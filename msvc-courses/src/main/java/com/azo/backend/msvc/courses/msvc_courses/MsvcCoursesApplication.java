@@ -8,6 +8,7 @@ public class MsvcCoursesApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(MsvcCoursesApplication.class, args);
+    System.out.println("Servidor levantado courses!!!");
 	}
 
 }

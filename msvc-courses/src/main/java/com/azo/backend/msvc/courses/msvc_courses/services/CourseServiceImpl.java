@@ -4,11 +4,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.azo.backend.msvc.courses.msvc_courses.models.entities.Course;
 import com.azo.backend.msvc.courses.msvc_courses.repositories.CourseRepository;
 
+//paso 4.
+@Service
 public class CourseServiceImpl implements CourseService {
 
   @Autowired
@@ -28,7 +31,7 @@ public class CourseServiceImpl implements CourseService {
 
   @Override
   @Transactional
-  public Course create(Course course) {
+  public Course save(Course course) {
     return repository.save(course);
   }
 

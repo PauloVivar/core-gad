@@ -1,11 +1,14 @@
 package com.azo.backend.msvc.users.msvc_users.controllers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.azo.backend.msvc.users.msvc_users.models.entities.User;
 import com.azo.backend.msvc.users.msvc_users.services.UserService;
+
+import jakarta.validation.Valid;
 
 
 //5. Se icrea el UserController
@@ -43,13 +48,19 @@ public class UserController {
   }
 
   @PostMapping
-  public ResponseEntity<?> create (@RequestBody User user){
+  public ResponseEntity<?> create (@Valid @RequestBody User user, BindingResult result){
+    if(result.hasErrors()){
+      return validate(result);
+    }
     return ResponseEntity.status(HttpStatus.CREATED).body(service.save(user));
   }
 
 
   @PutMapping("/{id}")
-  public ResponseEntity<?> update (@RequestBody User user, @PathVariable Long id){
+  public ResponseEntity<?> update (@Valid @RequestBody User user, BindingResult result, @PathVariable Long id){
+    if(result.hasErrors()){
+      return validate(result);
+    }
     Optional<User> o = service.findById(id);
     if(o.isPresent()){
       User userDb = o.orElseThrow();
@@ -74,5 +85,16 @@ public class UserController {
     }
     return ResponseEntity.notFound().build();
   }
+
+
+  //metodos utilitario para validar que un error si se repite el user o email
+  private ResponseEntity<Map<String, String>> validate (BindingResult result){
+    Map<String, String> errors = new HashMap<>();
+    result.getFieldErrors().forEach( err -> {
+      errors.put(err.getField(), "El campo " + err.getField() + " " + err.getDefaultMessage());
+    });
+    return ResponseEntity.badRequest().body(errors);
+  }
+
 
 }
