@@ -46,9 +46,9 @@ public class User {
   private LocalDateTime createdAt;
 
   @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
+  protected void onCreate() {
+      createdAt = LocalDateTime.now();
+  }
 
 
   // Getters and setters

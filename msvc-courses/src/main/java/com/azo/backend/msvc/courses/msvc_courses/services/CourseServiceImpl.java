@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.azo.backend.msvc.courses.msvc_courses.models.User;
 import com.azo.backend.msvc.courses.msvc_courses.models.entities.Course;
 import com.azo.backend.msvc.courses.msvc_courses.repositories.CourseRepository;
 
@@ -39,6 +40,24 @@ public class CourseServiceImpl implements CourseService {
   @Transactional
   public void remove(Long id) {
     repository.deleteById(id);
+  }
+
+  @Override
+  public Optional<User> assignUser(User user, Long courseId) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'assignUser'");
+  }
+
+  @Override
+  public Optional<User> createUser(User user, Long courseId) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'createUser'");
+  }
+
+  @Override
+  public Optional<User> deleteUser(User user, Long courseId) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'deleteUser'");
   }
 
 }

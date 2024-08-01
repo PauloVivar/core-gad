@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ import com.azo.backend.msvc.users.msvc_users.services.UserService;
 import jakarta.validation.Valid;
 
 
-//5. Se icrea el UserController
+//5. Se crea el UserController
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -49,8 +50,14 @@ public class UserController {
 
   @PostMapping
   public ResponseEntity<?> create (@Valid @RequestBody User user, BindingResult result){
+
     if(result.hasErrors()){
       return validate(result);
+    }
+    if(!user.getEmail().isEmpty() && service.findByEmail(user.getEmail()).isPresent()){
+      return ResponseEntity.badRequest()
+        .body(Collections
+          .singletonMap("message", "Ya existe un usuario con este correo electronico"));
     }
     return ResponseEntity.status(HttpStatus.CREATED).body(service.save(user));
   }
@@ -64,6 +71,13 @@ public class UserController {
     Optional<User> o = service.findById(id);
     if(o.isPresent()){
       User userDb = o.orElseThrow();
+
+      if(!user.getEmail().isEmpty() && !user.getEmail().equalsIgnoreCase(userDb.getEmail()) && service.findByEmail(user.getEmail()).isPresent()){
+        return ResponseEntity.badRequest()
+          .body(Collections
+            .singletonMap("message", "Ya existe un usuario con este correo electronico"));
+      }
+
       userDb.setUsername(user.getUsername());
       userDb.setPassword(user.getPassword());
       userDb.setEmail(user.getEmail());
