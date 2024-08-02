@@ -8,7 +8,7 @@ public class MsvcUsersApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(MsvcUsersApplication.class, args);
-    System.out.println("Servidor levantado users!!!");
+    System.out.println("Servidor levantado users test!!!");
 	}
 
 }

@@ -44,19 +44,16 @@ public class CourseServiceImpl implements CourseService {
 
   @Override
   public Optional<User> assignUser(User user, Long courseId) {
-    // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'assignUser'");
   }
 
   @Override
   public Optional<User> createUser(User user, Long courseId) {
-    // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'createUser'");
   }
 
   @Override
   public Optional<User> deleteUser(User user, Long courseId) {
-    // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'deleteUser'");
   }
 
