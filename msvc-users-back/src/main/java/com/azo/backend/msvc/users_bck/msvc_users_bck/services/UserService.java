@@ -16,34 +16,38 @@ import com.azo.backend.msvc.users_bck.msvc_users_bck.models.request.UserRequest;
 
 public interface UserService {
 
-  //listar data
+  //listar todos los users
   List<UserDto> findAll();
 
-  //método custom para listar todo con paginación data users
+  //listar todos los users con paginación
   Page<UserDto> findAll(Pageable pageable);
 
-  //buscar data por id
+  //buscar users por id
   Optional<UserDto> findById(Long id);
 
-  //guardar data
+  //guardar user
   UserDto save(User user);
 
-  //*test guardar data registration
+  //guardar user registration
   UserDto saveRegistration(UserRegistrationDTO userRegistration, String ipAddress);
 
-  //actualizar data
+  //actualizar user
   Optional<UserDto> update (UserRequest user, Long id);
   //Optional<UserDto> update (UserRegistrationDTO user, Long id);
 
-  //eliminar data
+  //eliminar user
   void remove(Long id);
+
+  //*test activo y desactivo status
+  // UserDto activateUser(Long id);
+  // UserDto deactivateUser(Long id);
 
   //validar campos unique
   boolean existsByUsername(String username);
   boolean existsByEmail(String email);
 
   //reset password
-  //método para encontrar usuario por email
+  //método para buscar user por email
   Optional<User> findByEmail(String email);
 
   //métodos para el restablecimiento de contraseña

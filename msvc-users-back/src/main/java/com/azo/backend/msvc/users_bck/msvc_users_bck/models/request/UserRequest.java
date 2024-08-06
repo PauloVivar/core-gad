@@ -6,8 +6,9 @@ import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 
-//1.1 Create Clases UserRequest personalización de JSON
+//1.1 Create Class UserRequest personalización de JSON
 
 public class UserRequest implements IUser {
 
@@ -22,6 +23,28 @@ public class UserRequest implements IUser {
 
   //Role admin
   private boolean admin;
+
+  private String avatar;
+
+  @Pattern(regexp = "ACTIVO|INACTIVO", message = "El estado debe ser ACTIVO o INACTIVO")
+  @Column(columnDefinition = "VARCHAR(10) DEFAULT 'ACTIVO'")
+  private String status;
+
+  public String getAvatar() {
+    return avatar;
+  }
+
+  public void setAvatar(String avatar) {
+    this.avatar = avatar;
+  }
+
+  public String getStatus() {
+    return status;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
+  }
 
   //Getters and Setters
   public String getUsername() {

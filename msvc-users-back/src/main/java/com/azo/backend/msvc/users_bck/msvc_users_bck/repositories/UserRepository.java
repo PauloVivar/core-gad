@@ -15,14 +15,14 @@ public interface UserRepository extends CrudRepository<User, Long> {
 
   //método custom 2 formas
 
-  //1ra. forma -> siguiendo la nomenclatura de Spring boot
+  //1ra. forma 1 -> siguiendo la nomenclatura de Spring boot, buscar por username
   Optional<User> findByUsername(String username);
 
-  //2da. forma -> consulta personalizanda (nombre del método) -> "and u.email=?2" -> en caso de 2do parametro
+  //1ra. forma 2 -> consulta personalizanda (nombre del método) -> "and u.email=?2" -> en caso de 2do parametro
   @Query("select u from User u where u.username = ?1")
   Optional<User> getUserByUsername(String username);
 
-  //obtener id de user para mandar por el token
+  //2ro. método custom para obtener id de user para mandar por el token
   @Query("select u.id from User u where u.username = ?1")
   Optional<Long> findIdByUsername(String username);
 

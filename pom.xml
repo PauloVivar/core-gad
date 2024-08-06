@@ -19,6 +19,7 @@
     <module>msvc-users</module>
     <module>msvc-courses</module>
     <module>msvc-users-back</module>
+    <module>msvc-avaluos-catastros</module>
   </modules>
 
 	<name>core-gad</name>

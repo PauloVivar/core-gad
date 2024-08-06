@@ -24,8 +24,11 @@ public class Role {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   
-  @Column(unique = true)
+  @Column(unique = true, nullable = false)
   private String name;
+
+  @Column
+  private String description;
 
   //Getters and Setters
   public Long getId() {
@@ -39,6 +42,14 @@ public class Role {
   }
   public void setName(String name) {
     this.name = name;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
   }
 
   

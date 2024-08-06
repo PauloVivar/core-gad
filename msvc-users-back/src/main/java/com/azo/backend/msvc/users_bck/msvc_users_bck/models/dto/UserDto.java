@@ -5,17 +5,24 @@ public class UserDto {
   private String username;
   private String email;
   private boolean admin;     //role admin
+  private String avatar;
+  private String status;
+  private CustomerDto customer;
 
   public UserDto() {
   }
 
-  public UserDto(Long id, String username, String email, boolean admin) {
+  public UserDto(Long id, String username, String email, boolean admin, String avatar, String status, CustomerDto customer) {
     this.id = id;
     this.username = username;
     this.email = email;
     this.admin = admin;
+    this.avatar = avatar;
+    this.status = status;
+    this.customer = customer;
   }
   
+  //Getters and Setters
   public Long getId() {
     return id;
   }
@@ -40,6 +47,30 @@ public class UserDto {
   }
   public void setAdmin(boolean admin) {
     this.admin = admin;
+  }
+
+  public String getAvatar() {
+    return avatar;
+  }
+
+  public void setAvatar(String avatar) {
+    this.avatar = avatar;
+  }
+
+  public String getStatus() {
+    return status;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
+  }
+
+  public CustomerDto getCustomer() {
+    return customer;
+  }
+
+  public void setCustomer(CustomerDto customer) {
+    this.customer = customer;
   }
 
 }

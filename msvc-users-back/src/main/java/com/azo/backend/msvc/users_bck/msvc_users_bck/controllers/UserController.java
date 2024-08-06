@@ -45,7 +45,7 @@ public class UserController {
   @Autowired
   private UserService service;
 
-  //get
+  //listar todos los users
   @GetMapping
   public List<UserDto> list(){
     //solo pruebas
@@ -57,19 +57,20 @@ public class UserController {
     return service.findAll();
   }
 
-  //método custom para paginación
+  //listar todos los users con paginación
   @GetMapping("/page/{page}")
   public Page<UserDto> list(@PathVariable Integer page){
     Pageable pageable = PageRequest.of(page, 5);
     return service.findAll(pageable);
   }
 
-  //***Forma alternativa para el get
+  //***Forma alternativa para el list users
   // @GetMapping("/{id}")
   // public User show (@PathVariable Long id){
   //   return service.findById(id).orElseThrow();
   // }
 
+  //buscar users por id
   //getById -> orElseThrow()
   @GetMapping("/{id}")
   public ResponseEntity<?> show (@PathVariable Long id){
@@ -87,7 +88,7 @@ public class UserController {
   //   return service.save(user);
   // }
 
-  //post
+  //guardar user
   @PostMapping
   public ResponseEntity<?> create (@Valid @RequestBody User user, BindingResult result){
     if(result.hasErrors()){
@@ -102,7 +103,7 @@ public class UserController {
     return ResponseEntity.status(HttpStatus.CREATED).body(userDb);
   }
 
-  //post registration test 
+  //guardar user registration
   @PostMapping("/registration")
   public ResponseEntity<?> createRegistration (@Valid @RequestBody UserRegistrationDTO userRegistration, 
                                             BindingResult result,
@@ -144,7 +145,7 @@ public class UserController {
     return ipAddress;
   }
 
-  //update
+  //actualizar user
   @PutMapping("/{id}")
   public ResponseEntity<?> update (@Valid @RequestBody UserRequest user, BindingResult result, @PathVariable Long id){
     if(result.hasErrors()){
@@ -157,7 +158,7 @@ public class UserController {
     return ResponseEntity.notFound().build();
   }
 
-  //delete
+  //eliminar user
   @DeleteMapping("/{id}")
   public ResponseEntity<?> remove (@PathVariable Long id){
     Optional<UserDto> useOptional = service.findById(id);
@@ -168,7 +169,7 @@ public class UserController {
     return ResponseEntity.notFound().build();    //404
   }
 
-  //metodo para validar entrada de data
+  //metodo utils para validar entrada de data
   private ResponseEntity<?> validation(BindingResult result) {
     Map<String, String> errors = new HashMap<>();
     result.getFieldErrors().forEach(err -> {

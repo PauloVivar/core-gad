@@ -20,6 +20,7 @@ import com.azo.backend.msvc.users_bck.msvc_users_bck.models.IUser;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.models.dto.UserDto;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.models.dto.UserRegistrationDTO;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.models.dto.mapper.DtoMapperUser;
+import com.azo.backend.msvc.users_bck.msvc_users_bck.models.entities.Customer;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.models.entities.PasswordResetCode;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.models.entities.Role;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.models.entities.User;
@@ -58,10 +59,13 @@ public class UserServiceImpl implements UserService {
   @Autowired
   private EmailService emailService;
 
+  
+  //listar todos los users
   @Override
   @Transactional(readOnly = true)
   public List<UserDto> findAll() {
     List<User> users = (List<User>) repository.findAll();
+
     return users
       .stream()
       .map( u -> DtoMapperUser.builder().setUser(u).build())
@@ -70,7 +74,7 @@ public class UserServiceImpl implements UserService {
     //return (List<User>) repository.findAll();
   }
 
-  //método custom para paginación
+  //listar todos los users con paginación
   @Override
   @Transactional(readOnly = true)
   public Page<UserDto> findAll(Pageable pageable) {
@@ -78,6 +82,7 @@ public class UserServiceImpl implements UserService {
     return usersPage.map(u -> DtoMapperUser.builder().setUser(u).build());
   }
 
+  //buscar users por id
   @Override
   @Transactional(readOnly = true)
   public Optional<UserDto> findById(Long id) {
@@ -89,20 +94,23 @@ public class UserServiceImpl implements UserService {
     //return repository.findById(id);
   }
 
+  //guardar user
   //Transactional ya no es readOnly ya que save guarda y actualiza
   @Override
   @Transactional
   public UserDto save(User user) {
     String passwordBCrypt = passwordEncoder.encode(user.getPassword());
     user.setPassword(passwordBCrypt);
-    //get roles
+
+    //obtener roles
     List<Role> roles = getRoles(user);
+
     user.setRoles(roles);
     return DtoMapperUser.builder().setUser(repository.save(user)).build();
     //return repository.save(user);
   }
 
-  //guardar users registrados
+  //guardar user registration
   @Override
   @Transactional
   public UserDto saveRegistration(UserRegistrationDTO userRegistration, String ipAddress) {
@@ -123,15 +131,27 @@ public class UserServiceImpl implements UserService {
       roleRepository.findByName("ROLE_USER").ifPresent(roles::add);
       newUser.setRoles(roles);
 
+      // ***test Crear y asociar Customer
+      Customer newCustomer = new Customer();
+      newCustomer.setFirstname(userRegistration.getFirstname());
+      newCustomer.setLastname(userRegistration.getLastname());
+      newCustomer.setTypeDocumentId(userRegistration.getTypeDocumentId());
+      newCustomer.setDocumentId(userRegistration.getDocumentId());
+      newCustomer.setUser(newUser);
+      newUser.setCustomer(newCustomer);
+
       User savedUser = repository.save(newUser);
 
       // Registrar la aceptación de términos
       termsService.recordTermsInteraction(savedUser.getId(), true, ipAddress);
 
+
+      //return DtoMapperUser.build(savedUser); // test
       return DtoMapperUser.builder().setUser(savedUser).build();
   }
 
-  //Se utiliza UserRequest ya que no se pasa el password
+  //actualizar user
+  //se utiliza UserRequest ya que no se pasa el password por seguridad
   @Override
   @Transactional
   public Optional<UserDto> update(UserRequest user, Long id) {
@@ -139,19 +159,23 @@ public class UserServiceImpl implements UserService {
     User userOptional = null;
     if(o.isPresent()){
 
-      //get roles
+      //obtener roles
       List<Role> roles = getRoles(user);
 
       User userDb = o.orElseThrow();
       userDb.setRoles(roles);
       userDb.setUsername(user.getUsername());
       userDb.setEmail(user.getEmail());
+      userDb.setStatus(user.getStatus());
+      userDb.setAvatar(user.getAvatar());
+      
       userOptional = repository.save(userDb);
     }
     return Optional.ofNullable(DtoMapperUser.builder().setUser(userOptional).build());
     //return Optional.ofNullable(userOptional);
   }
   
+  //eliminar user
   @Override
   @Transactional
   public void remove(Long id) {
@@ -251,13 +275,27 @@ public class UserServiceImpl implements UserService {
     return repository.toString().equals(username);
   }
 
-  //validar campos unique
   @Override
   public boolean existsByEmail(String email) {
     return repository.toString().equals(email);
   }
 
-  //logica para asignar o eliminar un usuario como role admin
+  // @Override
+  // public UserDto activateUser(Long id) {
+  //   User user = repository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+  //   user.setStatus(User.STATUS_ACTIVE);
+  //   return repository.save(user);
+  // }
+
+  // @Override
+  // public UserDto deactivateUser(Long id) {
+  //   User user = repository.findById(id)
+  //       .orElseThrow(() -> new UserNotFoundException(id));
+  //   user.setStatus(User.STATUS_INACTIVE);
+  //   return repository.save(user);
+  // }
+
+  //Logica utils para asignar o eliminar un usuario como role admin
   private List<Role> getRoles(IUser user){
     Optional<Role> ou = roleRepository.findByName("ROLE_USER");
     List<Role> roles = new ArrayList<>();
