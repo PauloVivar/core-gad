@@ -34,9 +34,9 @@ public interface CustomerService {
   void remove(Long id);
 
   //validar campo unique
-  boolean existsByIdDocument(String documentId);
+  boolean existsByDocumentId(String documentId);
 
   //buscar por id Document
-  Optional<Customer> findByIdDocument (String documentId);
+  Optional<Customer> findByDocumentId (String documentId);
   
 }

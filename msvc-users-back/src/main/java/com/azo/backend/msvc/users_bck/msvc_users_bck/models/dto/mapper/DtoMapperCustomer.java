@@ -27,7 +27,7 @@ public class DtoMapperCustomer {
     }
     
     //return new CustomerDto(customer.getId(), customer.getUsername(), customer.getEmail(), isAdmin);
-    return new CustomerDto(customer.getId(), customer.getFirstname(), customer.getLastname(), customer.getDocumentId(), customer.getTypeDocumentId(), customer.getUser());
+    return new CustomerDto(customer.getId(), customer.getFirstname(), customer.getLastname(), customer.getDocumentId(), customer.getTypeDocumentId(), customer.getUser().getId());
   }
 
 }

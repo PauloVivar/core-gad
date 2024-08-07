@@ -11,6 +11,16 @@ public class CustomerDto {
   public CustomerDto() {
   }
 
+  // Constructor sin id para creación
+  public CustomerDto(String firstname, String lastname, String documentId, String typeDocumentId, Long userId) {
+    this.firstname = firstname;
+    this.lastname = lastname;
+    this.documentId = documentId;
+    this.typeDocumentId = typeDocumentId;
+    this.userId = userId;
+}
+
+  // Constructor completo para respuestas
   public CustomerDto(Long id, String firstname, String lastname, String documentId, String typeDocumentId, Long userId) {
     this.id = id;
     this.firstname = firstname;
@@ -62,11 +72,11 @@ public class CustomerDto {
     this.typeDocumentId = typeDocumentId;
   }
 
-  public Long getUser() {
+  public Long getUserId() {
     return userId;
   }
 
-  public void setUser(Long userId) {
+  public void setUserId(Long userId) {
     this.userId = userId;
   }
 

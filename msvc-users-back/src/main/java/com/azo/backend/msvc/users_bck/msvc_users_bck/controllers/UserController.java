@@ -121,6 +121,11 @@ public class UserController {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El nombre de usuario ya existe");
     }
 
+    // Verificar si el email ya existe en la base de datos
+    if (service.existsByEmail(userRegistration.getEmail())) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El email ya está registrado");
+    }
+
     try {
       String ipAddress = getIpAddress(request);
       UserDto user = service.saveRegistration(userRegistration, ipAddress);

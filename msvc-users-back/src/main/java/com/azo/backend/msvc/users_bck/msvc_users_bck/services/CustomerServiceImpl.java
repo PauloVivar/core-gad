@@ -92,14 +92,14 @@ public class CustomerServiceImpl implements CustomerService {
   }
 
   @Override
-  public boolean existsByIdDocument(String documentId) {
+  public boolean existsByDocumentId(String documentId) {
     return repository.toString().equals(documentId);
   }
 
   @Override
   @Transactional
-  public Optional<Customer> findByIdDocument(String documentId) {
-    return repository.findByIdDocument(documentId);
+  public Optional<Customer> findByDocumentId(String documentId) {
+    return repository.findByDocumentId(documentId);
   }
 
 }

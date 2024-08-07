@@ -30,22 +30,6 @@ public class UserRequest implements IUser {
   @Column(columnDefinition = "VARCHAR(10) DEFAULT 'ACTIVO'")
   private String status;
 
-  public String getAvatar() {
-    return avatar;
-  }
-
-  public void setAvatar(String avatar) {
-    this.avatar = avatar;
-  }
-
-  public String getStatus() {
-    return status;
-  }
-
-  public void setStatus(String status) {
-    this.status = status;
-  }
-
   //Getters and Setters
   public String getUsername() {
     return username;
@@ -70,6 +54,22 @@ public class UserRequest implements IUser {
 
   public void setAdmin(boolean admin) {
     this.admin = admin;
+  }
+
+  public String getAvatar() {
+    return avatar;
+  }
+
+  public void setAvatar(String avatar) {
+    this.avatar = avatar;
+  }
+
+  public String getStatus() {
+    return status;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
   }
 
 }

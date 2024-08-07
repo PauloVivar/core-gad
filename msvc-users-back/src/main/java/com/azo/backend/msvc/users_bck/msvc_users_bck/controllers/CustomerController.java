@@ -22,8 +22,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.azo.backend.msvc.users_bck.msvc_users_bck.models.dto.CustomerDto;
+import com.azo.backend.msvc.users_bck.msvc_users_bck.models.dto.UserDto;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.models.entities.Customer;
+import com.azo.backend.msvc.users_bck.msvc_users_bck.models.entities.User;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.services.CustomerService;
+import com.azo.backend.msvc.users_bck.msvc_users_bck.services.UserService;
 
 import jakarta.validation.Valid;
 
@@ -40,6 +43,9 @@ public class CustomerController {
 
   @Autowired
   private CustomerService service;
+
+  @Autowired
+  private UserService userService;
 
   //listar todos los users
   @GetMapping
@@ -66,17 +72,34 @@ public class CustomerController {
 
   //post
   @PostMapping
-  public ResponseEntity<?> create (@Valid @RequestBody Customer customer, BindingResult result){
+  public ResponseEntity<?> create (@Valid @RequestBody CustomerDto customerDTO, BindingResult result){
     if(result.hasErrors()){
       return validation(result);
     }
-    // Verificar si el IdDocument ya existe en la base de datos
-    if (service.existsByIdDocument(customer.getDocumentId())) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Campo ya existe");
+    // Verificar si el documentId ya existe en la base de datos
+    if (service.existsByDocumentId(customerDTO.getDocumentId())) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El documento de identidad ya existe");
     }
+
+    Optional<UserDto> userOptional = userService.findById(customerDTO.getUserId());
+    if (!userOptional.isPresent()) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El usuario especificado no existe");
+    }
+
+    UserDto userDto = userOptional.orElseThrow();
+    Customer customer = new Customer();
+    customer.setFirstname(customerDTO.getFirstname());
+    customer.setLastname(customerDTO.getLastname());
+    customer.setDocumentId(customerDTO.getDocumentId());
+    customer.setTypeDocumentId(customerDTO.getTypeDocumentId());
+
+    // Se convierte UserDto a User
+    User user = convertToUser(userDto);
+    customer.setUser(user);
+
     // Guardar el cliente si no existe
-    CustomerDto customerDb = service.save(customer);
-    return ResponseEntity.status(HttpStatus.CREATED).body(customerDb);
+    CustomerDto savedCustomer = service.save(customer);
+    return ResponseEntity.status(HttpStatus.CREATED).body(savedCustomer);
   }
 
   //update
@@ -111,6 +134,20 @@ public class CustomerController {
       errors.put(err.getField(), err.getDefaultMessage());
     });
     return ResponseEntity.badRequest().body(errors);
+  }
+
+  // Se convierte UserDto a User
+  private User convertToUser(UserDto userDto) {
+    User user = new User();
+    user.setId(userDto.getId());
+    user.setUsername(userDto.getUsername());
+    user.setEmail(userDto.getEmail());
+    user.setAdmin(false);
+    user.setAvatar(userDto.getAvatar());
+    user.setStatus(userDto.getStatus());
+    //user.setCustomer(userDto.getCustomer());
+
+    return user;
   }
 
 }

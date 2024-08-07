@@ -15,7 +15,7 @@ public interface CustomerRepository extends CrudRepository<Customer, Long> {
   //método custom 2 formas
 
   //1ra. método custom para buscar por documentId
-  Optional<Customer> findByIdDocument(String documentId);
+  Optional<Customer> findByDocumentId(String documentId);
 
   //2do. método custom para paginación
   Page<Customer> findAll(Pageable pageable);

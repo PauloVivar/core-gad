@@ -115,39 +115,38 @@ public class UserServiceImpl implements UserService {
   @Transactional
   public UserDto saveRegistration(UserRegistrationDTO userRegistration, String ipAddress) {
     if (existsByUsername(userRegistration.getUsername())) {
-          throw new RuntimeException("El nombre de usuario ya existe");
-      }
-      if (existsByEmail(userRegistration.getEmail())) {
-          throw new RuntimeException("El email ya está registrado");
-      }
+        throw new RuntimeException("El nombre de usuario ya existe");
+    }
+    if (existsByEmail(userRegistration.getEmail())) {
+        throw new RuntimeException("El email ya está registrado");
+    }
 
-      User newUser = new User();
-      newUser.setUsername(userRegistration.getUsername());
-      newUser.setPassword(passwordEncoder.encode(userRegistration.getPassword()));
-      newUser.setEmail(userRegistration.getEmail());
+    User newUser = new User();
+    newUser.setUsername(userRegistration.getUsername());
+    newUser.setPassword(passwordEncoder.encode(userRegistration.getPassword()));
+    newUser.setEmail(userRegistration.getEmail());
 
-      // Asignar rol de usuario por defecto
-      List<Role> roles = new ArrayList<>();
-      roleRepository.findByName("ROLE_USER").ifPresent(roles::add);
-      newUser.setRoles(roles);
+    // Asignar rol de usuario por defecto
+    List<Role> roles = new ArrayList<>();
+    roleRepository.findByName("ROLE_USER").ifPresent(roles::add);
+    newUser.setRoles(roles);
 
-      // ***test Crear y asociar Customer
-      Customer newCustomer = new Customer();
-      newCustomer.setFirstname(userRegistration.getFirstname());
-      newCustomer.setLastname(userRegistration.getLastname());
-      newCustomer.setTypeDocumentId(userRegistration.getTypeDocumentId());
-      newCustomer.setDocumentId(userRegistration.getDocumentId());
-      newCustomer.setUser(newUser);
-      newUser.setCustomer(newCustomer);
+    // ***test Crear y asociar Customer
+    Customer newCustomer = new Customer();
+    newCustomer.setFirstname(userRegistration.getFirstname());
+    newCustomer.setLastname(userRegistration.getLastname());
+    newCustomer.setTypeDocumentId(userRegistration.getTypeDocumentId());
+    newCustomer.setDocumentId(userRegistration.getDocumentId());
+    newCustomer.setUser(newUser);
+    newUser.setCustomer(newCustomer);
 
-      User savedUser = repository.save(newUser);
+    User savedUser = repository.save(newUser);
 
-      // Registrar la aceptación de términos
-      termsService.recordTermsInteraction(savedUser.getId(), true, ipAddress);
+    // Registrar la aceptación de términos
+    termsService.recordTermsInteraction(savedUser.getId(), true, ipAddress);
 
-
-      //return DtoMapperUser.build(savedUser); // test
-      return DtoMapperUser.builder().setUser(savedUser).build();
+    return DtoMapperUser.build(savedUser); // test
+    //return DtoMapperUser.builder().setUser(savedUser).build();
   }
 
   //actualizar user

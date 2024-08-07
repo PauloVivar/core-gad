@@ -48,7 +48,8 @@ public class DtoMapperUser {
       user.getEmail(),
       user.getRoles().stream().anyMatch(r -> r.getName().equals("ROLE_ADMIN")),
       user.getAvatar(),
-      user.getStatus(), null
+      user.getStatus(),
+      null
     );
 
     if(user.getCustomer() != null) {
