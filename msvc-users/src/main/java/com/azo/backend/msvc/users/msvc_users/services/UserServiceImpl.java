@@ -37,14 +37,13 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public Optional<User> findByEmail(String email) {
+    return repository.findByEmail(email);
+  }
+  
+  @Override
   @Transactional
   public void remove(Long id) {
     repository.deleteById(id);
   }
-
-  @Override
-  public Optional<User> findByEmail(String email) {
-    return repository.findByEmail(email);
-  }
-
 }

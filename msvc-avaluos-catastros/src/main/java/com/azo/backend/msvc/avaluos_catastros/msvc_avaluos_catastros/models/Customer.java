@@ -1,67 +1,84 @@
 package com.azo.backend.msvc.avaluos_catastros.msvc_avaluos_catastros.models;
 
+import java.time.LocalDate;
+
 //import java.time.LocalDateTime;
 
 public class Customer {
 
   private Long id;
-  private String username;
-  private String password;
-  private String email;
-  private String cellphone;
-  private String phone;
-  private String avatar;
-  //private LocalDateTime createdAt;
+  private String firstname;
+  private String lastname;
+  private String documentId;
+  private String typeDocumentId;
+  private LocalDate birthdate;
+  private String gender;
+  private String civilStatus;
+  private String disability;
+  private String ethnicity;
+
 
   //getters and setters
-
+  
   public Long getId() {
     return id;
   }
   public void setId(Long id) {
     this.id = id;
   }
-  public String getUsername() {
-    return username;
+  public String getFirstname() {
+    return firstname;
   }
-  public void setUsername(String username) {
-    this.username = username;
+  public void setFirstname(String firstname) {
+    this.firstname = firstname;
   }
-  public String getPassword() {
-    return password;
+  public String getLastname() {
+    return lastname;
   }
-  public void setPassword(String password) {
-    this.password = password;
+  public void setLastname(String lastname) {
+    this.lastname = lastname;
   }
-  public String getEmail() {
-    return email;
+  public String getDocumentId() {
+    return documentId;
   }
-  public void setEmail(String email) {
-    this.email = email;
+  public void setDocumentId(String documentId) {
+    this.documentId = documentId;
   }
-  public String getCellphone() {
-    return cellphone;
+  public String getTypeDocumentId() {
+    return typeDocumentId;
   }
-  public void setCellphone(String cellphone) {
-    this.cellphone = cellphone;
+  public void setTypeDocumentId(String typeDocumentId) {
+    this.typeDocumentId = typeDocumentId;
   }
-  public String getPhone() {
-    return phone;
+  public LocalDate getBirthdate() {
+    return birthdate;
   }
-  public void setPhone(String phone) {
-    this.phone = phone;
+  public void setBirthdate(LocalDate birthdate) {
+    this.birthdate = birthdate;
   }
-  public String getAvatar() {
-    return avatar;
+  public String getGender() {
+    return gender;
   }
-  public void setAvatar(String avatar) {
-    this.avatar = avatar;
+  public void setGender(String gender) {
+    this.gender = gender;
   }
-  // public LocalDateTime getCreatedAt() {
-  //   return createdAt;
-  // }
-  // public void setCreatedAt(LocalDateTime createdAt) {
-  //   this.createdAt = createdAt;
-  // }
-  
+  public String getCivilStatus() {
+    return civilStatus;
+  }
+  public void setCivilStatus(String civilStatus) {
+    this.civilStatus = civilStatus;
+  }
+  public String getDisability() {
+    return disability;
+  }
+  public void setDisability(String disability) {
+    this.disability = disability;
+  }
+  public String getEthnicity() {
+    return ethnicity;
+  }
+  public void setEthnicity(String ethnicity) {
+    this.ethnicity = ethnicity;
+  }
+
 }

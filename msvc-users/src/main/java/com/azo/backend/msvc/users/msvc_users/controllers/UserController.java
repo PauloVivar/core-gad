@@ -69,6 +69,7 @@ public class UserController {
       return validate(result);
     }
     Optional<User> o = service.findById(id);
+
     if(o.isPresent()){
       User userDb = o.orElseThrow();
 
@@ -99,7 +100,6 @@ public class UserController {
     }
     return ResponseEntity.notFound().build();
   }
-
 
   //metodos utilitario para validar que un error si se repite el user o email
   private ResponseEntity<Map<String, String>> validate (BindingResult result){

@@ -17,8 +17,8 @@ public class ProcedureCustomer {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "user_id", unique = true)
-  private Long userId;
+  @Column(name = "customer_id", unique = true)
+  private Long customerId;
 
   //getters and setters
 
@@ -30,15 +30,15 @@ public class ProcedureCustomer {
     this.id = id;
   }
 
-  public Long getUserId() {
-    return userId;
+  public Long getCustomerId() {
+    return customerId;
   }
 
-  public void setUserId(Long userId) {
-    this.userId = userId;
+  public void setCustomerId(Long customerId) {
+    this.customerId = customerId;
   }
 
-  //metodo para sobreescribir y usarlo en removeCourseUser de Course
+  //metodo para sobreescribir y usarlo en removeProcedureCustomer de entidad Tramite(Procedure)
   @Override
   public boolean equals(Object obj) {
     if(this == obj){
@@ -49,7 +49,7 @@ public class ProcedureCustomer {
     }
 
     ProcedureCustomer o = (ProcedureCustomer) obj;
-    return this.userId != null && this.userId.equals(o.userId);
+    return this.customerId != null && this.customerId.equals(o.customerId);
   }
 
 }
