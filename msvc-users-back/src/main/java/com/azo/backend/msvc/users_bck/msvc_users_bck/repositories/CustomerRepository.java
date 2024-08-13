@@ -20,4 +20,7 @@ public interface CustomerRepository extends CrudRepository<Customer, Long> {
   //2do. método custom para paginación
   Page<Customer> findAll(Pageable pageable);
 
+  //3ro. ver si existe el documento de identidad
+  boolean existsByDocumentId(String documentId);
+
 }

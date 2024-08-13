@@ -1,5 +1,6 @@
 package com.azo.backend.msvc.avaluos_catastros.msvc_avaluos_catastros.controllers;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,9 +22,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.azo.backend.msvc.avaluos_catastros.msvc_avaluos_catastros.models.Customer;
 import com.azo.backend.msvc.avaluos_catastros.msvc_avaluos_catastros.models.entities.Procedure;
 import com.azo.backend.msvc.avaluos_catastros.msvc_avaluos_catastros.services.ProcedureService;
 
+import feign.FeignException;
 import jakarta.validation.Valid;
 
 //5. Se crea el ProcedureController
@@ -93,6 +96,57 @@ public class ProcedureController {
     if(o.isPresent()){
       service.remove(id);
       return ResponseEntity.noContent().build();
+    }
+    return ResponseEntity.notFound().build();
+  }
+
+  @PutMapping("/assign-customer/{procedureId}")
+  public ResponseEntity<?> assignCustomer (@RequestBody Customer customer, @PathVariable Long procedureId){
+    Optional<Customer> o;
+    try {
+      o = service.assignCustomer(customer, procedureId);
+    } catch (FeignException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        .body(Collections.singletonMap("message", "No existe el usuario por " + 
+          "el id o error en la comunicación" + e.getMessage()));
+    }
+    if(o.isPresent()){
+      return ResponseEntity.status(HttpStatus.CREATED).body(o.get());
+
+    }
+    return ResponseEntity.notFound().build();
+  }
+
+  @PostMapping("/create-customer/{procedureId}")
+  public ResponseEntity<?> createCustomer (@RequestBody Customer customer, @PathVariable Long procedureId){
+    Optional<Customer> o;
+    try {
+      o = service.createCustomer(customer, procedureId);
+    } catch (FeignException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        .body(Collections.singletonMap("message", "No se pudo crear el usuario " + 
+          "o error en la comunicación" + e.getMessage()));
+    }
+    if(o.isPresent()){
+      return ResponseEntity.status(HttpStatus.CREATED).body(o.get());
+
+    }
+    return ResponseEntity.notFound().build();
+  }
+
+  @PostMapping("/remove-customer/{procedureId}")
+  public ResponseEntity<?> removeCustomer (@RequestBody Customer customer, @PathVariable Long procedureId){
+    Optional<Customer> o;
+    try {
+      o = service.removeCustomer(customer, procedureId);
+    } catch (FeignException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        .body(Collections.singletonMap("message", "No se pudo crear el usuario " + 
+          "o error en la comunicación" + e.getMessage()));
+    }
+    if(o.isPresent()){
+      return ResponseEntity.status(HttpStatus.OK).body(o.get());
+
     }
     return ResponseEntity.notFound().build();
   }

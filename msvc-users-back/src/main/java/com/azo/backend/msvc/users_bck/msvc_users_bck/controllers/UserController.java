@@ -66,14 +66,14 @@ public class UserController {
 
   //***Forma alternativa para el list users
   // @GetMapping("/{id}")
-  // public User show (@PathVariable Long id){
+  // public User detail (@PathVariable Long id){
   //   return service.findById(id).orElseThrow();
   // }
 
   //buscar users por id
   //getById -> orElseThrow()
   @GetMapping("/{id}")
-  public ResponseEntity<?> show (@PathVariable Long id){
+  public ResponseEntity<?> detail (@PathVariable Long id){
     Optional<UserDto> userOptional = service.findById(id);
     if(userOptional.isPresent()){
       return ResponseEntity.ok(userOptional.orElseThrow());

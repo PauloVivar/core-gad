@@ -11,6 +11,7 @@ public class Customer {
   private String lastname;
   private String documentId;
   private String typeDocumentId;
+  
   private LocalDate birthdate;
   private String gender;
   private String civilStatus;

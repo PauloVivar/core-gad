@@ -93,7 +93,7 @@ public class CustomerServiceImpl implements CustomerService {
 
   @Override
   public boolean existsByDocumentId(String documentId) {
-    return repository.toString().equals(documentId);
+    return repository.existsByDocumentId(documentId);
   }
 
   @Override

@@ -9,8 +9,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.azo.backend.msvc.avaluos_catastros.msvc_avaluos_catastros.clients.CustomerClientRest;
 import com.azo.backend.msvc.avaluos_catastros.msvc_avaluos_catastros.models.Customer;
 import com.azo.backend.msvc.avaluos_catastros.msvc_avaluos_catastros.models.entities.Procedure;
+import com.azo.backend.msvc.avaluos_catastros.msvc_avaluos_catastros.models.entities.ProcedureCustomer;
 import com.azo.backend.msvc.avaluos_catastros.msvc_avaluos_catastros.repositories.ProcedureRepository;
 
 //paso 4.
@@ -19,6 +21,9 @@ public class ProcedureServiceImpl implements ProcedureService {
 
   @Autowired
   private ProcedureRepository repository;
+
+  @Autowired
+  private CustomerClientRest client;
 
   @Override
   @Transactional(readOnly = true)
@@ -66,22 +71,62 @@ public class ProcedureServiceImpl implements ProcedureService {
     repository.deleteById(id);
   }
 
+  //asignar usuario a tramite
   @Override
+  @Transactional
   public Optional<Customer> assignCustomer(Customer customer, Long procedureId) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'assignCustomer'");
+
+    Optional<Procedure> o = repository.findById(procedureId);
+    if(o.isPresent()){
+      Customer customerMsvc = client.detail(customer.getId());
+
+      Procedure procedure = o.get();
+      ProcedureCustomer procedureCustomer = new ProcedureCustomer();
+      procedureCustomer.setId(customerMsvc.getId());
+
+      procedure.addProcedureCustomer(procedureCustomer);
+      repository.save(procedure);
+      return Optional.of(customerMsvc);
+    }
+    return Optional.empty();
   }
 
+  //crear un nuevo Usuario para el tramite
   @Override
+  @Transactional
   public Optional<Customer> createCustomer(Customer customer, Long procedureId) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'createCustomer'");
+    Optional<Procedure> o = repository.findById(procedureId);
+    if(o.isPresent()){
+      Customer customerNewMsvc = client.create(customer);
+
+      Procedure procedure = o.get();
+      ProcedureCustomer procedureCustomer = new ProcedureCustomer();
+      procedureCustomer.setId(customerNewMsvc.getId());
+
+      procedure.addProcedureCustomer(procedureCustomer);
+      repository.save(procedure);
+      return Optional.of(customerNewMsvc);
+    }
+    return Optional.empty();
   }
 
+  //desasignar usuario de tramite
   @Override
+  @Transactional
   public Optional<Customer> removeCustomer(Customer customer, Long procedureId) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'removeCustomer'");
+    Optional<Procedure> o = repository.findById(procedureId);
+    if(o.isPresent()){
+      Customer customerMsvc = client.detail(customer.getId());
+
+      Procedure procedure = o.get();
+      ProcedureCustomer procedureCustomer = new ProcedureCustomer();
+      procedureCustomer.setId(customerMsvc.getId());
+
+      procedure.removeProcedureCustomer(procedureCustomer);  //---> ProcedureCustomer metodo equals
+      repository.save(procedure);
+      return Optional.of(customerMsvc);
+    }
+    return Optional.empty();
   }
 
 }

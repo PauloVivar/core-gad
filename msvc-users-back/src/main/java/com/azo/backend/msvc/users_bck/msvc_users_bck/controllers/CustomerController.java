@@ -62,7 +62,7 @@ public class CustomerController {
 
   //getById -> orElseThrow()
   @GetMapping("/{id}")
-  public ResponseEntity<?> show (@PathVariable Long id){
+  public ResponseEntity<?> detail (@PathVariable Long id){
     Optional<CustomerDto> customerOptional = service.findById(id);
     if(customerOptional.isPresent()){
       return ResponseEntity.ok(customerOptional.orElseThrow());
@@ -102,6 +102,7 @@ public class CustomerController {
     return ResponseEntity.status(HttpStatus.CREATED).body(savedCustomer);
   }
 
+
   //update
   @PutMapping("/{id}")
   public ResponseEntity<?> update (@Valid @RequestBody Customer customer, BindingResult result, @PathVariable Long id){
@@ -126,6 +127,7 @@ public class CustomerController {
     return ResponseEntity.notFound().build();    //404
   }
 
+  //metodos utils
   //metodo para validar entrada de data
   private ResponseEntity<?> validation(BindingResult result) {
     Map<String, String> errors = new HashMap<>();

@@ -30,7 +30,8 @@ public class CustomerDto {
     this.userId = userId;
   }
 
-  //Getters and setters
+
+  // Getters and setters
   
   public Long getId() {
     return id;
