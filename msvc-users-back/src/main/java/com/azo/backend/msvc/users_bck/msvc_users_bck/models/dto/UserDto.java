@@ -7,19 +7,17 @@ public class UserDto {
   private boolean admin;     //role admin
   private String avatar;
   private String status;
-  private CustomerDto customer;
 
   public UserDto() {
   }
 
-  public UserDto(Long id, String username, String email, boolean admin, String avatar, String status, CustomerDto customer) {
+  public UserDto(Long id, String username, String email, boolean admin, String avatar, String status) {
     this.id = id;
     this.username = username;
     this.email = email;
     this.admin = admin;
     this.avatar = avatar;
     this.status = status;
-    this.customer = customer;
   }
   
   //Getters and Setters
@@ -63,14 +61,6 @@ public class UserDto {
 
   public void setStatus(String status) {
     this.status = status;
-  }
-
-  public CustomerDto getCustomer() {
-    return customer;
-  }
-
-  public void setCustomer(CustomerDto customer) {
-    this.customer = customer;
   }
 
 }

@@ -1,5 +1,7 @@
 package com.azo.backend.msvc.users_bck.msvc_users_bck.models.dto;
 
+import java.util.List;
+
 public class CustomerDto {
   private Long id;
   private String firstname;
@@ -7,6 +9,7 @@ public class CustomerDto {
   private String documentId;
   private String typeDocumentId;
   private Long userId;
+  private List<AddressDto> addresses;
 
   public CustomerDto() {
   }
@@ -18,7 +21,7 @@ public class CustomerDto {
     this.documentId = documentId;
     this.typeDocumentId = typeDocumentId;
     this.userId = userId;
-}
+  }
 
   // Constructor completo para respuestas
   public CustomerDto(Long id, String firstname, String lastname, String documentId, String typeDocumentId, Long userId) {
@@ -28,6 +31,12 @@ public class CustomerDto {
     this.documentId = documentId;
     this.typeDocumentId = typeDocumentId;
     this.userId = userId;
+  }
+
+  // Constructor que incluye addresses
+  public CustomerDto(Long id, String firstname, String lastname, String documentId, String typeDocumentId, Long userId, List<AddressDto> addresses) {
+    this(id, firstname, lastname, documentId, typeDocumentId, userId);
+    this.addresses = addresses;
   }
 
 
@@ -79,6 +88,14 @@ public class CustomerDto {
 
   public void setUserId(Long userId) {
     this.userId = userId;
+  }
+
+  public List<AddressDto> getAddresses() {
+    return addresses;
+  }
+
+  public void setAddresses(List<AddressDto> addresses) {
+    this.addresses = addresses;
   }
 
 }

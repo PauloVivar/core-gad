@@ -1,7 +1,10 @@
 package com.azo.backend.msvc.users_bck.msvc_users_bck.models.entities;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -9,6 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
@@ -48,6 +52,11 @@ public class Customer {
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", unique = true)
   private User user;
+
+
+  //relación con Entity Address
+  @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Address> addresses = new ArrayList<>();
 
   // Getters and Setters
 
@@ -139,6 +148,22 @@ public class Customer {
     this.user = user;
   }
 
+  public List<Address> getAddresses() {
+    return addresses;
+  }
 
+  public void setAddresses(List<Address> addresses) {
+    this.addresses = addresses;
+  }
+
+  public void addAddress(Address address) {
+    addresses.add(address);
+    address.setCustomer(this);
+  }
+
+  public void removeAddress(Address address) {
+    addresses.remove(address);
+    address.setCustomer(null);
+  }
 
 }

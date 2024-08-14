@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import com.azo.backend.msvc.users_bck.msvc_users_bck.models.dto.UserDetailDto;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.models.dto.UserDto;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.models.dto.UserRegistrationDTO;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.models.entities.User;
@@ -23,7 +24,7 @@ public interface UserService {
   Page<UserDto> findAll(Pageable pageable);
 
   //buscar users por id
-  Optional<UserDto> findById(Long id);
+  Optional<UserDetailDto> findById(Long id);
 
   //guardar user
   UserDto save(User user);

@@ -141,7 +141,7 @@ public class ProcedureController {
       o = service.removeCustomer(customer, procedureId);
     } catch (FeignException e) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND)
-        .body(Collections.singletonMap("message", "No se pudo crear el usuario " + 
+        .body(Collections.singletonMap("message", "No se pudo remover el usuario " + 
           "o error en la comunicación" + e.getMessage()));
     }
     if(o.isPresent()){

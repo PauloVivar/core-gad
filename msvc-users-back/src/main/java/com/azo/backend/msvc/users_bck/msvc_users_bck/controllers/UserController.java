@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 //import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.azo.backend.msvc.users_bck.msvc_users_bck.models.dto.UserDetailDto;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.models.dto.UserDto;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.models.dto.UserRegistrationDTO;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.models.entities.User;
@@ -74,7 +75,7 @@ public class UserController {
   //getById -> orElseThrow()
   @GetMapping("/{id}")
   public ResponseEntity<?> detail (@PathVariable Long id){
-    Optional<UserDto> userOptional = service.findById(id);
+    Optional<UserDetailDto> userOptional = service.findById(id);
     if(userOptional.isPresent()){
       return ResponseEntity.ok(userOptional.orElseThrow());
     }
@@ -166,7 +167,7 @@ public class UserController {
   //eliminar user
   @DeleteMapping("/{id}")
   public ResponseEntity<?> remove (@PathVariable Long id){
-    Optional<UserDto> useOptional = service.findById(id);
+    Optional<UserDetailDto> useOptional = service.findById(id);
     if(useOptional.isPresent()){
       service.remove(id);
       return ResponseEntity.noContent().build(); //204

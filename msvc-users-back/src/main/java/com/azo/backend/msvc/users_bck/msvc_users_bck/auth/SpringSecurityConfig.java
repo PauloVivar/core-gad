@@ -57,17 +57,20 @@ public class SpringSecurityConfig {
         .requestMatchers(HttpMethod.GET, "/api/v1/customers", "/api/v1/customers/page/{page}", "/api/v1/customers/{id}").permitAll()
         .requestMatchers(HttpMethod.GET, "/api/v1/users/{id}").hasAnyRole("ADMIN", "USER")
         .requestMatchers(HttpMethod.GET, "/api/v1/terms/status/{id}").hasAnyRole("ADMIN", "USER")
+        .requestMatchers(HttpMethod.GET, "/api/v1/addresses").permitAll() 
 
         .requestMatchers(HttpMethod.POST, "/api/v1/password/**").permitAll()
         .requestMatchers(HttpMethod.POST, "/api/v1/users", "/api/v1/users/registration").permitAll()                  //SOLO PRUEBAS
         .requestMatchers(HttpMethod.POST, "/api/v1/terms/record").permitAll()
         .requestMatchers(HttpMethod.POST, "/api/v1/terms").hasRole("ADMIN")
         .requestMatchers(HttpMethod.POST, "/api/v1/customers").hasRole("ADMIN")
+        .requestMatchers(HttpMethod.POST, "/api/v1/addresses").permitAll()  
 
         .requestMatchers("/api/v1/users/*").hasRole("ADMIN")
         .requestMatchers("/api/v1/terms/*").hasRole("ADMIN")
         .requestMatchers("/api/v1/customers/*").hasRole("ADMIN")
         .requestMatchers("/api/v1/procedures/*").permitAll()
+        .requestMatchers("/api/v1/addresses/*").permitAll()
         
         //.requestMatchers(HttpMethod.DELETE, "/api/v1/users/{id}").hasRole("ADMIN")
         //.requestMatchers(HttpMethod.PUT, "/api/v1/users/{id}").hasRole("ADMIN")

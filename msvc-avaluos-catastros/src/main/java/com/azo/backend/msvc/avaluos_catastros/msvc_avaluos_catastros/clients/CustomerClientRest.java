@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.azo.backend.msvc.avaluos_catastros.msvc_avaluos_catastros.models.Customer;
 
-@FeignClient(name = "msvc-users-back", url = "localhost:8080/api/v1/customers")
+@FeignClient(name = "msvc-users-back", url = "localhost:8001/api/v1/customers")
 public interface CustomerClientRest {
 
   @GetMapping("/{id}")

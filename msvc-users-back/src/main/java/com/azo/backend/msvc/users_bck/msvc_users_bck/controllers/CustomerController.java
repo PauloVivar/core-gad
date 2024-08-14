@@ -21,7 +21,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.azo.backend.msvc.users_bck.msvc_users_bck.models.dto.AddressDto;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.models.dto.CustomerDto;
+import com.azo.backend.msvc.users_bck.msvc_users_bck.models.dto.UserDetailDto;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.models.dto.UserDto;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.models.entities.Customer;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.models.entities.User;
@@ -81,7 +83,7 @@ public class CustomerController {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El documento de identidad ya existe");
     }
 
-    Optional<UserDto> userOptional = userService.findById(customerDTO.getUserId());
+    Optional<UserDetailDto> userOptional = userService.findById(customerDTO.getUserId());
     if (!userOptional.isPresent()) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El usuario especificado no existe");
     }
@@ -125,6 +127,25 @@ public class CustomerController {
       return ResponseEntity.noContent().build(); //204
     }
     return ResponseEntity.notFound().build();    //404
+  }
+
+  //address endpoints
+  @PostMapping("/{customerId}/addresses")
+  public ResponseEntity<CustomerDto> addAddress(@PathVariable Long customerId, @Valid @RequestBody AddressDto addressDto) {
+    CustomerDto updatedCustomer = service.addAddressToCustomer(customerId, addressDto);
+    return ResponseEntity.status(HttpStatus.CREATED).body(updatedCustomer);
+  }
+
+  @DeleteMapping("/{customerId}/addresses/{addressId}")
+  public ResponseEntity<CustomerDto> removeAddress(@PathVariable Long customerId, @PathVariable Long addressId) {
+    CustomerDto updatedCustomer = service.removeAddressFromCustomer(customerId, addressId);
+    return ResponseEntity.ok(updatedCustomer);
+  }
+
+  @GetMapping("/{customerId}/addresses")
+  public ResponseEntity<List<AddressDto>> getCustomerAddresses(@PathVariable Long customerId) {
+    List<AddressDto> addresses = service.getCustomerAddresses(customerId);
+    return ResponseEntity.ok(addresses);
   }
 
   //metodos utils

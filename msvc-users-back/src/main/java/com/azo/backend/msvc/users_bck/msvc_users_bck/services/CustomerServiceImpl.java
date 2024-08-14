@@ -10,9 +10,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.azo.backend.msvc.users_bck.msvc_users_bck.models.dto.AddressDto;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.models.dto.CustomerDto;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.models.dto.mapper.DtoMapperCustomer;
+import com.azo.backend.msvc.users_bck.msvc_users_bck.models.entities.Address;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.models.entities.Customer;
+import com.azo.backend.msvc.users_bck.msvc_users_bck.repositories.AddressRepository;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.repositories.CustomerRepository;
 
 //4. Cuarto Implementación de CustomerService -> volver realidad el CRUD
@@ -22,6 +25,9 @@ public class CustomerServiceImpl implements CustomerService {
 
   @Autowired
   private CustomerRepository repository;
+
+  @Autowired
+  private AddressRepository addressRepository;
 
   @Override
   @Transactional(readOnly = true)
@@ -100,6 +106,93 @@ public class CustomerServiceImpl implements CustomerService {
   @Transactional
   public Optional<Customer> findByDocumentId(String documentId) {
     return repository.findByDocumentId(documentId);
+  }
+
+
+  //se asocia un Address a un Customer
+  @Override
+  @Transactional
+  public CustomerDto addAddressToCustomer(Long customerId, AddressDto addressDto) {
+      Customer customer = repository.findById(customerId)
+          .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+
+      Address address = convertToEntity(addressDto);
+      address.setCustomer(customer);
+      customer.addAddress(address);
+
+      repository.save(customer);
+      return convertToDto(customer);
+  }
+
+  @Override
+  @Transactional
+  public CustomerDto removeAddressFromCustomer(Long customerId, Long addressId) {
+    Customer customer = repository.findById(customerId)
+        .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+
+    Address address = addressRepository.findById(addressId)
+        .orElseThrow(() -> new RuntimeException("Dirección no encontrada"));
+
+    customer.removeAddress(address);
+    repository.save(customer);
+    addressRepository.delete(address);
+
+    return convertToDto(customer);
+  }
+
+  @Override
+  @Transactional
+  public List<AddressDto> getCustomerAddresses(Long customerId) {
+      Customer customer = repository.findById(customerId)
+          .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+
+      return customer.getAddresses().stream()
+          .map(this::convertAddressToDto)
+          .collect(Collectors.toList());
+  }
+
+
+  //metodos utils
+  private Address convertToEntity(AddressDto dto) {
+    Address address = new Address();
+    address.setStreet(dto.getStreet());
+    address.setCity(dto.getCity());
+    address.setProvince(dto.getProvince());
+    address.setPostalCode(dto.getPostalCode());
+    address.setCountry(dto.getCountry());
+    return address;
+  }
+
+  private CustomerDto convertToDto(Customer customer) {
+    CustomerDto dto = new CustomerDto();
+    dto.setId(customer.getId());
+    dto.setFirstname(customer.getFirstname());
+    dto.setLastname(customer.getLastname());
+    dto.setDocumentId(customer.getDocumentId());
+    dto.setTypeDocumentId(customer.getTypeDocumentId());
+    if (customer.getUser() != null) {
+        dto.setUserId(customer.getUser().getId());
+    }
+    
+    // Convertir y establecer las direcciones si existen
+    if (customer.getAddresses() != null) {
+        dto.setAddresses(customer.getAddresses().stream()
+            .map(this::convertAddressToDto)
+            .collect(Collectors.toList()));
+    }
+    
+    return dto;
+  }
+
+  private AddressDto convertAddressToDto(Address address) {
+    AddressDto dto = new AddressDto();
+    dto.setId(address.getId());
+    dto.setStreet(address.getStreet());
+    dto.setCity(address.getCity());
+    dto.setProvince(address.getProvince());
+    dto.setPostalCode(address.getPostalCode());
+    dto.setCountry(address.getCountry());
+    return dto;
   }
 
 }

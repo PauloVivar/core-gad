@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import com.azo.backend.msvc.users_bck.msvc_users_bck.models.dto.AddressDto;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.models.dto.CustomerDto;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.models.entities.Customer;
 
@@ -33,10 +34,18 @@ public interface CustomerService {
   //eliminar data
   void remove(Long id);
 
+  //devuelve una lista por Ids
+  //Iterable<CustomerDto> findByAllId(Long id);
+
   //validar campo unique
   boolean existsByDocumentId(String documentId);
 
   //buscar por id Document
   Optional<Customer> findByDocumentId (String documentId);
+
+  // Nuevos métodos para manejar direcciones
+  CustomerDto addAddressToCustomer(Long customerId, AddressDto addressDto);
+  CustomerDto removeAddressFromCustomer(Long customerId, Long addressId);
+  List<AddressDto> getCustomerAddresses(Long customerId);
   
 }

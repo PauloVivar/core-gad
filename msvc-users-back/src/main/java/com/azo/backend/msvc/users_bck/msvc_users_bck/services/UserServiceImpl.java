@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.azo.backend.msvc.users_bck.msvc_users_bck.auth.TokenJwtConfig;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.models.IUser;
+import com.azo.backend.msvc.users_bck.msvc_users_bck.models.dto.UserDetailDto;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.models.dto.UserDto;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.models.dto.UserRegistrationDTO;
 import com.azo.backend.msvc.users_bck.msvc_users_bck.models.dto.mapper.DtoMapperUser;
@@ -85,11 +86,11 @@ public class UserServiceImpl implements UserService {
   //buscar users por id
   @Override
   @Transactional(readOnly = true)
-  public Optional<UserDto> findById(Long id) {
+  public Optional<UserDetailDto> findById(Long id) {
     return repository.findById(id).map(u -> DtoMapperUser
       .builder()
       .setUser(u)
-      .build());
+      .buildDetail());
     
     //return repository.findById(id);
   }
