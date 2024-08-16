@@ -17,8 +17,8 @@
   <packaging>pom</packaging>
   <modules>
     <module>msvc-users</module>
-    <module>msvc-courses</module>
     <module>msvc-users-back</module>
+    <module>msvc-users-prod</module>
     <module>msvc-avaluos-catastros</module>
   </modules>
 
