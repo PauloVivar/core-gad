@@ -11,7 +11,10 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 //paso 1: entidad Contribuyente
 
@@ -20,10 +23,10 @@ import jakarta.validation.constraints.NotBlank;
 public class Contribuyente {
 
   @Id
+  @NotBlank(message = "El documento de identificación es requerido.")
   @Column(name = "ctrcedula", length = 15)
   private String ci;
 
-  @NotBlank(message = "El nombre completo es requerido.")
   @Column(name = "ctrnombre", length = 100)
   private String fullName;
 
@@ -33,20 +36,22 @@ public class Contribuyente {
   @Column(name = "ctrtelefono", columnDefinition = "text")
   private String phone;
 
+  //omitido en Dto
   @Column(name = "ctrfecha")
   private LocalDate contributionDate;
 
+  //omitido en Dto
   @Column(name = "ctrusuario", length = 60)
   private String responsibleUser;
 
   @Column(name = "ctrexonera")
   private Boolean indicatorExoneration;
 
-  //omitido en Dto
   @Column(name = "ctrrazonex", columnDefinition = "text")
   private String reasonExoneration;
 
-  @Column(name = "ctrestado", length = 20)
+  @Pattern(regexp = "ACTIVO|INACTIVO", message = "El estado del contribuyente debe ser ACTIVO o INACTIVO")
+  @Column(name = "ctrestado", length = 20, columnDefinition = "VARCHAR(10) DEFAULT 'ACTIVO'")
   private String taxpayerStatus;
 
   //omitido en Dto cedula Contribuyente Real
@@ -62,14 +67,17 @@ public class Contribuyente {
   @Column(name = "ctrtipo")
   private Integer taxpayerType;
 
+  //omitido en Dto
   @Column(name = "ctrhora")
   private LocalTime contributionTime;
 
+  //omitido en Dto
   //estacion de trabajo
   @Column(name = "ctresttra", length = 30)
   private String workstation;
 
-  //omitido en Dto tipoProgramaContabilidad
+  //omitido en Dto 
+  //tipoProgramaContabilidad
   @Column(name = "cttipopro", length = 100)
   private String typeProgramAccounting;
 
@@ -84,10 +92,11 @@ public class Contribuyente {
   @Column(name = "ctrtipoid")
   private Integer identificationType;
 
-  //omitido en Dto
   @Column(name = "ctrfechanacimiento")
   private LocalDate birthdate;
 
+  @Min(value = 0, message = "El porcentaje de discapacidad no puede ser negativo")
+  @Max(value = 100, message = "El porcentaje de discapacidad no puede ser mayor a 100")
   @Column(name = "ctrdiscapacidad")
   private Integer disabilityPercentage;
 
@@ -98,6 +107,7 @@ public class Contribuyente {
   @Column(name = "ctrcontrayente", length = 13)
   private String spouse;
 
+  //omitido en Dto
   @Column(name = "ctrpassword", length = 15)
   private String password;
 

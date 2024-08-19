@@ -50,7 +50,8 @@ public class DtoMapperContribuyente {
       contribuyente.getMaritalStatus(),
       //contribuyente.getSpouse(),
       //contribuyente.getPassword(),
-      contribuyente.getUser().getId());
+      contribuyente.getUser() != null ? contribuyente.getUser().getId() : null
+    );
   }
 
 }

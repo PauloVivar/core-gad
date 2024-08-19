@@ -14,6 +14,8 @@ public interface ContribuyenteRepository extends CrudRepository<Contribuyente, S
 
   //método custom 2 formas
 
+  Optional<Contribuyente> findByCi(String ci);
+
   //1ra. método custom para buscar por ci
   Optional<Contribuyente> findByTaxpayerStatus(String taxpayerStatus);
 

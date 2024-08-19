@@ -26,6 +26,7 @@ import com.azo.backend.msvc.users_prod.msvc_users_prod.models.entities.PasswordR
 import com.azo.backend.msvc.users_prod.msvc_users_prod.models.entities.Role;
 import com.azo.backend.msvc.users_prod.msvc_users_prod.models.entities.User;
 import com.azo.backend.msvc.users_prod.msvc_users_prod.models.request.UserRequest;
+import com.azo.backend.msvc.users_prod.msvc_users_prod.repositories.ContribuyenteRepository;
 import com.azo.backend.msvc.users_prod.msvc_users_prod.repositories.PasswordResetCodeRepository;
 import com.azo.backend.msvc.users_prod.msvc_users_prod.repositories.RoleRepository;
 import com.azo.backend.msvc.users_prod.msvc_users_prod.repositories.TermsAcceptanceRepository;
@@ -43,6 +44,9 @@ public class UserServiceImpl implements UserService {
 
   @Autowired
   private RoleRepository roleRepository;
+
+  @Autowired
+  private ContribuyenteRepository contribuyenteRepository;
 
   @Autowired
   private TermsAcceptanceRepository termsAcceptanceRepository;
@@ -132,35 +136,46 @@ public class UserServiceImpl implements UserService {
     roleRepository.findByName("ROLE_USER").ifPresent(roles::add);
     newUser.setRoles(roles);
 
+    // Guardar el User primero
+    newUser = repository.save(newUser);
+
+    // Buscar si existe un Contribuyente con la cédula proporcionada
+    Optional<Contribuyente> existingContribuyente = contribuyenteRepository.findByCi(userRegistration.getCi());
+
     // ***test Crear y asociar Contribuyente
-    Contribuyente newContribuyente = new Contribuyente();
-    newContribuyente.setCi(userRegistration.getCi());
-    newContribuyente.setFullName(userRegistration.getFullName());
-    newContribuyente.setAddress(userRegistration.getAddress());
-    newContribuyente.setPhone(userRegistration.getPhone());
-    newContribuyente.setTaxpayerCity(userRegistration.getTaxpayerCity());
-    newContribuyente.setHouseNumber(userRegistration.getHouseNumber());
-    newContribuyente.setTaxpayerType(userRegistration.getTaxpayerType());
-    newContribuyente.setLegalPerson(userRegistration.getLegalPerson());
-    newContribuyente.setIdentificationType(userRegistration.getIdentificationType());
-    newContribuyente.setBirthdate(userRegistration.getBirthdate());
-    newContribuyente.setDisabilityPercentage(userRegistration.getDisabilityPercentage());
-    newContribuyente.setMaritalStatus(userRegistration.getMaritalStatus());
 
-    newContribuyente.setUser(newUser);
-    newUser.setContribuyente(newContribuyente);
+    Contribuyente contribuyente;
+    if (existingContribuyente.isPresent()) {
+      // Si existe, asociarlo al nuevo usuario
+      contribuyente = existingContribuyente.get();
 
-    User savedUser = repository.save(newUser);
+      // Actualizar los campos del contribuyente
+      updateContribuyente(contribuyente, userRegistration);
+
+    } else {
+      // Si no existe, crear un nuevo Contribuyente
+      contribuyente = createNewContribuyente(userRegistration);
+    }
+
+    contribuyente.setUser(newUser);
+    newUser.setContribuyente(contribuyente);
+
+    // Guardar el Contribuyente
+    contribuyenteRepository.save(contribuyente);
+
+    // Actualizar el User con la referencia al Contribuyente
+    newUser = repository.save(newUser);
 
     // Registrar la aceptación de términos
-    termsService.recordTermsInteraction(savedUser.getId(), true, ipAddress);
+    termsService.recordTermsInteraction(newUser.getId(), true, ipAddress);
 
-    return DtoMapperUser.build(savedUser); // test
+    return DtoMapperUser.build(newUser);
     //return DtoMapperUser.builder().setUser(savedUser).build();
+
   }
 
   //actualizar user
-  //se utiliza UserRequest ya que no se pasa el password por seguridad
+  //se utiliza UserRequest por que no se pasa el password por seguridad
   @Override
   @Transactional
   public Optional<UserDto> update(UserRequest user, Long id) {
@@ -184,14 +199,25 @@ public class UserServiceImpl implements UserService {
     //return Optional.ofNullable(userOptional);
   }
   
-  //eliminar user
+  //eliminar user sin eliminar contribuyente
   @Override
   @Transactional
   public void remove(Long id) {
-    // Primero, eliminamos todas las aceptaciones de términos asociadas
-    termsAcceptanceRepository.deleteByUserId(id);
-    // Luego, eliminamos el usuario
-    repository.deleteById(id);
+    Optional<User> userOpt = repository.findById(id);
+    if (userOpt.isPresent()) {
+      User user = userOpt.get();
+      if (user.getContribuyente() != null) {
+          Contribuyente contribuyente = user.getContribuyente();
+          contribuyente.setUser(null);
+          contribuyenteRepository.save(contribuyente);
+      }
+      
+      // Eliminar las aceptaciones de términos asociadas
+      termsAcceptanceRepository.deleteByUserId(id);
+      
+      // Finalmente, eliminar el usuario
+      repository.delete(user);
+    }
   }
 
   //inicio reset password
@@ -289,21 +315,6 @@ public class UserServiceImpl implements UserService {
     return repository.toString().equals(email);
   }
 
-  // @Override
-  // public UserDto activateUser(Long id) {
-  //   User user = repository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
-  //   user.setStatus(User.STATUS_ACTIVE);
-  //   return repository.save(user);
-  // }
-
-  // @Override
-  // public UserDto deactivateUser(Long id) {
-  //   User user = repository.findById(id)
-  //       .orElseThrow(() -> new UserNotFoundException(id));
-  //   user.setStatus(User.STATUS_INACTIVE);
-  //   return repository.save(user);
-  // }
-
   //Logica utils para asignar o eliminar un usuario como role admin
   private List<Role> getRoles(IUser user){
     Optional<Role> ou = roleRepository.findByName("ROLE_USER");
@@ -319,6 +330,33 @@ public class UserServiceImpl implements UserService {
       }
     }
     return roles;
+  }
+
+  private void updateContribuyente(Contribuyente contribuyente, UserRegistrationDTO userRegistration) {
+    contribuyente.setFullName(userRegistration.getFullName());
+    contribuyente.setAddress(userRegistration.getAddress());
+    contribuyente.setPhone(userRegistration.getPhone());
+
+    contribuyente.setIndicatorExoneration(userRegistration.getIndicatorExoneration());  //por defecto
+    contribuyente.setReasonExoneration(userRegistration.getReasonExoneration());        //por defecto
+    contribuyente.setTaxpayerStatus(userRegistration.getTaxpayerStatus());              //por defecto
+    contribuyente.setTaxpayerCity(userRegistration.getTaxpayerCity());
+    contribuyente.setHouseNumber(userRegistration.getHouseNumber());
+    contribuyente.setTaxpayerType(userRegistration.getTaxpayerType());                  //por defecto
+
+
+    contribuyente.setLegalPerson(userRegistration.getLegalPerson());
+    contribuyente.setIdentificationType(userRegistration.getIdentificationType());
+    contribuyente.setBirthdate(userRegistration.getBirthdate());
+    contribuyente.setDisabilityPercentage(userRegistration.getDisabilityPercentage());
+    contribuyente.setMaritalStatus(userRegistration.getMaritalStatus());
+  }
+
+  private Contribuyente createNewContribuyente(UserRegistrationDTO userRegistration) {
+    Contribuyente contribuyente = new Contribuyente();
+    contribuyente.setCi(userRegistration.getCi());
+    updateContribuyente(contribuyente, userRegistration);
+    return contribuyente;
   }
 
 }

@@ -73,23 +73,18 @@ public class ContribuyenteController {
 
   //post
   @PostMapping
-  public ResponseEntity<?> create (@Valid @RequestBody ContribuyenteDto contribuyenteDto, BindingResult result){
+  public ResponseEntity<?> create (@Valid @RequestBody ContribuyenteDto contribuyenteDto, 
+                                BindingResult result){
     if(result.hasErrors()){
       return validation(result);
     }
-    // Verificar si el documentId ya existe en la base de datos
+    // Verificar si el contribuyente ya existe
     if (service.existsByCi(contribuyenteDto.getCi())) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El documento de identidad ya existe");
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El contribuyente ya existe");
     }
 
-    Optional<UserDetailDto> userOptional = userService.findById(contribuyenteDto.getUserId());
-    if (!userOptional.isPresent()) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El usuario especificado no existe");
-    }
-
-    UserDto userDto = userOptional.orElseThrow();
     Contribuyente contribuyente = new Contribuyente();
-    contribuyente.setCi(contribuyenteDto.getCi());                 //id
+    contribuyente.setCi(contribuyenteDto.getCi());                                      //idContribuyente
     contribuyente.setFullName(contribuyenteDto.getFullName());
     contribuyente.setAddress(contribuyenteDto.getAddress());
     contribuyente.setPhone(contribuyenteDto.getPhone());
@@ -100,36 +95,66 @@ public class ContribuyenteController {
     contribuyente.setTaxpayerStatus(contribuyenteDto.getTaxpayerStatus());
     contribuyente.setTaxpayerCity(contribuyenteDto.getTaxpayerCity());
     contribuyente.setHouseNumber(contribuyenteDto.getHouseNumber());
+    contribuyente.setTaxpayerType(contribuyenteDto.getTaxpayerType());
     //contribuyente.setContributionTime(contribuyenteDto.getContributionTime());
     //contribuyente.setWorkstation(contribuyenteDto.getWorkstation());
     //contribuyente.setEmail(contribuyenteDto.getEmail());
     contribuyente.setLegalPerson(contribuyenteDto.getLegalPerson());
     contribuyente.setIdentificationType(contribuyenteDto.getIdentificationType());
     contribuyente.setBirthdate(contribuyenteDto.getBirthdate());
+    contribuyente.setDisabilityPercentage(contribuyenteDto.getDisabilityPercentage());
     contribuyente.setMaritalStatus(contribuyenteDto.getMaritalStatus());
     //contribuyente.setSpouse(contribuyenteDto.getSpouse());
     //contribuyente.setPassword(contribuyenteDto.getPassword());
- 
-    // Se convierte UserDto a User
-    User user = convertToUser(userDto);
-    contribuyente.setUser(user);
 
-    // Guardar el contribuyente si no existe
+    // Si se proporciona un userId, asociar el User existente
+    if (contribuyenteDto.getUserId() != null) {
+      Optional<UserDetailDto> userOptional = userService.findById(contribuyenteDto.getUserId());
+      if (userOptional.isPresent()) {
+          // Se convierte UserDto a User
+          User user = convertToUser(userOptional.get());
+          contribuyente.setUser(user);
+      } else {
+          return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El usuario especificado no existe");
+      }
+    }
+
+    // Guardar el contribuyente
     ContribuyenteDto savedContribuyente = service.save(contribuyente);
     return ResponseEntity.status(HttpStatus.CREATED).body(savedContribuyente);
   }
 
   //update
   @PutMapping("/{ci}")
-  public ResponseEntity<?> update (@Valid @RequestBody Contribuyente contribuyente, BindingResult result, @PathVariable String ci){
+  public ResponseEntity<?> update (@Valid @RequestBody ContribuyenteDto contribuyenteDto, 
+                                BindingResult result, 
+                                @PathVariable String ci){
     if(result.hasErrors()){
       return validation(result);
     }
-    Optional<ContribuyenteDto> ContribuyenteOptional = service.update(contribuyente, ci);
-    if(ContribuyenteOptional.isPresent()){
-      return ResponseEntity.status(HttpStatus.CREATED).body(ContribuyenteOptional.orElseThrow());
-    }
-    return ResponseEntity.notFound().build();
+
+    Optional<ContribuyenteDto> contribuyenteOptional = service.findById(ci);
+      if (contribuyenteOptional.isPresent()) {
+        Contribuyente contribuyente = convertToEntity(contribuyenteDto);
+        contribuyente.setCi(ci); // Asegurarse de que el CI no cambie
+
+        // Manejar la asociación con User
+        if (contribuyenteDto.getUserId() != null) {
+            Optional<UserDetailDto> userOptional = userService.findById(contribuyenteDto.getUserId());
+            if (userOptional.isPresent()) {
+                User user = convertToUser(userOptional.get());
+                contribuyente.setUser(user);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El usuario especificado no existe");
+            }
+        } else {
+            contribuyente.setUser(null); // Desasociar el usuario si no se proporciona userId
+        }
+
+        Optional<ContribuyenteDto> updatedContribuyente = service.update(contribuyente, ci);
+        return ResponseEntity.ok(updatedContribuyente.orElseThrow());
+      }
+      return ResponseEntity.notFound().build();
   }
 
   //delete
@@ -143,7 +168,7 @@ public class ContribuyenteController {
     return ResponseEntity.notFound().build();    //404
   }
 
-  // metodos utils
+  // ***** metodos utils
   // validar entrada de data
   private ResponseEntity<?> validation(BindingResult result) {
     Map<String, String> errors = new HashMap<>();
@@ -152,6 +177,29 @@ public class ContribuyenteController {
       errors.put(err.getField(), err.getDefaultMessage());
     });
     return ResponseEntity.badRequest().body(errors);
+  }
+
+  private Contribuyente convertToEntity(ContribuyenteDto dto) {
+    Contribuyente contribuyente = new Contribuyente();
+    contribuyente.setCi(dto.getCi());
+    contribuyente.setFullName(dto.getFullName());
+    contribuyente.setAddress(dto.getAddress());
+    contribuyente.setPhone(dto.getPhone());
+    
+    contribuyente.setIndicatorExoneration(dto.getIndicatorExoneration());
+    contribuyente.setReasonExoneration(dto.getReasonExoneration());
+    contribuyente.setTaxpayerStatus(dto.getTaxpayerStatus());
+    contribuyente.setTaxpayerCity(dto.getTaxpayerCity());
+    contribuyente.setHouseNumber(dto.getHouseNumber());
+    contribuyente.setTaxpayerType(dto.getTaxpayerType());
+    
+    contribuyente.setLegalPerson(dto.getLegalPerson());
+    contribuyente.setIdentificationType(dto.getIdentificationType());
+    contribuyente.setBirthdate(dto.getBirthdate());
+    contribuyente.setDisabilityPercentage(dto.getDisabilityPercentage());
+    contribuyente.setMaritalStatus(dto.getMaritalStatus());
+
+    return contribuyente;
   }
 
   // Se convierte UserDto a User

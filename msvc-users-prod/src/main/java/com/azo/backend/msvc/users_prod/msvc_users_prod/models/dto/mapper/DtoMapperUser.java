@@ -88,12 +88,14 @@ public class DtoMapperUser {
             user.getContribuyente().getFullName(),
             user.getContribuyente().getAddress(),
             user.getContribuyente().getPhone(),
+
             user.getContribuyente().getIndicatorExoneration(),
             user.getContribuyente().getReasonExoneration(),
             user.getContribuyente().getTaxpayerStatus(),
             user.getContribuyente().getTaxpayerCity(),
             user.getContribuyente().getHouseNumber(),
             user.getContribuyente().getTaxpayerType(),
+            
             user.getContribuyente().getLegalPerson(),
             user.getContribuyente().getIdentificationType(),
             user.getContribuyente().getBirthdate(),

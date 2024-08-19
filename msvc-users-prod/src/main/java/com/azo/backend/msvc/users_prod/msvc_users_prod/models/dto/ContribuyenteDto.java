@@ -12,18 +12,18 @@ public class ContribuyenteDto {
   //private String responsibleUser;
   private Boolean indicatorExoneration;    // 0
   private String reasonExoneration;
-  private String taxpayerStatus;      // ACTIVO
+  private String taxpayerStatus;           // ACTIVO
   private String taxpayerCity;
   private String houseNumber;
-  private Integer taxpayerType;       // Normal = 0, Proveedor, Empleado, Trabajador
+  private Integer taxpayerType;            // Normal = 0, Proveedor, Empleado, Trabajador
   //private LocalTime contributionTime;
   //private String workstation;
   //private String email;
-  private Integer legalPerson;              // Persona Natural = 44, Juridica derecho privado, publico (lut_listasitems)
+  private Integer legalPerson;             // Persona Natural = 44, Juridica derecho privado, Juridica derecho publico (lut_listasitems)
   private Integer identificationType;      // Cedula = 33, Pasaporte (lut_listasitems)
   private LocalDate birthdate;
-  private Integer disabilityPercentage;  // 0
-  private Integer maritalStatus;             // Soltero = 37, Casado, Viudo, Unión libre (lut_listasitems)
+  private Integer disabilityPercentage;    // 0
+  private Integer maritalStatus;           // Soltero = 37, Casado, Viudo, Unión libre (lut_listasitems)
   //private String spouse;
   //private String password;
   private Long userId;

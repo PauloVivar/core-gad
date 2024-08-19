@@ -153,7 +153,9 @@ public class UserController {
 
   //actualizar user
   @PutMapping("/{id}")
-  public ResponseEntity<?> update (@Valid @RequestBody UserRequest user, BindingResult result, @PathVariable Long id){
+  public ResponseEntity<?> update (@Valid @RequestBody UserRequest user, 
+                                BindingResult result, 
+                                @PathVariable Long id){
     if(result.hasErrors()){
       return validation(result);
     }

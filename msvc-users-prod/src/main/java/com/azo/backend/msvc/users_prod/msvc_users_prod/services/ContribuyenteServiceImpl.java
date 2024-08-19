@@ -13,7 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.azo.backend.msvc.users_prod.msvc_users_prod.models.dto.ContribuyenteDto;
 import com.azo.backend.msvc.users_prod.msvc_users_prod.models.dto.mapper.DtoMapperContribuyente;
 import com.azo.backend.msvc.users_prod.msvc_users_prod.models.entities.Contribuyente;
+import com.azo.backend.msvc.users_prod.msvc_users_prod.models.entities.User;
 import com.azo.backend.msvc.users_prod.msvc_users_prod.repositories.ContribuyenteRepository;
+import com.azo.backend.msvc.users_prod.msvc_users_prod.repositories.UserRepository;
 
 //4. Cuarto Implementación de ContribuyenteService -> volver realidad el CRUD
 
@@ -22,6 +24,9 @@ public class ContribuyenteServiceImpl implements ContribuyenteService {
 
   @Autowired
   private ContribuyenteRepository repository;
+
+  @Autowired
+  private UserRepository userRepository;
 
   @Override
   @Transactional(readOnly = true)
@@ -68,11 +73,11 @@ public class ContribuyenteServiceImpl implements ContribuyenteService {
   @Transactional
   public Optional<ContribuyenteDto> update(Contribuyente contribuyente, String ci) {
     Optional<Contribuyente> o = repository.findById(ci);
-    Contribuyente contribuyenteOptional = null;
+    //Contribuyente contribuyenteOptional = null;
+    
     if(o.isPresent()){
-
       Contribuyente contribuyenteDb = o.orElseThrow();
-      contribuyenteDb.setCi(contribuyente.getCi());
+      // Actualizar campos...
       contribuyenteDb.setFullName(contribuyente.getFullName());
       contribuyenteDb.setAddress(contribuyente.getAddress());
       contribuyenteDb.setPhone(contribuyente.getPhone());
@@ -83,18 +88,43 @@ public class ContribuyenteServiceImpl implements ContribuyenteService {
       contribuyenteDb.setTaxpayerStatus(contribuyente.getTaxpayerStatus());
       contribuyenteDb.setTaxpayerCity(contribuyente.getTaxpayerCity());
       contribuyenteDb.setHouseNumber(contribuyente.getHouseNumber());
+      contribuyenteDb.setTaxpayerType(contribuyente.getTaxpayerType());
       //contribuyenteDb.setContributionTime(contribuyente.getContributionTime());
       //contribuyenteDb.SetEstacionTrabajo(contribuyente.getWorkstation());
       //contribuyenteDb.setEmail(contribuyente.getEmail());
       contribuyenteDb.setLegalPerson(contribuyente.getLegalPerson());
       contribuyenteDb.setIdentificationType(contribuyente.getIdentificationType());
       contribuyenteDb.setBirthdate(contribuyente.getBirthdate());
+      contribuyenteDb.setDisabilityPercentage(contribuyente.getDisabilityPercentage());
       contribuyenteDb.setMaritalStatus(contribuyente.getMaritalStatus());
       //contribuyenteDb.setSpouse(contribuyente.getSpouse());
       //contribuyenteDb.setPassword(contribuyente.getPassword());
-      contribuyenteOptional = repository.save(contribuyenteDb);
+
+      // Manejar la relación con User
+      if (contribuyente.getUser() != null) {
+        User user = userRepository.findById(contribuyente.getUser().getId())
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        contribuyenteDb.setUser(user);
+        user.setContribuyente(contribuyenteDb);
+      } else {
+          // Si el contribuyente ya no tiene un usuario asociado
+          if (contribuyenteDb.getUser() != null) {
+            User oldUser = contribuyenteDb.getUser();
+            oldUser.setContribuyente(null);
+            userRepository.save(oldUser);
+          }
+          contribuyenteDb.setUser(null);
+      }
+
+      Contribuyente saved = repository.save(contribuyenteDb);
+      return Optional.of(DtoMapperContribuyente.builder().setContribuyente(saved).build());
+
+      //old
+      //contribuyenteOptional = repository.save(contribuyenteDb);
     }
-    return Optional.ofNullable(DtoMapperContribuyente.builder().setContribuyente(contribuyenteOptional).build());
+
+    return Optional.empty();
+    //return Optional.ofNullable(DtoMapperContribuyente.builder().setContribuyente(contribuyenteOptional).build());
     //return Optional.ofNullable(contribuyenteOptional);
   }
   

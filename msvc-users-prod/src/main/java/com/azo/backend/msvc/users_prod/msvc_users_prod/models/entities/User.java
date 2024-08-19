@@ -10,7 +10,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import com.azo.backend.msvc.users_prod.msvc_users_prod.models.IUser;
 import com.azo.backend.msvc.users_prod.msvc_users_prod.models.ConstantsConfig;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -86,7 +85,8 @@ public class User implements IUser {
   @Column(name = "updated_at", nullable = false)
   private LocalDateTime updatedAt;
 
-  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  //@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
   private Contribuyente contribuyente;
 
   //Getters and Setters

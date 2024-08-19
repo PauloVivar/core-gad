@@ -7,6 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -52,25 +54,27 @@ public class UserRegistrationDTO {
 
   private String houseNumber;
 
-  @NotBlank(message = "El tipo de contribuyente es requerido.")
+  @NotNull(message = "El tipo de contribuyente es requerido.")
   private Integer taxpayerType;
 
-  @NotBlank(message = "El tipo de persona es requerido.")
+  @NotNull(message = "El tipo de persona es requerido.")
   private Integer legalPerson;
 
-  @NotBlank(message = "El tipo de identificación es requerido.")
+  @NotNull(message = "El tipo de identificación es requerido..")
   private Integer identificationType;
 
   private LocalDate birthdate;
+
+  @Min(value = 0, message = "El porcentaje de discapacidad no puede ser negativo")
+  @Max(value = 100, message = "El porcentaje de discapacidad no puede ser mayor a 100")
   private Integer disabilityPercentage;
 
-  @NotBlank(message = "El estado civil es requerido.")
+  @NotNull(message = "El estado civil es requerido.")
   private Integer maritalStatus;
 
   private MultipartFile ciImage;
   private MultipartFile faceImage;
   private boolean identityValidated;
-
 
   // Constructor
   public UserRegistrationDTO() {
@@ -82,13 +86,13 @@ public class UserRegistrationDTO {
     String email,  
     boolean acceptedTerms,
 
-    String ci, 
+    String ci,
     String fullName, 
     String address, 
     String phone,
-    Boolean indicatorExoneration,
-    String reasonExoneration,
-    String taxpayerStatus,
+    Boolean indicatorExoneration,   //no se pasa UserServiceImpl
+    String reasonExoneration,       //no se pasa UserServiceImpl
+    String taxpayerStatus,          //no se pasa UserServiceImpl
     String taxpayerCity,
     String houseNumber,
     Integer taxpayerType,
@@ -274,12 +278,12 @@ public class UserRegistrationDTO {
     this.maritalStatus = maritalStatus;
   }
 
-  public MultipartFile getCiImage () {
-    return ciImage ;
+  public MultipartFile getCiImage() {
+    return ciImage;
   }
 
-  public void setCiImage (MultipartFile ciImage ) {
-    this.ciImage  = ciImage ;
+  public void setCiImage(MultipartFile ciImage) {
+    this.ciImage = ciImage;
   }
 
   public MultipartFile getFaceImage() {
@@ -297,6 +301,5 @@ public class UserRegistrationDTO {
   public void setIdentityValidated(boolean identityValidated) {
     this.identityValidated = identityValidated;
   }
-
 
 }
