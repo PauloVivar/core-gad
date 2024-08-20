@@ -1,7 +1,6 @@
 package com.azo.backend.msvc.users_prod.msvc_users_prod.controllers;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -13,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,12 +45,6 @@ public class ContribuyenteController {
 
   @Autowired
   private UserService userService;
-
-  //listar todos los taxpayers
-  @GetMapping
-  public List<ContribuyenteDto> list(){
-    return service.findAll();
-  }
 
   //listar todos los taxpayers con paginación
   @GetMapping("/page/{page}")
@@ -155,17 +147,6 @@ public class ContribuyenteController {
         return ResponseEntity.ok(updatedContribuyente.orElseThrow());
       }
       return ResponseEntity.notFound().build();
-  }
-
-  //delete
-  @DeleteMapping("/{ci}")
-  public ResponseEntity<?> remove (@PathVariable String ci){
-    Optional<ContribuyenteDto> ContribuyenteOptional = service.findById(ci);
-    if(ContribuyenteOptional.isPresent()){
-      service.remove(ci);
-      return ResponseEntity.noContent().build(); //204
-    }
-    return ResponseEntity.notFound().build();    //404
   }
 
   // ***** metodos utils

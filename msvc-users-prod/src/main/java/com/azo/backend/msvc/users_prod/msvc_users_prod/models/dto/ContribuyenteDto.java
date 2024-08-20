@@ -10,7 +10,7 @@ public class ContribuyenteDto {
   private String phone;
   //private LocalDate contributionDate;
   //private String responsibleUser;
-  private Boolean indicatorExoneration;    // 0
+  private Integer indicatorExoneration;    // 0
   private String reasonExoneration;
   private String taxpayerStatus;           // ACTIVO
   private String taxpayerCity;
@@ -38,7 +38,7 @@ public class ContribuyenteDto {
     String phone, 
     //LocalDate contributionDate, 
     //String responsibleUser, 
-    Boolean indicatorExoneration,
+    Integer indicatorExoneration,
     String reasonExoneration,
     String taxpayerStatus,
     String taxpayerCity,
@@ -131,11 +131,11 @@ public class ContribuyenteDto {
   //   this.responsibleUser = responsibleUser;
   // }
 
-  public Boolean getIndicatorExoneration() {
+  public Integer getIndicatorExoneration() {
     return indicatorExoneration;
   }
 
-  public void setIndicatorExoneration(Boolean indicatorExoneration) {
+  public void setIndicatorExoneration(Integer indicatorExoneration) {
     this.indicatorExoneration = indicatorExoneration;
   }
 

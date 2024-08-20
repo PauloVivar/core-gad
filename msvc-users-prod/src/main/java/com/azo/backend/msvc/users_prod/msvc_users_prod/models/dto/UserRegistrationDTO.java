@@ -45,7 +45,7 @@ public class UserRegistrationDTO {
   @NotBlank(message = "El teléfono es requerido.")
   private String phone;
 
-  private Boolean indicatorExoneration;
+  private Integer indicatorExoneration;
   private String reasonExoneration;
   private String taxpayerStatus;
 
@@ -90,7 +90,7 @@ public class UserRegistrationDTO {
     String fullName, 
     String address, 
     String phone,
-    Boolean indicatorExoneration,   //no se pasa UserServiceImpl
+    Integer indicatorExoneration,   //no se pasa UserServiceImpl
     String reasonExoneration,       //no se pasa UserServiceImpl
     String taxpayerStatus,          //no se pasa UserServiceImpl
     String taxpayerCity,
@@ -190,11 +190,11 @@ public class UserRegistrationDTO {
     this.phone = phone;
   }
 
-  public Boolean getIndicatorExoneration() {
+  public Integer getIndicatorExoneration() {
     return indicatorExoneration;
   }
 
-  public void setIndicatorExoneration(Boolean indicatorExoneration) {
+  public void setIndicatorExoneration(Integer indicatorExoneration) {
     this.indicatorExoneration = indicatorExoneration;
   }
 

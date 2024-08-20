@@ -16,6 +16,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
+import com.azo.backend.msvc.users_prod.msvc_users_prod.models.ConstantsConfig;
+
 //paso 1: entidad Contribuyente
 
 @Entity
@@ -45,14 +47,14 @@ public class Contribuyente {
   private String responsibleUser;
 
   @Column(name = "ctrexonera")
-  private Boolean indicatorExoneration;
+  private Integer indicatorExoneration = 0;         // 0
 
   @Column(name = "ctrrazonex", columnDefinition = "text")
   private String reasonExoneration;
 
   @Pattern(regexp = "ACTIVO|INACTIVO", message = "El estado del contribuyente debe ser ACTIVO o INACTIVO")
   @Column(name = "ctrestado", length = 20, columnDefinition = "VARCHAR(10) DEFAULT 'ACTIVO'")
-  private String taxpayerStatus;
+  private String taxpayerStatus = ConstantsConfig.STATUS_ACTIVE;         // ACTIVO
 
   //omitido en Dto cedula Contribuyente Real
   @Column(name = "ctrcedulare", length = 15)
@@ -65,7 +67,7 @@ public class Contribuyente {
   private String houseNumber;
 
   @Column(name = "ctrtipo")
-  private Integer taxpayerType;
+  private Integer taxpayerType = 0;                 // Normal = 0, Proveedor, Empleado, Trabajador
 
   //omitido en Dto
   @Column(name = "ctrhora")
@@ -87,10 +89,10 @@ public class Contribuyente {
   private String email;
 
   @Column(name = "ctrpersoneria")
-  private Integer legalPerson;
+  private Integer legalPerson = 44;               // Persona Natural = 44, Juridica derecho privado, Juridica derecho publico (lut_listasitems)
 
   @Column(name = "ctrtipoid")
-  private Integer identificationType;
+  private Integer identificationType = 33;        // Cedula = 33, Pasaporte (lut_listasitems)
 
   @Column(name = "ctrfechanacimiento")
   private LocalDate birthdate;
@@ -98,10 +100,10 @@ public class Contribuyente {
   @Min(value = 0, message = "El porcentaje de discapacidad no puede ser negativo")
   @Max(value = 100, message = "El porcentaje de discapacidad no puede ser mayor a 100")
   @Column(name = "ctrdiscapacidad")
-  private Integer disabilityPercentage;
+  private Integer disabilityPercentage = 0;       // 0
 
   @Column(name = "ctrcivil")
-  private Integer maritalStatus;
+  private Integer maritalStatus = 37;             // Soltero = 37, Casado, Viudo, Unión libre (lut_listasitems)
 
   //omitido en Dto spouse
   @Column(name = "ctrcontrayente", length = 13)
@@ -168,11 +170,11 @@ public class Contribuyente {
     this.responsibleUser = responsibleUser;
   }
 
-  public Boolean getIndicatorExoneration() {
+  public Integer getIndicatorExoneration() {
     return indicatorExoneration;
   }
 
-  public void setIndicatorExoneration(Boolean indicatorExoneration) {
+  public void setIndicatorExoneration(Integer indicatorExoneration) {
     this.indicatorExoneration = indicatorExoneration;
   }
 

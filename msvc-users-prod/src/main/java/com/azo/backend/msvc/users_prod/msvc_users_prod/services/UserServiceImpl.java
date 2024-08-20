@@ -140,30 +140,20 @@ public class UserServiceImpl implements UserService {
     newUser = repository.save(newUser);
 
     // Buscar si existe un Contribuyente con la cédula proporcionada
-    Optional<Contribuyente> existingContribuyente = contribuyenteRepository.findByCi(userRegistration.getCi());
+    Contribuyente contribuyente = contribuyenteRepository.findByCi(userRegistration.getCi())
+    .orElse(new Contribuyente());
 
-    // ***test Crear y asociar Contribuyente
+    // Actualizar o crear el Contribuyente
+    updateOrCreateContribuyente(contribuyente, userRegistration);
 
-    Contribuyente contribuyente;
-    if (existingContribuyente.isPresent()) {
-      // Si existe, asociarlo al nuevo usuario
-      contribuyente = existingContribuyente.get();
-
-      // Actualizar los campos del contribuyente
-      updateContribuyente(contribuyente, userRegistration);
-
-    } else {
-      // Si no existe, crear un nuevo Contribuyente
-      contribuyente = createNewContribuyente(userRegistration);
-    }
-
+    // Asociar el User al Contribuyente
     contribuyente.setUser(newUser);
+
+    // Guardar o actualizar el Contribuyente
+    contribuyente = contribuyenteRepository.save(contribuyente);
+
+    // Asociar el Contribuyente al User
     newUser.setContribuyente(contribuyente);
-
-    // Guardar el Contribuyente
-    contribuyenteRepository.save(contribuyente);
-
-    // Actualizar el User con la referencia al Contribuyente
     newUser = repository.save(newUser);
 
     // Registrar la aceptación de términos
@@ -332,7 +322,8 @@ public class UserServiceImpl implements UserService {
     return roles;
   }
 
-  private void updateContribuyente(Contribuyente contribuyente, UserRegistrationDTO userRegistration) {
+  private void updateOrCreateContribuyente(Contribuyente contribuyente, UserRegistrationDTO userRegistration) {
+    contribuyente.setCi(userRegistration.getCi());
     contribuyente.setFullName(userRegistration.getFullName());
     contribuyente.setAddress(userRegistration.getAddress());
     contribuyente.setPhone(userRegistration.getPhone());
@@ -344,19 +335,11 @@ public class UserServiceImpl implements UserService {
     contribuyente.setHouseNumber(userRegistration.getHouseNumber());
     contribuyente.setTaxpayerType(userRegistration.getTaxpayerType());                  //por defecto
 
-
     contribuyente.setLegalPerson(userRegistration.getLegalPerson());
     contribuyente.setIdentificationType(userRegistration.getIdentificationType());
     contribuyente.setBirthdate(userRegistration.getBirthdate());
     contribuyente.setDisabilityPercentage(userRegistration.getDisabilityPercentage());
     contribuyente.setMaritalStatus(userRegistration.getMaritalStatus());
-  }
-
-  private Contribuyente createNewContribuyente(UserRegistrationDTO userRegistration) {
-    Contribuyente contribuyente = new Contribuyente();
-    contribuyente.setCi(userRegistration.getCi());
-    updateContribuyente(contribuyente, userRegistration);
-    return contribuyente;
   }
 
 }

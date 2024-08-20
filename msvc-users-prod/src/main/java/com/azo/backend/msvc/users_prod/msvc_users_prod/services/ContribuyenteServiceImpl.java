@@ -1,8 +1,6 @@
 package com.azo.backend.msvc.users_prod.msvc_users_prod.services;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,18 +25,6 @@ public class ContribuyenteServiceImpl implements ContribuyenteService {
 
   @Autowired
   private UserRepository userRepository;
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<ContribuyenteDto> findAll() {
-    List<Contribuyente> contribuyentes = (List<Contribuyente>) repository.findAll();
-    return contribuyentes
-      .stream()
-      .map( c -> DtoMapperContribuyente.builder().setContribuyente(c).build())
-      .collect(Collectors.toList());
-
-    //return (List<Contribuyente>) repository.findAll();
-  }
 
   //método custom para paginación
   @Override
@@ -126,13 +112,6 @@ public class ContribuyenteServiceImpl implements ContribuyenteService {
     return Optional.empty();
     //return Optional.ofNullable(DtoMapperContribuyente.builder().setContribuyente(contribuyenteOptional).build());
     //return Optional.ofNullable(contribuyenteOptional);
-  }
-  
-  @Override
-  @Transactional
-  public void remove(String ci) {
-    // eliminación el usuario
-    repository.deleteById(ci);
   }
 
   @Override

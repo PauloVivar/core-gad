@@ -1,6 +1,5 @@
 package com.azo.backend.msvc.users_prod.msvc_users_prod.services;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -14,9 +13,6 @@ import com.azo.backend.msvc.users_prod.msvc_users_prod.models.entities.Contribuy
 
 public interface ContribuyenteService {
 
-  //listar data
-  List<ContribuyenteDto> findAll();
-
   //listar data con paginación contribuyentes
   Page<ContribuyenteDto> findAll(Pageable pageable);
 
@@ -29,9 +25,6 @@ public interface ContribuyenteService {
   //actualizar data
   //Optional<UserDto> update (UserRequest user, Long id);
   Optional<ContribuyenteDto> update (Contribuyente contribuyente, String ci);
-
-  //eliminar data
-  void remove(String ci);
 
   //devuelve una lista por Ids
   //Iterable<ContribuyenteDto> findByAllId(String ci);
