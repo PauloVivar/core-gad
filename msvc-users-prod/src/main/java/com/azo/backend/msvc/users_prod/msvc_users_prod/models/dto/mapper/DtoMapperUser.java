@@ -65,6 +65,11 @@ public class DtoMapperUser {
       user.getStatus()
     );
 
+    // cédula del contribuyente si existe
+    if (user.getContribuyente() != null) {
+      userDto.setContribuyenteCi(user.getContribuyente().getCi());
+    }
+
     return userDto;
   }
 

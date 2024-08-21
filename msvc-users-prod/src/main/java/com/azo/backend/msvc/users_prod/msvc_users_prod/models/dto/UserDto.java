@@ -7,6 +7,7 @@ public class UserDto {
   private boolean admin;     //role admin
   private String avatar;
   private String status;
+  private String contribuyenteCi;  // idContribuyente
 
   public UserDto() {
   }
@@ -61,6 +62,14 @@ public class UserDto {
 
   public void setStatus(String status) {
     this.status = status;
+  }
+
+  public String getContribuyenteCi() {
+    return contribuyenteCi;
+  }
+
+  public void setContribuyenteCi(String contribuyenteCi) {
+    this.contribuyenteCi = contribuyenteCi;
   }
 
 }
