@@ -77,6 +77,8 @@ public class DtoMapperUser {
     if (user == null) {
         throw new RuntimeException("Debe pasar el Entity User!");
     }
+
+    String contribuyenteCi = user.getContribuyente() != null ? user.getContribuyente().getCi() : null;
     
     UserDetailDto userDetailDto = new UserDetailDto(
       user.getId(),
@@ -84,7 +86,8 @@ public class DtoMapperUser {
       user.getEmail(),
       user.getRoles().stream().anyMatch(r -> r.getName().equals("ROLE_ADMIN")),
       user.getAvatar(),
-      user.getStatus()
+      user.getStatus(),
+      contribuyenteCi
     );
 
     if (user.getContribuyente() != null) {

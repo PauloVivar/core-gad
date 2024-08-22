@@ -32,4 +32,7 @@ public interface UserRepository extends CrudRepository<User, Long> {
   //4to. método custom para findByEmail
   Optional<User> findByEmail(String email);
 
+  boolean existsByUsername(String username);
+  boolean existsByEmail(String email);
+
 }

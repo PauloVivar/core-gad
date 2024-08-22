@@ -119,12 +119,16 @@ public class UserController {
 
     // Verificar si el username ya existe en la base de datos
     if (service.existsByUsername(userRegistration.getUsername())) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El nombre de usuario ya existe");
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El nombre de usuario ya existe.");
     }
 
     // Verificar si el email ya existe en la base de datos
     if (service.existsByEmail(userRegistration.getEmail())) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El email ya está registrado");
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El email ya está registrado.");
+    }
+
+    if (service.isContribuyenteAssociated(userRegistration.getCi())) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El contribuyente ya está asociado a un usuario existente");
     }
 
     try {
@@ -132,7 +136,7 @@ public class UserController {
       UserDto user = service.saveRegistration(userRegistration, ipAddress);
       return ResponseEntity.status(HttpStatus.CREATED).body(user);
     } catch (RuntimeException e) {
-      return ResponseEntity.badRequest().body(e.getMessage());
+      return ResponseEntity.badRequest().body("Error en el registro: " + e.getMessage());
     }
   }
 

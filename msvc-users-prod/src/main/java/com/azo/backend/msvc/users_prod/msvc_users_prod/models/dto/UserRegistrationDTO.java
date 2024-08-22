@@ -36,31 +36,19 @@ public class UserRegistrationDTO {
   @NotBlank(message = "El documento de identificación es requerido.")
   private String ci;
 
-  @NotBlank(message = "El nombre completo es requerido.")
+  // Campos opcionales para nuevo contribuyente
   private String fullName;
-
-  @NotBlank(message = "La dirección es requerida.")
   private String address;
-
-  @NotBlank(message = "El teléfono es requerido.")
   private String phone;
 
   private Integer indicatorExoneration;
   private String reasonExoneration;
   private String taxpayerStatus;
 
-  @NotBlank(message = "La ciudad es requerida.")
   private String taxpayerCity;
-
   private String houseNumber;
-
-  @NotNull(message = "El tipo de contribuyente es requerido.")
   private Integer taxpayerType;
-
-  @NotNull(message = "El tipo de persona es requerido.")
   private Integer legalPerson;
-
-  @NotNull(message = "El tipo de identificación es requerido..")
   private Integer identificationType;
 
   private LocalDate birthdate;
@@ -69,7 +57,6 @@ public class UserRegistrationDTO {
   @Max(value = 100, message = "El porcentaje de discapacidad no puede ser mayor a 100")
   private Integer disabilityPercentage;
 
-  @NotNull(message = "El estado civil es requerido.")
   private Integer maritalStatus;
 
   private MultipartFile ciImage;

@@ -119,42 +119,23 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public UserDto saveRegistration(UserRegistrationDTO userRegistration, String ipAddress) {
-    if (existsByUsername(userRegistration.getUsername())) {
-        throw new RuntimeException("El nombre de usuario ya existe");
+    
+    // Verificar si el contribuyente ya está asociado a un usuario
+    Optional<Contribuyente> existingContribuyente = contribuyenteRepository.findByCi(userRegistration.getCi());
+    if (existingContribuyente.isPresent() && existingContribuyente.get().getUser() != null) {
+        throw new RuntimeException("El contribuyente ya está asociado a un usuario existente.");
     }
-    if (existsByEmail(userRegistration.getEmail())) {
-        throw new RuntimeException("El email ya está registrado");
+    User newUser = createNewUser(userRegistration);
+
+    Contribuyente contribuyente;
+
+    if (existingContribuyente.isPresent()) {
+        contribuyente = existingContribuyente.get();
+    } else {
+        contribuyente = createNewContribuyente(userRegistration);
     }
 
-    User newUser = new User();
-    newUser.setUsername(userRegistration.getUsername());
-    newUser.setPassword(passwordEncoder.encode(userRegistration.getPassword()));
-    newUser.setEmail(userRegistration.getEmail());
-
-    // Asignar rol de usuario por defecto
-    List<Role> roles = new ArrayList<>();
-    roleRepository.findByName("ROLE_USER").ifPresent(roles::add);
-    newUser.setRoles(roles);
-
-    // Guardar el User primero
-    newUser = repository.save(newUser);
-
-    // Buscar si existe un Contribuyente con la cédula proporcionada
-    Contribuyente contribuyente = contribuyenteRepository.findByCi(userRegistration.getCi())
-    .orElse(new Contribuyente());
-
-    // Actualizar o crear el Contribuyente
-    updateOrCreateContribuyente(contribuyente, userRegistration);
-
-    // Asociar el User al Contribuyente
-    contribuyente.setUser(newUser);
-
-    // Guardar o actualizar el Contribuyente
-    contribuyente = contribuyenteRepository.save(contribuyente);
-
-    // Asociar el Contribuyente al User
-    newUser.setContribuyente(contribuyente);
-    newUser = repository.save(newUser);
+    associateUserAndContribuyente(newUser, contribuyente);
 
     // Registrar la aceptación de términos
     termsService.recordTermsInteraction(newUser.getId(), true, ipAddress);
@@ -293,16 +274,22 @@ public class UserServiceImpl implements UserService {
   }
   //fin reset password
 
-
+  // Métodos de validación llamados desde el controlador
   //validar campos unique
   @Override
   public boolean existsByUsername(String username) {
-    return repository.toString().equals(username);
+      return repository.existsByUsername(username);
   }
 
   @Override
   public boolean existsByEmail(String email) {
-    return repository.toString().equals(email);
+      return repository.existsByEmail(email);
+  }
+
+  @Override
+  public boolean isContribuyenteAssociated(String ci) {
+      Optional<Contribuyente> contribuyente = contribuyenteRepository.findByCi(ci);
+      return contribuyente.isPresent() && contribuyente.get().getUser() != null;
   }
 
   //Logica utils para asignar o eliminar un usuario como role admin
@@ -322,24 +309,46 @@ public class UserServiceImpl implements UserService {
     return roles;
   }
 
-  private void updateOrCreateContribuyente(Contribuyente contribuyente, UserRegistrationDTO userRegistration) {
-    contribuyente.setCi(userRegistration.getCi());
-    contribuyente.setFullName(userRegistration.getFullName());
-    contribuyente.setAddress(userRegistration.getAddress());
-    contribuyente.setPhone(userRegistration.getPhone());
+  //metodos aux para saveRegistration
+  private User createNewUser(UserRegistrationDTO userRegistration) {
+    User newUser = new User();
+    newUser.setUsername(userRegistration.getUsername());
+    newUser.setPassword(passwordEncoder.encode(userRegistration.getPassword()));
+    newUser.setEmail(userRegistration.getEmail());
 
-    contribuyente.setIndicatorExoneration(userRegistration.getIndicatorExoneration());  //por defecto
-    contribuyente.setReasonExoneration(userRegistration.getReasonExoneration());        //por defecto
-    contribuyente.setTaxpayerStatus(userRegistration.getTaxpayerStatus());              //por defecto
-    contribuyente.setTaxpayerCity(userRegistration.getTaxpayerCity());
-    contribuyente.setHouseNumber(userRegistration.getHouseNumber());
-    contribuyente.setTaxpayerType(userRegistration.getTaxpayerType());                  //por defecto
+    List<Role> roles = new ArrayList<>();
+    roleRepository.findByName("ROLE_USER").ifPresent(roles::add);
+    newUser.setRoles(roles);
 
-    contribuyente.setLegalPerson(userRegistration.getLegalPerson());
-    contribuyente.setIdentificationType(userRegistration.getIdentificationType());
-    contribuyente.setBirthdate(userRegistration.getBirthdate());
-    contribuyente.setDisabilityPercentage(userRegistration.getDisabilityPercentage());
-    contribuyente.setMaritalStatus(userRegistration.getMaritalStatus());
+    return repository.save(newUser);
   }
+
+  private Contribuyente createNewContribuyente(UserRegistrationDTO userRegistration) {
+    Contribuyente contribuyente = new Contribuyente();
+    contribuyente.setCi(userRegistration.getCi());
+    
+    // Solo establecer los campos si están presentes
+    if (userRegistration.getFullName() != null) contribuyente.setFullName(userRegistration.getFullName());
+    if (userRegistration.getAddress() != null) contribuyente.setAddress(userRegistration.getAddress());
+    if (userRegistration.getPhone() != null) contribuyente.setPhone(userRegistration.getPhone());
+    if (userRegistration.getTaxpayerType() != null) contribuyente.setTaxpayerType(userRegistration.getTaxpayerType());
+    if (userRegistration.getLegalPerson() != null) contribuyente.setLegalPerson(userRegistration.getLegalPerson());
+    if (userRegistration.getIdentificationType() != null) contribuyente.setIdentificationType(userRegistration.getIdentificationType());
+    if (userRegistration.getBirthdate() != null) contribuyente.setBirthdate(userRegistration.getBirthdate());
+    if (userRegistration.getTaxpayerCity() != null) contribuyente.setTaxpayerCity(userRegistration.getTaxpayerCity());
+    if (userRegistration.getHouseNumber() != null) contribuyente.setHouseNumber(userRegistration.getHouseNumber());
+    if (userRegistration.getMaritalStatus() != null) contribuyente.setMaritalStatus(userRegistration.getMaritalStatus());
+
+    return contribuyenteRepository.save(contribuyente);
+  }
+
+  private void associateUserAndContribuyente(User user, Contribuyente contribuyente) {
+    contribuyente.setUser(user);
+    user.setContribuyente(contribuyente);
+    repository.save(user);
+    contribuyenteRepository.save(contribuyente);
+  }
+
+
 
 }

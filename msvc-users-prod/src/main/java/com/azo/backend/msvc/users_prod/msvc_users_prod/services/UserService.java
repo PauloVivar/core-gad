@@ -56,5 +56,7 @@ public interface UserService {
   String validatePasswordResetCode(String code);
   User getUserByPasswordResetCode(String code);
   void changeUserPassword(User user, String newPassword);
+
+  boolean isContribuyenteAssociated(String ci);
   
 }
