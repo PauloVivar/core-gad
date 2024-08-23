@@ -63,6 +63,13 @@ public class ContribuyenteController {
     return ResponseEntity.notFound().build();
   }
 
+  // Nuevo endpoint para verificar si existe un contribuyente
+  @GetMapping("/check/{ci}")
+  public ResponseEntity<?> checkContribuyenteExists(@PathVariable String ci) {
+      boolean exists = service.existsByCi(ci);
+      return ResponseEntity.ok(Map.of("exists", exists));
+  }
+
   //post
   @PostMapping
   public ResponseEntity<?> create (@Valid @RequestBody ContribuyenteDto contribuyenteDto, 
