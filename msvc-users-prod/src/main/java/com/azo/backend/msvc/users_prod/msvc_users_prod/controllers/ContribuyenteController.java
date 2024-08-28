@@ -64,10 +64,15 @@ public class ContribuyenteController {
   }
 
   // Nuevo endpoint para verificar si existe un contribuyente
+  // @GetMapping("/check/{ci}")
+  // public ResponseEntity<?> checkContribuyenteExists(@PathVariable String ci) {
+  //     boolean exists = service.existsByCi(ci);
+  //     return ResponseEntity.ok(Map.of("exists", exists));
+  // }
   @GetMapping("/check/{ci}")
-  public ResponseEntity<?> checkContribuyenteExists(@PathVariable String ci) {
+  public ResponseEntity<Boolean> checkContribuyenteExists(@PathVariable String ci) {
       boolean exists = service.existsByCi(ci);
-      return ResponseEntity.ok(Map.of("exists", exists));
+      return ResponseEntity.ok(exists);
   }
 
   //post
