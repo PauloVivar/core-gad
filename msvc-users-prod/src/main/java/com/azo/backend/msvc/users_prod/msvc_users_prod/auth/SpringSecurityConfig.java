@@ -60,7 +60,8 @@ public class SpringSecurityConfig {
         .requestMatchers(HttpMethod.GET, "/api/v1/terms/status/{id}").hasAnyRole("ADMIN", "USER")
         .requestMatchers(HttpMethod.GET, "/api/v1/addresses").permitAll() 
 
-        .requestMatchers(HttpMethod.POST, "/api/v1/password/**").permitAll()
+        .requestMatchers(HttpMethod.POST, "/api/v1/password/reset-request").permitAll()
+        .requestMatchers(HttpMethod.POST, "/api/v1/password/reset").permitAll()
         .requestMatchers(HttpMethod.POST, "/api/v1/users", "/api/v1/users/registration").permitAll()                  //SOLO PRUEBAS
         .requestMatchers(HttpMethod.POST, "/api/v1/terms/record").permitAll()
         .requestMatchers(HttpMethod.POST, "/api/v1/terms").hasRole("ADMIN")
