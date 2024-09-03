@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.azo.backend.msvc.avaluos_catastros.msvc_avaluos_catastros.models.Customer;
+import com.azo.backend.msvc.avaluos_catastros.msvc_avaluos_catastros.models.User;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -50,18 +50,18 @@ public class Procedure {
   //tipo de user que se va a persistir
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "procedure_id")
-  private List<ProcedureCustomer> procedureCustomers;
+  private List<ProcedureUser> procedureUsers;
 
-  //este  atributo no se mapea a la db, se utliza para poblar los datos de customers desde
-  //el msvc-users-back (comunicadcion entre microservicios)
+  //este  atributo no se mapea a la db, se utiliza para poblar los datos de users desde
+  //el msvc-users-prod (comunicación entre microservicios)
   //tipo de user que no se va a persistir
   @Transient
-  private List<Customer> customers;
+  private List<User> users;
 
-  //constructor para instanciar ProcedureCustomer
+  //constructor para instanciar ProcedureUser
   public Procedure() {
-    procedureCustomers = new ArrayList<>();
-    customers = new ArrayList<>();
+    procedureUsers = new ArrayList<>();
+    users = new ArrayList<>();
   }
 
   //getters and setters
@@ -106,33 +106,31 @@ public class Procedure {
     this.endDate = endDate;
   }
 
-  public List<ProcedureCustomer> getProcedureCustomers() {
-    return procedureCustomers;
+  public List<ProcedureUser> getProcedureUsers() {
+    return procedureUsers;
   }
 
-  public void setProcedureCustomers(List<ProcedureCustomer> procedureCustomers) {
-    this.procedureCustomers = procedureCustomers;
+  public void setProcedureUsers(List<ProcedureUser> procedureUsers) {
+    this.procedureUsers = procedureUsers;
   }
 
-  public List<Customer> getCustomers() {
-    return customers;
+  public List<User> getUsers() {
+    return users;
   }
 
-  public void setCustomers(List<Customer> customers) {
-    this.customers = customers;
+  public void setUsers(List<User> users) {
+    this.users = users;
   }
 
   //metodos para agregar y quitar de la lista los usuarios de los trámites
-  public void addProcedureCustomer(ProcedureCustomer procedureCust){
-    procedureCustomers.add(procedureCust);
+  public void addProcedureUser(ProcedureUser procedureUs){
+    procedureUsers.add(procedureUs);
   }
 
   //se debe comparar por el id y no por la instacia ya que los objetos son unicos, se agrega
-  //metodod equals en ProcedureCustomer
-  public void removeProcedureCustomer(ProcedureCustomer procedureCust){
-    procedureCustomers.remove(procedureCust);
+  //metodos equals en ProcedureUser
+  public void removeProcedureUser(ProcedureUser procedureUs){
+    procedureUsers.remove(procedureUs);
   }
-
-
 
 }

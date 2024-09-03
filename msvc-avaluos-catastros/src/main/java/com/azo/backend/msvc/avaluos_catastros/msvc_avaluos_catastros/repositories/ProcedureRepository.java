@@ -4,6 +4,8 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import com.azo.backend.msvc.avaluos_catastros.msvc_avaluos_catastros.models.entities.Procedure;
@@ -17,5 +19,10 @@ public interface ProcedureRepository extends CrudRepository<Procedure, Long> {
 
   //2do. método custom para paginación
   Page<Procedure> findAll(Pageable pageable);
+
+  //cuando se elimina un user de msvc_users se desasigna ese user del trámite
+  @Modifying
+  @Query("delete from ProcedureUser pu where pu.userId=?1")
+  void removeProcedureUserById(Long id);
 
 }

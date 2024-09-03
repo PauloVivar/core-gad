@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.azo.backend.msvc.avaluos_catastros.msvc_avaluos_catastros.models.Customer;
+import com.azo.backend.msvc.avaluos_catastros.msvc_avaluos_catastros.models.User;
 import com.azo.backend.msvc.avaluos_catastros.msvc_avaluos_catastros.models.entities.Procedure;
 import com.azo.backend.msvc.avaluos_catastros.msvc_avaluos_catastros.services.ProcedureService;
 
@@ -52,7 +52,7 @@ public class ProcedureController {
 
   @GetMapping("/{id}")
   public ResponseEntity<?> detail(@PathVariable Long id) {
-    Optional<Procedure> o = service.findById(id);
+    Optional<Procedure> o = service.findByIdWithUsers(id); //service.findById(id);
     if(o.isPresent()) {
       return ResponseEntity.ok(o.orElseThrow());
     }
@@ -100,11 +100,12 @@ public class ProcedureController {
     return ResponseEntity.notFound().build();
   }
 
-  @PutMapping("/assign-customer/{procedureId}")
-  public ResponseEntity<?> assignCustomer (@RequestBody Customer customer, @PathVariable Long procedureId){
-    Optional<Customer> o;
+  //microservicios
+  @PutMapping("/assign-user/{procedureId}")
+  public ResponseEntity<?> assignUser (@RequestBody User user, @PathVariable Long procedureId){
+    Optional<User> o;
     try {
-      o = service.assignCustomer(customer, procedureId);
+      o = service.assignUser(user, procedureId);
     } catch (FeignException e) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND)
         .body(Collections.singletonMap("message", "No existe el usuario por " + 
@@ -117,11 +118,11 @@ public class ProcedureController {
     return ResponseEntity.notFound().build();
   }
 
-  @PostMapping("/create-customer/{procedureId}")
-  public ResponseEntity<?> createCustomer (@RequestBody Customer customer, @PathVariable Long procedureId){
-    Optional<Customer> o;
+  @PostMapping("/create-user/{procedureId}")
+  public ResponseEntity<?> createUser (@RequestBody User user, @PathVariable Long procedureId){
+    Optional<User> o;
     try {
-      o = service.createCustomer(customer, procedureId);
+      o = service.createUser(user, procedureId);
     } catch (FeignException e) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND)
         .body(Collections.singletonMap("message", "No se pudo crear el usuario " + 
@@ -134,11 +135,11 @@ public class ProcedureController {
     return ResponseEntity.notFound().build();
   }
 
-  @PostMapping("/remove-customer/{procedureId}")
-  public ResponseEntity<?> removeCustomer (@RequestBody Customer customer, @PathVariable Long procedureId){
-    Optional<Customer> o;
+  @DeleteMapping("/remove-user/{procedureId}")
+  public ResponseEntity<?> removeUser (@RequestBody User user, @PathVariable Long procedureId){
+    Optional<User> o;
     try {
-      o = service.removeCustomer(customer, procedureId);
+      o = service.removeUser(user, procedureId);
     } catch (FeignException e) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND)
         .body(Collections.singletonMap("message", "No se pudo remover el usuario " + 
@@ -151,6 +152,9 @@ public class ProcedureController {
     return ResponseEntity.notFound().build();
   }
 
+  @DeleteMapping("/remove-procedure-user/{id}")
+
+  //METODOS AUXILIARES
   //metodos utilitario para validar que un error si se repite el user o email
   private ResponseEntity<Map<String, String>> validate (BindingResult result){
     Map<String, String> errors = new HashMap<>();

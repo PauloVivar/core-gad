@@ -8,7 +8,7 @@
     <version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<groupId>com.azo.backend.msvc.users</groupId>
+	<groupId>com.azo.backend.msvc.users_prod</groupId>
 	<artifactId>msvc-users-prod</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>msvc-users-prod</name>

@@ -292,6 +292,14 @@ public class UserServiceImpl implements UserService {
       return contribuyente.isPresent() && contribuyente.get().getUser() != null;
   }
 
+  @Override
+  @Transactional(readOnly = true)
+  public List<User> listByIds(Iterable<Long> ids) {
+    return (List<User>) repository.findAllById(ids);
+  }
+
+
+  //METODOS AUXILIARES
   //Logica utils para asignar o eliminar un usuario como role admin
   private List<Role> getRoles(IUser user){
     Optional<Role> ou = roleRepository.findByName("ROLE_USER");
@@ -309,7 +317,7 @@ public class UserServiceImpl implements UserService {
     return roles;
   }
 
-  //metodos aux para saveRegistration
+  //Logica utils para saveRegistration
   private User createNewUser(UserRegistrationDTO userRegistration) {
     User newUser = new User();
     newUser.setUsername(userRegistration.getUsername());
@@ -348,7 +356,5 @@ public class UserServiceImpl implements UserService {
     repository.save(user);
     contribuyenteRepository.save(contribuyente);
   }
-
-
 
 }

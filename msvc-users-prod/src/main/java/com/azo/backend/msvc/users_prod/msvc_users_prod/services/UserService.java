@@ -39,10 +39,6 @@ public interface UserService {
   //eliminar user
   void remove(Long id);
 
-  //*test activo y desactivo status
-  // UserDto activateUser(Long id);
-  // UserDto deactivateUser(Long id);
-
   //validar campos unique
   boolean existsByUsername(String username);
   boolean existsByEmail(String email);
@@ -58,5 +54,9 @@ public interface UserService {
   void changeUserPassword(User user, String newPassword);
 
   boolean isContribuyenteAssociated(String ci);
+
+  //microservicios
+  //listar arreglo de ids
+  List<User> listByIds(Iterable<Long> ids);
   
 }

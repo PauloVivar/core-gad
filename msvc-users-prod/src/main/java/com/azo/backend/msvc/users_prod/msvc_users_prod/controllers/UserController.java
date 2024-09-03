@@ -33,6 +33,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 //5. Quinto Create Controller -> Mapeo de endpoints, finalización del CRUD
@@ -181,6 +183,13 @@ public class UserController {
     return ResponseEntity.notFound().build();    //404
   }
 
+  //obtener usuarios por tramite
+  @GetMapping("/users-by-procedure")
+  public ResponseEntity<?> getUsersByProcedure(@RequestParam List<Long> ids) {
+      return ResponseEntity.ok(service.listByIds(ids));
+  }
+  
+  //METODOS AUXILIARES
   //metodo utils para validar entrada de data
   private ResponseEntity<?> validation(BindingResult result) {
     Map<String, String> errors = new HashMap<>();
