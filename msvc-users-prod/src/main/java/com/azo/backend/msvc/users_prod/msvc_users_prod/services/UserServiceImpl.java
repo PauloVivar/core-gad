@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.azo.backend.msvc.users_prod.msvc_users_prod.auth.TokenJwtConfig;
+import com.azo.backend.msvc.users_prod.msvc_users_prod.clients.ProcedureClientRest;
 import com.azo.backend.msvc.users_prod.msvc_users_prod.models.IUser;
 import com.azo.backend.msvc.users_prod.msvc_users_prod.models.dto.UserDetailDto;
 import com.azo.backend.msvc.users_prod.msvc_users_prod.models.dto.UserDto;
@@ -64,18 +65,18 @@ public class UserServiceImpl implements UserService {
   @Autowired
   private EmailService emailService;
 
+  @Autowired
+  private ProcedureClientRest client;
   
   //listar todos los users
   @Override
   @Transactional(readOnly = true)
   public List<UserDto> findAll() {
     List<User> users = (List<User>) repository.findAll();
-
     return users
       .stream()
       .map( u -> DtoMapperUser.builder().setUser(u).build())
       .collect(Collectors.toList());
-
     //return (List<User>) repository.findAll();
   }
 
@@ -95,7 +96,6 @@ public class UserServiceImpl implements UserService {
       .builder()
       .setUser(u)
       .buildDetail());
-    
     //return repository.findById(id);
   }
 
@@ -125,10 +125,9 @@ public class UserServiceImpl implements UserService {
     if (existingContribuyente.isPresent() && existingContribuyente.get().getUser() != null) {
         throw new RuntimeException("El contribuyente ya está asociado a un usuario existente.");
     }
+
     User newUser = createNewUser(userRegistration);
-
     Contribuyente contribuyente;
-
     if (existingContribuyente.isPresent()) {
         contribuyente = existingContribuyente.get();
     } else {
@@ -136,13 +135,10 @@ public class UserServiceImpl implements UserService {
     }
 
     associateUserAndContribuyente(newUser, contribuyente);
-
     // Registrar la aceptación de términos
     termsService.recordTermsInteraction(newUser.getId(), true, ipAddress);
-
     return DtoMapperUser.build(newUser);
     //return DtoMapperUser.builder().setUser(savedUser).build();
-
   }
 
   //actualizar user
@@ -163,7 +159,6 @@ public class UserServiceImpl implements UserService {
       userDb.setEmail(user.getEmail());
       userDb.setStatus(user.getStatus());
       userDb.setAvatar(user.getAvatar());
-      
       userOptional = repository.save(userDb);
     }
     return Optional.ofNullable(DtoMapperUser.builder().setUser(userOptional).build());
@@ -174,9 +169,9 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public void remove(Long id) {
-    Optional<User> userOpt = repository.findById(id);
-    if (userOpt.isPresent()) {
-      User user = userOpt.get();
+    Optional<User> uo = repository.findById(id);
+    if (uo.isPresent()) {
+      User user = uo.get();
       if (user.getContribuyente() != null) {
           Contribuyente contribuyente = user.getContribuyente();
           contribuyente.setUser(null);
@@ -188,6 +183,9 @@ public class UserServiceImpl implements UserService {
       
       // Finalmente, eliminar el usuario
       repository.delete(user);
+
+      // Elimina user de trámite de msvc_avaluos
+      client.removeProcedureUserById(id);
     }
   }
 

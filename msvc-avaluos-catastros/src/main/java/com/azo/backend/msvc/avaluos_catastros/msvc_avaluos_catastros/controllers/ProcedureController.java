@@ -112,7 +112,7 @@ public class ProcedureController {
           "el id o error en la comunicación" + e.getMessage()));
     }
     if(o.isPresent()){
-      return ResponseEntity.status(HttpStatus.CREATED).body(o.get());
+      return ResponseEntity.status(HttpStatus.CREATED).body(o.orElseThrow());
 
     }
     return ResponseEntity.notFound().build();
@@ -129,7 +129,7 @@ public class ProcedureController {
           "o error en la comunicación" + e.getMessage()));
     }
     if(o.isPresent()){
-      return ResponseEntity.status(HttpStatus.CREATED).body(o.get());
+      return ResponseEntity.status(HttpStatus.CREATED).body(o.orElseThrow());
 
     }
     return ResponseEntity.notFound().build();
@@ -146,13 +146,17 @@ public class ProcedureController {
           "o error en la comunicación" + e.getMessage()));
     }
     if(o.isPresent()){
-      return ResponseEntity.status(HttpStatus.OK).body(o.get());
+      return ResponseEntity.status(HttpStatus.OK).body(o.orElseThrow());
 
     }
     return ResponseEntity.notFound().build();
   }
 
   @DeleteMapping("/remove-procedure-user/{id}")
+  public ResponseEntity<?> removeProcedureUserById(@PathVariable Long id){
+    service.removeProcedureUserById(id);
+    return ResponseEntity.noContent().build();
+  }
 
   //METODOS AUXILIARES
   //metodos utilitario para validar que un error si se repite el user o email

@@ -43,6 +43,24 @@ public class ProcedureServiceImpl implements ProcedureService {
   }
 
   @Override
+  @Transactional(readOnly = true)
+  public Optional<Procedure> findByIdWithUsers(Long id) {
+    Optional<Procedure> o = repository.findById(id);
+    if(o.isPresent()){
+      Procedure procedure = o.orElseThrow();
+      if(!procedure.getProcedureUsers().isEmpty()){
+        //List<Long> ids = procedure.getProcedureUsers().stream().map(cu -> cu.getUserId()).toList();
+        List<Long> ids = procedure.getProcedureUsers().stream().map(ProcedureUser::getUserId).toList();
+
+        List<User> users = client.getUsersByProcedure(ids);
+        procedure.setUsers(users);
+      }
+      return Optional.of(procedure);
+    }
+    return Optional.empty();
+  }
+
+  @Override
   @Transactional
   public Procedure save(Procedure procedure) {
     return repository.save(procedure);
@@ -70,11 +88,16 @@ public class ProcedureServiceImpl implements ProcedureService {
     repository.deleteById(id);
   }
 
+  @Override
+  @Transactional
+  public void removeProcedureUserById(Long id) {
+    repository.removeProcedureUserById(id);
+  }
+
   //asignar usuario a tramite
   @Override
   @Transactional
   public Optional<User> assignUser(User user, Long procedureId) {
-
     Optional<Procedure> o = repository.findById(procedureId);
     if(o.isPresent()){
       User userMsvc = client.detail(user.getId());
@@ -97,7 +120,6 @@ public class ProcedureServiceImpl implements ProcedureService {
     Optional<Procedure> o = repository.findById(procedureId);
     if(o.isPresent()){
       User userNewMsvc = client.create(user);
-
       Procedure procedure = o.orElseThrow();
       ProcedureUser procedureUser = new ProcedureUser();
       procedureUser.setId(userNewMsvc.getId());
@@ -117,7 +139,7 @@ public class ProcedureServiceImpl implements ProcedureService {
     if(o.isPresent()){
       User userMsvc = client.detail(user.getId());
 
-      Procedure procedure = o.get();
+      Procedure procedure = o.orElseThrow();
       ProcedureUser procedureUser = new ProcedureUser();
       procedureUser.setId(userMsvc.getId());
 
@@ -126,32 +148,6 @@ public class ProcedureServiceImpl implements ProcedureService {
       return Optional.of(userMsvc);
     }
     return Optional.empty();
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public Optional<Procedure> findByIdWithUsers(Long id) {
-    Optional<Procedure> o = repository.findById(id);
-
-    if(o.isPresent()){
-      Procedure procedure = o.get();
-      if(!procedure.getProcedureUsers().isEmpty()){
-        //List<Long> ids = procedure.getProcedureUsers().stream().map(cu -> cu.getUserId()).toList();
-        List<Long> ids = procedure.getProcedureUsers().stream().map(ProcedureUser::getUserId).toList();
-
-        List<User> users = client.getUsersByProcedure(ids);
-        procedure.setUsers(users);
-      }
-      return Optional.of(procedure);
-    }
-    
-    return Optional.empty();
-  }
-
-  @Override
-  @Transactional
-  public void removeProcedureUserById(Long id) {
-    repository.removeProcedureUserById(id);
   }
 
 }
