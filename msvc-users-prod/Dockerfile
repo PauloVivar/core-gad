@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY ./target/msvc-users-prod-0.0.1-SNAPSHOT.jar .
 
-EXPOSE 8080
+EXPOSE 8001
 
 # Define una variable de entorno
 ENV SPRING_MAIL_PASSWORD=eqwyqgalkzsykgvi
