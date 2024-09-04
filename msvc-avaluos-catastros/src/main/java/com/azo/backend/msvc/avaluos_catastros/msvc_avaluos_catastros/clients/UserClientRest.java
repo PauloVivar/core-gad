@@ -12,7 +12,8 @@ import com.azo.backend.msvc.avaluos_catastros.msvc_avaluos_catastros.models.User
 
 //paso 4: comunicación con UserController de msvc_users
 
-@FeignClient(name = "msvc-users-prod", url = "localhost:8001/api/v1/users")
+//@FeignClient(name = "msvc-users-prod", url = "localhost:8001/api/v1/users")
+@FeignClient(name = "msvc-users-prod", url = "host.docker.internal:8001/api/v1/users")
 public interface UserClientRest {
   
   @GetMapping("/{id}")
