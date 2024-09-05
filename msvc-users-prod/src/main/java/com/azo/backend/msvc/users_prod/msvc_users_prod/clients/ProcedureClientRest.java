@@ -6,7 +6,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 //paso: comunicación con ProcedureController de msvc_avaluos
 
-@FeignClient(name = "msvc-avaluos-catastros", url = "localhost:8002/api/v1/procedures")
+//@FeignClient(name = "msvc-avaluos-catastros", url = "localhost:8002/api/v1/procedures")
+@FeignClient(name = "msvc-avaluos-catastros", url = "msvc-avaluos-catastros:8002/api/v1/procedures")
 public interface ProcedureClientRest {
   
   @DeleteMapping("/remove-procedure-user/{id}")
