@@ -29,11 +29,13 @@ Construir la imagen de Docker a partir del Dockerfile:
 7. Puede eliminar imagen (OPCIONAL): 
 `docker rmi -f f052f6eda49f`
 8. Levantar el contenedor de Docker postgres:16-alpine:
-`docker run -p 5434:5432 --name postgres16 --network spring -e POSTGRES_USER=paulov -e POSTGRES_PASSWORD=paulovroot -e POSTGRES_DB=db_msvc_users_prod -d postgres:16-alpine`
+`docker run -p 5434:5432 -d --name postgres16 --network spring -e POSTGRES_USER=paulov -e POSTGRES_PASSWORD=paulovroot -e POSTGRES_DB=db_msvc_users_prod -v data-postgres:/var/lib/postgresql/data postgres:16-alpine`
 
 9. Volver nuevamente al ambiente de desarrollo para compilarlo desde IDE(OPCIONAL):
+`chmod +x mvnw`
+`./mvnw clean`
 `mvn clean install`
 `mvn spring-boot:run`
 10. Modificar el archivo application.properties(OPCIONAL):
-`spring.datasource.url=jdbc:postgresql://localhost:5433/db_msvc_users_prod`
-`#spring.datasource.url=jdbc:postgresql://host.docker.internal:5433/db_msvc_users_prod`
+`spring.datasource.url=jdbc:postgresql://localhost:5432/db_msvc_users_prod`
+`#spring.datasource.url=jdbc:postgresql://host.docker.internal:5432/db_msvc_users_prod`

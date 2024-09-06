@@ -26,10 +26,10 @@ WORKDIR /app
 
 COPY --from=builder /app/msvc-avaluos-catastros/target/msvc-avaluos-catastros-0.0.1-SNAPSHOT.jar .
 
-EXPOSE 8001
+EXPOSE 8002
 
 # es mas fijo y no permite iteractividad
-# ENTRYPOINT ["java", "-jar", "msvc-avaluos-catastros-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "msvc-avaluos-catastros-0.0.1-SNAPSHOT.jar"]
 
 # permite iteractividad, nos deja ingresar al SO del contenedor
-CMD ["java", "-jar", "msvc-avaluos-catastros-0.0.1-SNAPSHOT.jar"]
+# CMD ["java", "-jar", "msvc-avaluos-catastros-0.0.1-SNAPSHOT.jar"]

@@ -32,7 +32,7 @@ EXPOSE 8001
 ENV SPRING_MAIL_PASSWORD=eqwyqgalkzsykgvi
 
 # es mas fijo y no permite iteractividad
-# ENTRYPOINT ["java", "-jar", "msvc-users-prod-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "msvc-users-prod-0.0.1-SNAPSHOT.jar"]
 
 # permite iteractividad, nos deja ingresar al SO del contenedor
-CMD ["java", "-jar", "msvc-users-prod-0.0.1-SNAPSHOT.jar"]
+# CMD ["java", "-jar", "msvc-users-prod-0.0.1-SNAPSHOT.jar"]
