@@ -1,17 +1,21 @@
+ARG MSVC_NAME=msvc-users-prod
+
 # Etapa de construcción
 FROM eclipse-temurin:21.0.3_9-jdk-alpine as builder
+
+ARG MSVC_NAME
 
 # Instalar herramientas necesarias
 RUN apk add --no-cache curl tar bash
 
 # Configurar el directorio de trabajo
-WORKDIR /app/msvc-users-prod
+WORKDIR /app/$MSVC_NAME
 
 # Copiar archivos del proyecto
 COPY ./pom.xml /app/
-COPY ./msvc-users-prod/.mvn ./.mvn
-COPY ./msvc-users-prod/mvnw .
-COPY ./msvc-users-prod/pom.xml .
+COPY ./$MSVC_NAME/.mvn ./.mvn
+COPY ./$MSVC_NAME/mvnw .
+COPY ./$MSVC_NAME/pom.xml .
 
 # Asegurar que mvnw tenga permisos de ejecución y convertir a LF si es necesario
 RUN chmod +x mvnw && sed -i 's/\r$//' mvnw
@@ -21,19 +25,25 @@ RUN ./mvnw dependency:go-offline
 RUN ./mvnw clean package -Dmaven.test.skip -Dmaven.main.skip -Dspring-boot.repackage.skip
 
 # Copiar el código fuente y compilar la aplicación
-COPY ./msvc-users-prod/src ./src
+COPY ./$MSVC_NAME/src ./src
+COPY ./$MSVC_NAME/.env ./src/main/resources/.env
 RUN ./mvnw clean package -DskipTests
 
 # Etapa de producción
 FROM eclipse-temurin:21.0.3_9-jdk-alpine
 
+ARG MSVC_NAME
+
 WORKDIR /app
 
 # Copiar el jar compilado desde la etapa de construcción
-COPY --from=builder /app/msvc-users-prod/target/*.jar ./app.jar
+ARG TARGET_FOLDER=/app/$MSVC_NAME/target
+COPY --from=builder $TARGET_FOLDER/msvc-users-prod-0.0.1-SNAPSHOT.jar .
+COPY --from=builder /app/$MSVC_NAME/src/main/resources/.env .
 
-EXPOSE 8001
+ENV PORT 8001
+EXPOSE $PORT
 
 ENV SPRING_MAIL_PASSWORD=eqwyqgalkzsykgvi
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "msvc-users-prod-0.0.1-SNAPSHOT.jar"]

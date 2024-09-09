@@ -14,7 +14,8 @@ import com.azo.backend.msvc.avaluos_catastros.msvc_avaluos_catastros.models.User
 
 //@FeignClient(name = "msvc-users-prod", url = "localhost:8001/api/v1/users")
 //@FeignClient(name = "msvc-users-prod", url = "host.docker.internal:8001/api/v1/users")
-@FeignClient(name = "msvc-users-prod", url = "msvc-users-prod:8001/api/v1/users")
+//@FeignClient(name = "msvc-users-prod", url = "msvc-users-prod:8001/api/v1/users")
+@FeignClient(name = "msvc-users-prod", url = "${msvc.users.url}")
 public interface UserClientRest {
   
   @GetMapping("/{id}")

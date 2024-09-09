@@ -22,8 +22,8 @@ Construir la imagen de Docker a partir del Dockerfile:
 5. Levantar el contenedor de Docker a partir de imagen generada: 
 `docker run -p 8001:8001 users` "o utilizar" 
 `docker run -p 8001:8001 afa6fd21178c` "o utilizar"
-`docker run -p 8001:8001 -d --name msvc-users-prod users:latest` "o utilizar"
-`docker run -p 8001:8001 -d --rm --name msvc-users-prod --network spring users`
+`docker run -p 8001:8001 -d --rm --name msvc-users-prod --network spring users:latest` "o utilizar"
+`docker run -p 8001:8001 --env-file .\msvc-users-prod\.env -d --rm --name msvc-users-prod --network spring users`
 6. Puede eliminar contenedor (OPCIONAL): 
 `docker rm -f f052f6eda49f`
 7. Puede eliminar imagen (OPCIONAL): 

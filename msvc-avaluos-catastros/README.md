@@ -16,8 +16,8 @@ Construir la imagen de Docker a partir del Dockerfile:
 5. Levantar el contenedor de Docker a partir de imagen generada: 
 `docker run -p 8002:8002 avaluos-catastros` "o utilizar" 
 `docker run -p 8002:8002 afa6fd21178c` "o utilizar"
-`docker run -p 8002:8002 -d --name msvc-avaluos-catastros avaluos-catastros:latest` "o utilizar"
-`docker run -p 8002:8002 -d --rm --name msvc-avaluos-catastros --network spring avaluos-catastros`
+`docker run -p 8002:8002 -d --rm --name msvc-avaluos-catastros --network spring avaluos-catastros:latest` "o utilizar"
+`docker run -p 8002:8002 --env-file .\msvc-avaluos-catastros\.env -d --rm --name msvc-avaluos-catastros --network spring avaluos-catastros`
 6. Puede eliminar contenedor (OPCIONAL): 
 `docker rm -f f052f6eda49f`
 7. Puede eliminar imagen (OPCIONAL): 
