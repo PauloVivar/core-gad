@@ -1,0 +1,78 @@
+services:
+  # postgres16:
+  #   container_name: postgres16
+  #   image: postgres:16-alpine
+  #   ports:
+  #     - "5434:5432"
+  #   environment:
+  #     - POSTGRES_USER=paulov
+  #     - POSTGRES_PASSWORD=paulovroot
+  #     - POSTGRES_DB=db_msvc_users_prod
+  #   volumes:
+  #     - data-postgres:/var/lib/postgresql/data
+  #   restart: always
+
+  postgres16ac:
+    container_name: postgres16ac
+    image: postgres:16-alpine
+    ports:
+      - "5435:5432"
+    environment:
+      - POSTGRES_USER=paulov
+      - POSTGRES_PASSWORD=paulovroot
+      - POSTGRES_DB=db_msvc_avaluos_catastros
+    volumes:
+      - data-postgres-ac:/var/lib/postgresql/data
+    restart: always
+
+  msvc-users-prod:
+    container_name: msvc-users-prod
+    image: paulovivar/msvc-users-prod:latest
+    # image: users:latest
+    # build: 
+    #   context: ./
+    #   dockerfile: ./msvc-users-prod/Dockerfile
+    ports:
+      - 8001:8001
+    # env_file:
+    #   - ./msvc-users-prod/.env
+    environment: 
+      - PORT=8002
+      - DB_HOST=172.26.11.35:5432
+      - DB_DATABASE=municipio
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=
+      - SPRING_MAIL_PASSWORD=eqwyqgalkzsykgvi
+      - PROCEDURES_URL=msvc-avaluos-catastros:8002/api/v1/procedures
+    # depends_on:
+    #   - postgres16
+    restart: always
+
+  msvc-avaluos-catastros:
+    container_name: msvc-avaluos-catastros
+    image: paulovivar/msvc-avaluos-catastros:latest
+    # image: avaluos-catastros:latest
+    # build: 
+    #   context: ./
+    #   dockerfile: ./msvc-avaluos-catastros/Dockerfile
+    ports:
+      - 8002:8002
+    # env_file: 
+    #   - ./msvc-avaluos-catastros/.env
+    environment: 
+      - PORT=8002
+      - DB_HOST=postgres16ac:5432
+      - DB_DATABASE=db_msvc_avaluos_catastros
+      - DB_USERNAME=paulov
+      - DB_PASSWORD=paulovroot
+      - USERS_URL=msvc-users-prod:8001/api/v1/users
+    depends_on:
+      - postgres16ac
+      - msvc-users-prod
+    restart: always
+
+volumes:
+  # data-postgres:
+  #   name: data-postgres
+  data-postgres-ac:
+    name: data-postgres-ac
