@@ -18,6 +18,7 @@
   <modules>
     <module>msvc-users-prod</module>
     <module>msvc-avaluos-catastros</module>
+    <module>msvc-binnacle</module>
   </modules>
 
 	<name>core-gad</name>
