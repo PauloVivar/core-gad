@@ -1,0 +1,59 @@
+image: docker:20.10.16
+
+services:
+  - docker:20.10.16-dind
+
+variables:
+  DOCKER_TLS_CERTDIR: "/certs"
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+cache:
+  paths:
+    - .m2/repository
+
+stages:
+  - build
+  - test
+  - package
+  - deploy
+
+build:
+  image: maven:3.9.8-eclipse-temurin-21-jammy
+  stage: build
+  script:
+    - cd msvc-binnacle
+    - mvn compile
+
+test:
+  image: maven:3.9.8-eclipse-temurin-21-jammy
+  stage: test
+  script:
+    - cd msvc-binnacle
+    - mvn test
+
+package:
+  image: maven:3.9.8-eclipse-temurin-21-jammy
+  stage: package
+  script:
+    - cd msvc-binnacle
+    - mvn package -DskipTests
+  artifacts:
+    paths:
+      - msvc-binnacle/target/*.jar
+
+build-docker:
+  stage: deploy
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $CI_REGISTRY_IMAGE/msvc-binnacle:$CI_COMMIT_SHA -t $CI_REGISTRY_IMAGE/msvc-binnacle:latest ./msvc-binnacle
+    - docker push $CI_REGISTRY_IMAGE/msvc-binnacle:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE/msvc-binnacle:latest
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploy to production server"
+    - echo "Update Docker Compose file with new image tag"
+    - echo "Run docker-compose up -d on the production server"
+  only:
+    - master

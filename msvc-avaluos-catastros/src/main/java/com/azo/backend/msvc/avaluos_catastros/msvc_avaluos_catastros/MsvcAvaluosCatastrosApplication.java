@@ -11,7 +11,7 @@ public class MsvcAvaluosCatastrosApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(MsvcAvaluosCatastrosApplication.class, args);
-    System.out.println("Servidor avaluos y catastrosssssssssssssssss!!!");
+    System.out.println("Micro-Servicio avaluos-catastrosssssssssssssssss!!!");
 	}
 
 }

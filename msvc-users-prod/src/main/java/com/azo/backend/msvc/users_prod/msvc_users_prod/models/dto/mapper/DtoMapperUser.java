@@ -33,7 +33,6 @@ public class DtoMapperUser {
   //   return new UserDto(user.getId(), user.getUsername(), user.getEmail(), isAdmin, user.getAvatar(), user.getStatus());
   // }
 
-  //test
   public UserDto build() {
     return buildUserDto(this.user);
   }
