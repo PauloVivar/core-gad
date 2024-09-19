@@ -5,19 +5,23 @@ import java.time.LocalDateTime;
 
 import com.azo.backend.msvc.binnacle.msvc_binnacle.enums.RequestStatus;
 
-public class RequestDto {
+public class RequestDetailDto {
   private Long id;
   private LocalDateTime entryDate;
   private RequestStatus status;
   private Long citizenId;
+  private String citizenName;            // Obtenido del msvc-users
+  private String citizenEmail;           // Obtenido del msvc-users
   private String cadastralCode;
   private Long assignedToUserId;
+  private String assignedToUserName;     // Obtenido del msvc-users
+  private String assignedToUserEmail;    // Obtenido del msvc-users
   private List<DocumentDto> documents;
 
-  public RequestDto() {
+  public RequestDetailDto() {
   }
 
-  public RequestDto(
+  public RequestDetailDto(
       Long id, 
       LocalDateTime entryDate,
       RequestStatus status,
@@ -26,7 +30,6 @@ public class RequestDto {
       Long assignedToUserId,
       List<DocumentDto> documents
     ) {
-
       this.id = id;
       this.entryDate = entryDate;
       this.status = status;
@@ -70,6 +73,22 @@ public class RequestDto {
     this.citizenId = citizenId;
   }
 
+  public String getCitizenName() {
+    return citizenName;
+  }
+
+  public void setCitizenName(String citizenName) {
+    this.citizenName = citizenName;
+  }
+
+  public String getCitizenEmail() {
+    return citizenEmail;
+  }
+
+  public void setCitizenEmail(String citizenEmail) {
+    this.citizenEmail = citizenEmail;
+  }
+
   public String getCadastralCode() {
     return cadastralCode;
   }
@@ -84,6 +103,22 @@ public class RequestDto {
 
   public void setAssignedToUserId(Long assignedToUserId) {
     this.assignedToUserId = assignedToUserId;
+  }
+
+  public String getAssignedToUserName() {
+    return assignedToUserName;
+  }
+
+  public void setAssignedToUserName(String assignedToUserName) {
+    this.assignedToUserName = assignedToUserName;
+  }
+
+  public String getAssignedToUserEmail() {
+    return assignedToUserEmail;
+  }
+
+  public void setAssignedToUserEmail(String assignedToUserEmail) {
+    this.assignedToUserEmail = assignedToUserEmail;
   }
 
   public List<DocumentDto> getDocuments() {

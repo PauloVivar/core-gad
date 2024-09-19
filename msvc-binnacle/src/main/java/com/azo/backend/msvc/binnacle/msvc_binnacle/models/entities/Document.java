@@ -40,6 +40,8 @@ public class Document {
   @JoinColumn(name = "request_id")
   private Request request;
 
+  //Getters and Setters
+  
   public Long getId() {
     return id;
   }
@@ -72,11 +74,11 @@ public class Document {
     this.fileUrl = fileUrl;
   }
 
-  public Request getRequestProcedure() {
+  public Request getRequest() {
     return request;
   }
 
-  public void setRequestProcedure(Request request) {
+  public void setRequest(Request request) {
     this.request = request;
   }
 

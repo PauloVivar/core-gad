@@ -23,37 +23,43 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.azo.backend.msvc.binnacle.msvc_binnacle.enums.RequestStatus;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.RequestDetailDto;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.RequestDto;
-import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.Request;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.services.RequestService;
 
 import feign.FeignException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 //5. Se crea el ProcedureController
 
 @RestController
 @RequestMapping("/api/v1/requests")
+@Tag(name = "RequestController", description = "Operaciones relacionadas con las solicitudes")
 public class RequestController {
 
   @Autowired
   private RequestService service;
 
   @GetMapping
+  @Operation(summary = "Obtener solicitudes", description = "Devuelve una lista de todas las solicitudes registradas")
   public ResponseEntity<List<RequestDto>> list () {
     return ResponseEntity.ok(service.findAll());
   }
 
-  //listar todos los tramites con paginación
   @GetMapping("/page/{page}")
+  @Operation(summary = "Obtener solicitudes paginadas", description = "Devuelve una lista paginada de solicitudes")
   public Page<RequestDto> list(@PathVariable Integer page){
     Pageable pageable = PageRequest.of(page, 5);
     return service.findAll(pageable);
   }
 
   @GetMapping("/{id}")
+  @Operation(summary = "Obtener detalle solicitud", description = "Devuelve los detalles de una solicitud por su ID")
   public ResponseEntity<?> detail(@PathVariable Long id) {
-    Optional<RequestDto> o = service.findById(id);
+    Optional<RequestDetailDto> o = service.findById(id);
     if(o.isPresent()) {
       return ResponseEntity.ok(o.orElseThrow());
     }
@@ -61,13 +67,15 @@ public class RequestController {
   }
 
   @PostMapping
-  public ResponseEntity<?> create (@Valid @RequestBody Request request, BindingResult result) {
+  @Operation(summary = "Crear nueva solicitud", description = "Crea una nueva solicitud a partir de los datos proporcionados")
+  public ResponseEntity<?> create (@Valid @RequestBody RequestDto requestDto, 
+          BindingResult result) {
     if(result.hasErrors()){
       return validate(result);
     }
 
     try {
-      RequestDto createdRequest = service.save(request);
+      RequestDto createdRequest = service.save(requestDto);
       return ResponseEntity.status(HttpStatus.CREATED).body(createdRequest);
     } catch (Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -77,15 +85,16 @@ public class RequestController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<?> update(@Valid @RequestBody Request request,
-  BindingResult result,  
-  @PathVariable Long id) {
+  @Operation(summary = "Actualizar solicitud", description = "Actualiza una solicitud existente con nuevos datos")
+  public ResponseEntity<?> update(@Valid @RequestBody RequestDto requestDto,
+          BindingResult result,  
+          @PathVariable Long id) {
     if(result.hasErrors()){
       return validate(result);
     }
 
     try {
-      RequestDto updatedRequest = service.update(id, request);
+      RequestDto updatedRequest = service.update(id, requestDto);
       return ResponseEntity.ok(updatedRequest);
     } catch (Exception e) {
         return ResponseEntity.notFound().build();
@@ -94,8 +103,11 @@ public class RequestController {
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<?> remove (@PathVariable Long id){
-    Optional<RequestDto> o = service.findById(id);
+  @Operation(summary = "Eliminar solicitud", description = "Elimina una solicitud existente")
+  public ResponseEntity<?> remove ( 
+          @Parameter(description = "ID de la solicitud", required = true)
+          @PathVariable Long id){
+    Optional<RequestDetailDto> o = service.findById(id);
     if(o.isPresent()){
       service.remove(id);
       return ResponseEntity.noContent().build();
@@ -104,7 +116,10 @@ public class RequestController {
   }
 
   @GetMapping("/status/{status}")
-  public ResponseEntity<?> getRequestsByStatus(@PathVariable RequestStatus status) {
+  @Operation(summary = "Obtener solicitudes por estado", description = "Devuelve una lista de solicitudes filtradas por su estado")
+  public ResponseEntity<?> getRequestsByStatus(
+          @Parameter(description = "Estado solicitud", required = true)
+          @PathVariable RequestStatus status) {
     try {
       List<RequestDto> requests = service.getRequestsByStatus(status);
       if (requests.isEmpty()) {
@@ -126,7 +141,10 @@ public class RequestController {
   }
 
   @GetMapping("/user/{userId}")
-  public ResponseEntity<?> getRequestsByUser(@PathVariable Long userId) {
+  @Operation(summary = "Obtener solicitudes por usuario", description = "Devuelve una lista de solicitudes filtradas por usuario")
+  public ResponseEntity<?> getRequestsByUser(
+          @Parameter(description = "ID del usuario", required = true)
+          @PathVariable Long userId) {
     try {
       List<RequestDto> requests = service.getRequestsByUser(userId);
       return ResponseEntity.ok(requests);

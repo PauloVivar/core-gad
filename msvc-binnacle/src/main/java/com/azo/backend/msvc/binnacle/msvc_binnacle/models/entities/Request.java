@@ -120,8 +120,8 @@ public class Request {
     return documents;
   }
 
-  public void setDocuments(List<Document> documents) {
-    this.documents = documents;
+  public void setDocuments(List<Document> list) {
+    this.documents = list;
   }
 
 }

@@ -13,23 +13,24 @@ public class DtoMapperDocument {
     }
 
     public static DtoMapperDocument builder() {
-        return new DtoMapperDocument();
+      return new DtoMapperDocument();
     }
 
     public DtoMapperDocument setDocument(Document document) {
-        this.document = document;
-        return this;
+      this.document = document;
+      return this;
     }
 
     public DocumentDto build() {
-        if(document == null) {
-            throw new RuntimeException("Debe pasar el Entity Document!");
-        }
-        return new DocumentDto(
-            document.getId(),
-            document.getType(),
-            document.getUploadDate(),
-            document.getFileUrl()
-        );
+      if(document == null) {
+        throw new RuntimeException("Debe pasar el Entity Document!");
+      }
+      return new DocumentDto(
+        document.getId(),
+        document.getType(),
+        document.getUploadDate(),
+        document.getFileUrl(),
+        document.getRequest()
+      );
     }
 }

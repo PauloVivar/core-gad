@@ -7,8 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.azo.backend.msvc.binnacle.msvc_binnacle.enums.RequestStatus;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.RequestDetailDto;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.RequestDto;
-import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.Request;
 
 //3. Tercero Create RequestService -> Implementación del CRUD
 //Interacción con la tabla user(dto) y cliente
@@ -21,13 +21,13 @@ public interface RequestService {
 
   //listar solicitudes por id
   //RequestDto findById(Long id);
-  Optional<RequestDto> findById(Long id);
+  Optional<RequestDetailDto> findById(Long id);
 
   //crear solicitud
-  RequestDto save(Request request);
+  RequestDto save(RequestDto request);
 
   //actualizar solicitud
-  RequestDto update(Long id, Request request);
+  RequestDto update(Long id, RequestDto request);
 
   //eliminar solicitud
   void remove(Long id);

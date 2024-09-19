@@ -13,10 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.clients.UserClientRest;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.enums.RequestStatus;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.User;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.DocumentDto;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.RequestDetailDto;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.RequestDto;
-import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.mapper.DtoMapperDocument;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.mapper.DtoMapperRequest;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.Document;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.Request;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.repositories.DocumentRepository;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.repositories.RequestRepository;
 
 //paso 4.1.
@@ -25,6 +28,9 @@ public class RequestServiceImpl implements RequestService {
 
   @Autowired
   private RequestRepository repository;
+
+  @Autowired
+  private DocumentRepository documentRepository;
 
   @Autowired
   private UserClientRest userClientRest;
@@ -48,37 +54,67 @@ public class RequestServiceImpl implements RequestService {
 
   @Override
   @Transactional(readOnly = true)
-  public Optional<RequestDto> findById(Long id) {
-    return repository.findById(id).map(r -> enrichRequestDTO(DtoMapperRequest
-      .builder()
-      .setRequest(r)
-      .build()));
+  public Optional<RequestDetailDto> findById(Long id) {
+    return repository.findById(id).map(r -> {
+      User citizen = userClientRest.detail(r.getCitizenId());
+      User assignedUser = userClientRest.detail(r.getAssignedToUserId());
+      return DtoMapperRequest.builder()
+              .setRequest(r)
+              .setCitizen(citizen)
+              .setAssignedUser(assignedUser)
+              .buildDetailDto();
+    });
     //return repository.findById(id);
   }
 
   @Override
   @Transactional
-  public RequestDto save(Request request) {
+  public RequestDto save(RequestDto requestDto) {
+    Request request = new Request();
+    request.setEntryDate(requestDto.getEntryDate());
+    request.setStatus(requestDto.getStatus());
+    request.setCitizenId(requestDto.getCitizenId());
+    request.setCadastralCode(requestDto.getCadastralCode());
+    request.setAssignedToUserId(requestDto.getAssignedToUserId());
+
     request = repository.save(request);
-    return enrichRequestDTO(DtoMapperRequest.builder().setRequest(request).build());
-    // return DtoMapperRequest.builder().setRequest(repository.save(request)).build();
+
+    // Manejar documentos
+    if (requestDto.getDocuments() != null && !requestDto.getDocuments().isEmpty()) {
+      List<Document> documents = requestDto.getDocuments().stream()
+        .map(docDto -> {
+            Document doc = new Document();
+            doc.setType(docDto.getType());
+            doc.setUploadDate(docDto.getUploadDate());
+            doc.setFileUrl(docDto.getFileUrl());
+            doc.setRequest(docDto.getRequest());
+            return doc;
+        })
+        .collect(Collectors.toList());
+      documentRepository.saveAll(documents);
+      request.setDocuments(documents);
+    }
+    return DtoMapperRequest.builder().setRequest(request).build();
   }
 
   @Override
   @Transactional
-  public RequestDto update(Long id, Request request) {
+  public RequestDto update(Long id, RequestDto requestDto) {
     Request existingRequest = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Request not found"));
-        
-        // Actualizar los campos necesarios
-        existingRequest.setStatus(request.getStatus());
-        existingRequest.setCadastralCode(request.getCadastralCode());
-        existingRequest.setAssignedToUserId(request.getAssignedToUserId());
-        // ... actualizar otros campos según sea necesario
+            .orElseThrow(() -> new RuntimeException("Request not found"));
+    
+    existingRequest.setStatus(requestDto.getStatus());
+    existingRequest.setCadastralCode(requestDto.getCadastralCode());
+    existingRequest.setAssignedToUserId(requestDto.getAssignedToUserId());
+    
+    // Actualizar documentos
+    if (requestDto.getDocuments() != null) {
+      updateDocuments(existingRequest, requestDto.getDocuments());
+    }
 
-        existingRequest = repository.save(existingRequest);
-        return enrichRequestDTO(DtoMapperRequest.builder().setRequest(existingRequest).build());
-  } 
+    existingRequest = repository.save(existingRequest);
+    return DtoMapperRequest.builder().setRequest(existingRequest).build();
+  }
 
   @Override
   @Transactional
@@ -95,39 +131,39 @@ public class RequestServiceImpl implements RequestService {
   @Transactional
   public List<RequestDto> getRequestsByStatus(RequestStatus status) {
     return repository.findByStatus(status).stream()
-      .map(request -> enrichRequestDTO(DtoMapperRequest.builder().setRequest(request).build()))
-      .collect(Collectors.toList());
+            .map(request -> DtoMapperRequest.builder().setRequest(request).build())
+            .collect(Collectors.toList());
   }
 
   @Override
   @Transactional
   public List<RequestDto> getRequestsByUser(Long userId) {
     return repository.findByCitizenId(userId).stream()
-      .map(request -> enrichRequestDTO(DtoMapperRequest.builder().setRequest(request).build()))
-      .collect(Collectors.toList());
+            .map(request -> DtoMapperRequest.builder().setRequest(request).build())
+            .collect(Collectors.toList());
   }
 
-  //metodos aux
+  //Métodos Aux
 
-  private RequestDto enrichRequestDTO(RequestDto dto) {
-    // Obtener información del usuario desde msvc-users
-    try {
-        User user = userClientRest.detail(dto.getCitizenId());
-        dto.setCitizenName(user.getUsername());
-        dto.setCitizenEmail(user.getEmail());
-    } catch (Exception e) {
-        // Manejar el error si no se puede obtener la información del usuario
-    }
+  private Document createDocumentFromDto(DocumentDto docDto, Request request) {
+    Document doc = new Document();
+    doc.setType(docDto.getType());
+    doc.setUploadDate(docDto.getUploadDate());
+    doc.setFileUrl(docDto.getFileUrl());
+    doc.setRequest(request);
+    return doc;
+  }
+
+  private void updateDocuments(Request request, List<DocumentDto> documentDtos) {
+    // Eliminar documentos existentes
+    documentRepository.deleteAll(request.getDocuments());
     
-    // Obtener y mapear los documentos si es necesario
-    Request request = repository.findById(dto.getId()).orElse(null);
-    if (request != null && request.getDocuments() != null) {
-        dto.setDocuments(request.getDocuments().stream()
-                .map(doc -> DtoMapperDocument.builder().setDocument(doc).build())
-                .collect(Collectors.toList()));
-    }
+    List<Document> newDocuments = documentDtos.stream()
+        .map(docDto -> createDocumentFromDto(docDto, request))
+        .collect(Collectors.toList());
     
-    return dto;
+    documentRepository.saveAll(newDocuments);
+    request.setDocuments(newDocuments);
   }
 
 }
