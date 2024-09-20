@@ -16,10 +16,10 @@ import com.azo.backend.msvc.binnacle.msvc_binnacle.models.User;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.DocumentDto;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.RequestDetailDto;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.RequestDto;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.mapper.DtoMapperDocument;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.mapper.DtoMapperRequest;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.Document;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.Request;
-import com.azo.backend.msvc.binnacle.msvc_binnacle.repositories.DocumentRepository;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.repositories.RequestRepository;
 
 //paso 4.1.
@@ -30,7 +30,7 @@ public class RequestServiceImpl implements RequestService {
   private RequestRepository repository;
 
   @Autowired
-  private DocumentRepository documentRepository;
+  private DocumentService documentService;
 
   @Autowired
   private UserClientRest userClientRest;
@@ -81,19 +81,14 @@ public class RequestServiceImpl implements RequestService {
 
     // Manejar documentos
     if (requestDto.getDocuments() != null && !requestDto.getDocuments().isEmpty()) {
-      List<Document> documents = requestDto.getDocuments().stream()
-        .map(docDto -> {
-            Document doc = new Document();
-            doc.setType(docDto.getType());
-            doc.setUploadDate(docDto.getUploadDate());
-            doc.setFileUrl(docDto.getFileUrl());
-            doc.setRequest(docDto.getRequest());
-            return doc;
-        })
-        .collect(Collectors.toList());
-      documentRepository.saveAll(documents);
+      List<DocumentDto> savedDocuments = documentService.saveAll(requestDto.getDocuments(), request.getId());
+      final Request finalRequest = request;  // Crear una referencia final
+      List<Document> documents = savedDocuments.stream()
+              .map(dto -> DtoMapperDocument.toEntity(dto, finalRequest))
+              .collect(Collectors.toList());
       request.setDocuments(documents);
     }
+
     return DtoMapperRequest.builder().setRequest(request).build();
   }
 
@@ -109,7 +104,13 @@ public class RequestServiceImpl implements RequestService {
     
     // Actualizar documentos
     if (requestDto.getDocuments() != null) {
-      updateDocuments(existingRequest, requestDto.getDocuments());
+      documentService.removeAllByRequestId(id);
+      List<DocumentDto> updatedDocuments = documentService.saveAll(requestDto.getDocuments(), id);
+      final Request finalRequest = existingRequest;  // Crear una referencia final
+      List<Document> documents = updatedDocuments.stream()
+              .map(dto -> DtoMapperDocument.toEntity(dto, finalRequest))
+              .collect(Collectors.toList());
+      existingRequest.setDocuments(documents);
     }
 
     existingRequest = repository.save(existingRequest);
@@ -144,26 +145,5 @@ public class RequestServiceImpl implements RequestService {
   }
 
   //Métodos Aux
-
-  private Document createDocumentFromDto(DocumentDto docDto, Request request) {
-    Document doc = new Document();
-    doc.setType(docDto.getType());
-    doc.setUploadDate(docDto.getUploadDate());
-    doc.setFileUrl(docDto.getFileUrl());
-    doc.setRequest(request);
-    return doc;
-  }
-
-  private void updateDocuments(Request request, List<DocumentDto> documentDtos) {
-    // Eliminar documentos existentes
-    documentRepository.deleteAll(request.getDocuments());
-    
-    List<Document> newDocuments = documentDtos.stream()
-        .map(docDto -> createDocumentFromDto(docDto, request))
-        .collect(Collectors.toList());
-    
-    documentRepository.saveAll(newDocuments);
-    request.setDocuments(newDocuments);
-  }
 
 }

@@ -10,7 +10,7 @@ import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.TechnicalRevi
 
 public interface TechnicalReviewRepository extends CrudRepository<TechnicalReview, Long> {
   
-  Page<TechnicalReview> findAll(Pageable pageable);
+  Page<TechnicalReview> findAllByRequestId(Long requestId, Pageable pageable);
   List<TechnicalReview> findByRequestId(Long requestId);
 
 }

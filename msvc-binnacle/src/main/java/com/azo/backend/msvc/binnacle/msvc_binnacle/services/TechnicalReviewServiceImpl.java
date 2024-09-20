@@ -37,18 +37,20 @@ public class TechnicalReviewServiceImpl implements TechnicalReviewService {
   public List<TechnicalReviewDto> findAll() {
     List<TechnicalReview> reviews = (List<TechnicalReview>) repository.findAll();
     return reviews.stream()
-            .map(r -> DtoMapperTechnicalReview.builder().setTechnicalReview(r).build())
+            .map(r -> enrichTechnicalReviewDto(
+              DtoMapperTechnicalReview.builder().setTechnicalReview(r).build()))
             .collect(Collectors.toList());
     //return (List<TechnicalReviewDto>) repository.findAll();
   }
 
   @Override
   @Transactional(readOnly = true)
-  public Page<TechnicalReviewDto> findAll(Pageable pageable) {
-    Page<TechnicalReview> reviews = repository.findAll(pageable);
-    return reviews.map(r -> DtoMapperTechnicalReview.builder().setTechnicalReview(r).build());
-    //return ((TechnicalReviewServiceImpl) repository).findAll(pageable);
-  }
+	public Page<TechnicalReviewDto> findAllByRequestId(Long requestId, Pageable pageable) {
+		Page<TechnicalReview> reviews = repository.findAllByRequestId(requestId, pageable);
+    return reviews
+            .map(r -> enrichTechnicalReviewDto(
+                        DtoMapperTechnicalReview.builder().setTechnicalReview(r).build()));
+	}
 
   @Override
   @Transactional(readOnly = true)
@@ -111,7 +113,6 @@ public class TechnicalReviewServiceImpl implements TechnicalReviewService {
 
   //método aux
   private TechnicalReviewDto enrichTechnicalReviewDto(TechnicalReviewDto dto) {
-
     try {
       User reviewer = userClientRest.detail(dto.getReviewerId());
       dto.setReviewerName(reviewer.getUsername());

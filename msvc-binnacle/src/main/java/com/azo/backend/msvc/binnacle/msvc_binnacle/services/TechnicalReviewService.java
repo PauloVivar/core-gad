@@ -11,7 +11,8 @@ import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.TechnicalReviewDto
 public interface TechnicalReviewService {
 
   List<TechnicalReviewDto> findAll();
-  Page<TechnicalReviewDto> findAll(Pageable pageable);
+  //listar todos las revisiones con paginación por solicitud
+  Page<TechnicalReviewDto> findAllByRequestId(Long requestId, Pageable pageable);
   Optional<TechnicalReviewDto> findById(Long id);
   TechnicalReviewDto save(TechnicalReviewDto review);
   Optional<TechnicalReviewDto> update(TechnicalReviewDto review, Long id);

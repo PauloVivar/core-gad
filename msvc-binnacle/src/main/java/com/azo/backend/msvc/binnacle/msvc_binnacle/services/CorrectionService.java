@@ -10,7 +10,7 @@ import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.CorrectionDto;
 
 public interface CorrectionService {
   List<CorrectionDto> findAll();
-  Page<CorrectionDto> findAll(Pageable pageable);
+  Page<CorrectionDto> findAllByRequestId(Long requestId, Pageable pageable);
   Optional<CorrectionDto> findById(Long id);
   CorrectionDto save(CorrectionDto correction);
   Optional<CorrectionDto> update(CorrectionDto correction, Long id);

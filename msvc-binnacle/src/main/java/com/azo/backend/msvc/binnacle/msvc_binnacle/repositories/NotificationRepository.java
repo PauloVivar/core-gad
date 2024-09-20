@@ -11,7 +11,7 @@ import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.Notification;
 
 public interface NotificationRepository extends CrudRepository<Notification, UUID> {
   
-  Page<Notification> findAll(Pageable pageable);
+  Page<Notification> findAllByRequestId(Long requestId, Pageable pageable);
   List<Notification> findByRequestId(Long requestId);
 
 }

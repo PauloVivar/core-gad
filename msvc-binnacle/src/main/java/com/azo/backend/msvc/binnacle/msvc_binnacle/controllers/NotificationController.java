@@ -26,7 +26,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/v1/notifications")
+@RequestMapping("/api/v1/requests/{requestId}/notifications")
 @Tag(name = "NotificationController", description = "Operaciones relacionadas con las notificaciones")
 public class NotificationController {
   @Autowired
@@ -34,20 +34,22 @@ public class NotificationController {
 
   @GetMapping
   @Operation(summary = "Obtener notificaciones", description = "Devuelve una lista de todas las notificaciones registradas")
-  public ResponseEntity<List<NotificationDto>> list() {
-    return ResponseEntity.ok(service.findAll());
+  public ResponseEntity<List<NotificationDto>> list(@PathVariable Long requestId) {
+    return ResponseEntity.ok(service.findByRequestId(requestId));
   }
 
   @GetMapping("/page/{page}")
   @Operation(summary = "Obtener notificaciones paginadas", description = "Devuelve una lista paginada de notificaciones")
-  public Page<NotificationDto> list(@PathVariable Integer page) {
+  public ResponseEntity<Page<NotificationDto>> list(@PathVariable Long requestId, 
+                                                    @PathVariable Integer page) {
     Pageable pageable = PageRequest.of(page, 5);
-    return service.findAll(pageable);
+    Page<NotificationDto> notifications = service.findAllByRequestId(requestId, pageable);
+    return ResponseEntity.ok(notifications);
   }
 
   @GetMapping("/{id}")
   @Operation(summary = "Obtener detalle notificación", description = "Devuelve los detalles de una notificación por su ID")
-  public ResponseEntity<?> detail(@PathVariable UUID id) {
+  public ResponseEntity<?> detail(@PathVariable Long requestId, @PathVariable UUID id) {
     Optional<NotificationDto> o = service.findById(id);
     if (o.isPresent()) {
         return ResponseEntity.ok(o.get());
@@ -57,24 +59,30 @@ public class NotificationController {
 
   @PostMapping
   @Operation(summary = "Crear nueva notificación", description = "Crea una nueva notificación a partir de los datos proporcionados")
-  public ResponseEntity<?> create(@RequestBody NotificationDto notification) {
-    NotificationDto notificationDb = service.save(notification);
-    return ResponseEntity.status(HttpStatus.CREATED).body(notificationDb);
+  public ResponseEntity<?> create(@PathVariable Long requestId, 
+                                  @RequestBody NotificationDto notificationDto) {
+    notificationDto.setRequestId(requestId);
+    NotificationDto savedNotification = service.save(notificationDto);
+    return ResponseEntity.status(HttpStatus.CREATED).body(savedNotification);
   }
 
   @PutMapping("/{id}")
   @Operation(summary = "Actualizar notificación", description = "Actualiza una notificación existente con nuevos datos")
-  public ResponseEntity<?> update(@RequestBody NotificationDto notification, @PathVariable UUID id) {
-    Optional<NotificationDto> o = service.update(notification, id);
-    if (o.isPresent()) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(o.get());
-    }
-    return ResponseEntity.notFound().build();
+  public ResponseEntity<?> update(
+    @PathVariable Long requestId, 
+    @RequestBody NotificationDto notificationDto, 
+    @PathVariable UUID id) {
+      notificationDto.setRequestId(requestId);
+      Optional<NotificationDto> o = service.update(notificationDto, id);
+      if (o.isPresent()) {
+          return ResponseEntity.status(HttpStatus.CREATED).body(o.get());
+      }
+      return ResponseEntity.notFound().build();
   }
 
   @DeleteMapping("/{id}")
   @Operation(summary = "Eliminar notificación", description = "Elimina una notificación existente")
-  public ResponseEntity<?> remove(@PathVariable UUID id) {
+  public ResponseEntity<?> remove(@PathVariable Long requestId, @PathVariable UUID id) {
     Optional<NotificationDto> o = service.findById(id);
     if (o.isPresent()) {
         service.remove(id);
@@ -83,11 +91,11 @@ public class NotificationController {
     return ResponseEntity.notFound().build();
   }
 
-  @GetMapping("/request/{requestId}")
-  @Operation(summary = "Buscar por Solicitud", description = "Busca notificaciones por una solicitud existente")
-  public ResponseEntity<List<NotificationDto>> findByRequestId(@PathVariable Long requestId) {
-      List<NotificationDto> notifications = service.findByRequestId(requestId);
-      return ResponseEntity.ok(notifications);
-  }
+  // @GetMapping("/request/{requestId}")
+  // @Operation(summary = "Buscar por Solicitud", description = "Busca notificaciones por una solicitud existente")
+  // public ResponseEntity<List<NotificationDto>> findByRequestId(@PathVariable Long requestId) {
+  //     List<NotificationDto> notifications = service.findByRequestId(requestId);
+  //     return ResponseEntity.ok(notifications);
+  // }
   
 }

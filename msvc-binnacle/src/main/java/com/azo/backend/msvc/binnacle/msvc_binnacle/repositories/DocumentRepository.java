@@ -1,5 +1,7 @@
 package com.azo.backend.msvc.binnacle.msvc_binnacle.repositories;
 
+import java.util.List;
+
 //import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -13,6 +15,7 @@ import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.Document;
 public interface DocumentRepository extends CrudRepository<Document, Long> {
 
   //método custom para paginación
-  Page<Document> findAll(Pageable pageable);
+  List<Document> findAllByRequestId(Long requestId);
+  Page<Document> findAllPageByRequestId(Long requestId, Pageable pageable);
 
 }

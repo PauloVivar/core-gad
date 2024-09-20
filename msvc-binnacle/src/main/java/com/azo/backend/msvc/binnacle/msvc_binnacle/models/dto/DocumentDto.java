@@ -1,7 +1,6 @@
 package com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto;
 
 import com.azo.backend.msvc.binnacle.msvc_binnacle.enums.DocumentType;
-import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.Request;
 
 import java.time.LocalDateTime;
 
@@ -10,16 +9,17 @@ public class DocumentDto {
   private DocumentType type;
   private LocalDateTime uploadDate;
   private String fileUrl;
-  private Request request;
+  private Long requestId;
+  //private Request request;
 
   public DocumentDto() {}
 
-  public DocumentDto(Long id, DocumentType type, LocalDateTime uploadDate, String fileUrl, Request request) {
+  public DocumentDto(Long id, DocumentType type, LocalDateTime uploadDate, String fileUrl, Long requestId) {
     this.id = id;
     this.type = type;
     this.uploadDate = uploadDate;
     this.fileUrl = fileUrl;
-    this.request = request;
+    this.requestId = requestId;
   }
 
   //Getters and Setters
@@ -55,12 +55,12 @@ public class DocumentDto {
     this.fileUrl = fileUrl;
   }
 
-  public Request getRequest() {
-    return request;
-  }
+	public Long getRequestId() {
+		return requestId;
+	}
 
-  public void setRequest(Request request) {
-    this.request = request;
-  }
+	public void setRequestId(Long requestId) {
+		this.requestId = requestId;
+	}
 
 }

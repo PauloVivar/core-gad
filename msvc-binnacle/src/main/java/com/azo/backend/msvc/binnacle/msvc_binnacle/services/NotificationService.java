@@ -12,7 +12,7 @@ import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.NotificationDto;
 public interface NotificationService {
 
   List<NotificationDto> findAll();
-  Page<NotificationDto> findAll(Pageable pageable);
+  Page<NotificationDto> findAllByRequestId(Long requestId, Pageable pageable);
   Optional<NotificationDto> findById(UUID id);
   NotificationDto save(NotificationDto notification);
   Optional<NotificationDto> update(NotificationDto notification, UUID id);

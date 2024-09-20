@@ -58,18 +58,21 @@ public class RequestController {
 
   @GetMapping("/{id}")
   @Operation(summary = "Obtener detalle solicitud", description = "Devuelve los detalles de una solicitud por su ID")
-  public ResponseEntity<?> detail(@PathVariable Long id) {
-    Optional<RequestDetailDto> o = service.findById(id);
-    if(o.isPresent()) {
-      return ResponseEntity.ok(o.orElseThrow());
-    }
-    return ResponseEntity.notFound().build();
+  public ResponseEntity<?> detail(
+    @Parameter(description = "ID de la solicitud", required = true) 
+    @PathVariable Long id) {
+      Optional<RequestDetailDto> o = service.findById(id);
+      if(o.isPresent()) {
+        return ResponseEntity.ok(o.orElseThrow());
+      }
+      return ResponseEntity.notFound().build();
   }
 
   @PostMapping
   @Operation(summary = "Crear nueva solicitud", description = "Crea una nueva solicitud a partir de los datos proporcionados")
-  public ResponseEntity<?> create (@Valid @RequestBody RequestDto requestDto, 
-          BindingResult result) {
+  public ResponseEntity<?> create (
+          @Valid @RequestBody RequestDto requestDto, 
+            BindingResult result) {
     if(result.hasErrors()){
       return validate(result);
     }
@@ -86,8 +89,10 @@ public class RequestController {
 
   @PutMapping("/{id}")
   @Operation(summary = "Actualizar solicitud", description = "Actualiza una solicitud existente con nuevos datos")
-  public ResponseEntity<?> update(@Valid @RequestBody RequestDto requestDto,
-          BindingResult result,  
+  public ResponseEntity<?> update(
+          @Valid @RequestBody RequestDto requestDto,
+            BindingResult result,
+          @Parameter(description = "ID de la solicitud", required = true)  
           @PathVariable Long id) {
     if(result.hasErrors()){
       return validate(result);

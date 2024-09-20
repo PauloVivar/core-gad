@@ -31,6 +31,7 @@ public class Document {
   @NotBlank(message = "Los documentos son requeridos.")
   private DocumentType type;
   
+  @NotEmpty
   private LocalDateTime uploadDate;
 
   @NotEmpty

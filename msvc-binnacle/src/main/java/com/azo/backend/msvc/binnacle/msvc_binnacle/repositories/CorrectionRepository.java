@@ -10,7 +10,7 @@ import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.Correction;
 
 public interface CorrectionRepository extends CrudRepository<Correction, Long> {
 
-  Page<Correction> findAll(Pageable pageable);
+  Page<Correction> findAllByRequestId(Long requestId, Pageable pageable);
   List<Correction> findByRequestId(Long requestId);
 
 }

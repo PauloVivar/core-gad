@@ -33,11 +33,11 @@ public class CorrectionServiceImpl implements CorrectionService {
 
   @Override
   @Transactional(readOnly = true)
-  public Page<CorrectionDto> findAll(Pageable pageable) {
-    Page<Correction> corrections = repository.findAll(pageable);
-    return corrections.map(c -> DtoMapperCorrection.builder().setCorrection(c).build());
-    //return ((CorrectionService) repository).findAll(pageable);
-  }
+	public Page<CorrectionDto> findAllByRequestId(Long requestId, Pageable pageable) {
+		Page<Correction> corrections = repository.findAllByRequestId(requestId, pageable);
+    return corrections
+              .map(c -> DtoMapperCorrection.builder().setCorrection(c).build());
+	}
 
   @Override
   @Transactional(readOnly = true)

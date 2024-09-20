@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/v1/corrections")
+@RequestMapping("/api/v1/requests/{requestId}/corrections")
 @Tag(name = "CorrectionController", description = "Operaciones relacionadas con las subsanaciones")
 public class CorrectionController {
   @Autowired
@@ -33,20 +33,23 @@ public class CorrectionController {
 
   @GetMapping
   @Operation(summary = "Obtener subsanaciones", description = "Devuelve una lista de todas las subsanaciones registradas")
-  public ResponseEntity<List<CorrectionDto>> list() {
-      return ResponseEntity.ok(service.findAll());
+  public ResponseEntity<List<CorrectionDto>> list(@PathVariable Long requestId) {
+      return ResponseEntity.ok(service.findByRequestId(requestId));
   }
 
   @GetMapping("/page/{page}")
   @Operation(summary = "Obtener subsanaciones paginadas", description = "Devuelve una lista paginada de subsanaciones")
-  public Page<CorrectionDto> list(@PathVariable Integer page) {
+  public ResponseEntity<Page<CorrectionDto>> list(
+    @PathVariable Long requestId, 
+    @PathVariable Integer page) {
       Pageable pageable = PageRequest.of(page, 5);
-      return service.findAll(pageable);
+      Page<CorrectionDto> corrections = service.findAllByRequestId(requestId, pageable);
+      return ResponseEntity.ok(corrections);
   }
 
   @GetMapping("/{id}")
   @Operation(summary = "Obtener detalle subsanación", description = "Devuelve los detalles de una subsanación por su ID")
-  public ResponseEntity<?> detail(@PathVariable Long id) {
+  public ResponseEntity<?> detail(@PathVariable Long requestId, @PathVariable Long id) {
       Optional<CorrectionDto> o = service.findById(id);
       if (o.isPresent()) {
           return ResponseEntity.ok(o.get());
@@ -56,15 +59,22 @@ public class CorrectionController {
 
   @PostMapping
   @Operation(summary = "Crear nueva subsanación", description = "Crea una nueva subsanación a partir de los datos proporcionados")
-  public ResponseEntity<?> create(@RequestBody CorrectionDto correction) {
-      CorrectionDto correctionDb = service.save(correction);
-      return ResponseEntity.status(HttpStatus.CREATED).body(correctionDb);
+  public ResponseEntity<?> create(
+    @PathVariable Long requestId, 
+    @RequestBody CorrectionDto correctionDto) {
+      correctionDto.setRequestId(requestId);
+      CorrectionDto savedCorrection = service.save(correctionDto);
+      return ResponseEntity.status(HttpStatus.CREATED).body(savedCorrection);
   }
 
   @PutMapping("/{id}")
   @Operation(summary = "Actualizar subsanación", description = "Actualiza una subsanación existente con nuevos datos")
-  public ResponseEntity<?> update(@RequestBody CorrectionDto correction, @PathVariable Long id) {
-      Optional<CorrectionDto> o = service.update(correction, id);
+  public ResponseEntity<?> update(
+    @PathVariable Long requestId, 
+    @RequestBody CorrectionDto correctionDto, 
+    @PathVariable Long id) {
+      correctionDto.setRequestId(requestId);
+      Optional<CorrectionDto> o = service.update(correctionDto, id);
       if (o.isPresent()) {
           return ResponseEntity.status(HttpStatus.CREATED).body(o.get());
       }
@@ -73,7 +83,7 @@ public class CorrectionController {
 
   @DeleteMapping("/{id}")
   @Operation(summary = "Eliminar subsanación", description = "Elimina una subsanación existente")
-  public ResponseEntity<?> remove(@PathVariable Long id) {
+  public ResponseEntity<?> remove(@PathVariable Long requestId, @PathVariable Long id) {
       Optional<CorrectionDto> o = service.findById(id);
       if (o.isPresent()) {
           service.remove(id);
@@ -82,11 +92,11 @@ public class CorrectionController {
       return ResponseEntity.notFound().build();
   }
 
-  @GetMapping("/request/{requestId}")
-  @Operation(summary = "Buscar por Solicitud", description = "Busca subsanaciones por una solicitud existente")
-  public ResponseEntity<List<CorrectionDto>> findByRequestId(@PathVariable Long requestId) {
-      List<CorrectionDto> corrections = service.findByRequestId(requestId);
-      return ResponseEntity.ok(corrections);
-  }
+  // @GetMapping("/request/{requestId}")
+  // @Operation(summary = "Buscar por Solicitud", description = "Busca subsanaciones por una solicitud existente")
+  // public ResponseEntity<List<CorrectionDto>> findByRequestId(@PathVariable Long requestId) {
+  //     List<CorrectionDto> corrections = service.findByRequestId(requestId);
+  //     return ResponseEntity.ok(corrections);
+  // }
   
 }

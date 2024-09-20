@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.azo.backend.msvc.binnacle.msvc_binnacle.clients.UserClientRest;
@@ -22,6 +23,7 @@ import com.azo.backend.msvc.binnacle.msvc_binnacle.repositories.NotificationRepo
 
 import feign.FeignException;
 
+@Service
 public class NotificationServiceImpl implements NotificationService {
 
   private static final Logger log = LoggerFactory.getLogger(NotificationServiceImpl.class);
@@ -45,12 +47,12 @@ public class NotificationServiceImpl implements NotificationService {
 
   @Override
   @Transactional(readOnly = true)
-  public Page<NotificationDto> findAll(Pageable pageable) {
-    Page<Notification> notifications = repository.findAll(pageable);
+	public Page<NotificationDto> findAllByRequestId(Long requestId, Pageable pageable) {
+		Page<Notification> notifications = repository.findAllByRequestId(requestId, pageable);
     return notifications
-            .map(n -> enrichNotificationDto(
-                DtoMapperNotification.builder().setNotification(n).build()));
-  }
+              .map(n -> enrichNotificationDto(
+                  DtoMapperNotification.builder().setNotification(n).build()));
+	}
 
   @Override
   @Transactional(readOnly = true)

@@ -13,13 +13,13 @@ import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.RequestDto;
 //3. Tercero Create RequestService -> Implementación del CRUD
 //Interacción con la tabla user(dto) y cliente
 public interface RequestService {
-  //listar todos los users
+  //listar todos las revisiones
   List<RequestDto> findAll();
 
-  //listar todos los users con paginación
+  //listar todos las revisiones con paginación
   Page<RequestDto> findAll(Pageable pageable);
 
-  //listar solicitudes por id
+  //listar revisiones por id
   //RequestDto findById(Long id);
   Optional<RequestDetailDto> findById(Long id);
 
