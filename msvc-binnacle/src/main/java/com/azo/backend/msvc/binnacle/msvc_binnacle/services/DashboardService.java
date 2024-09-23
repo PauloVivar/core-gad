@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.azo.backend.msvc.binnacle.msvc_binnacle.clients.UserClientRest;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.enums.RequestStatus;
@@ -17,6 +18,7 @@ import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.RequestDetailDto;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.Request;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.repositories.RequestRepository;
 
+@Service
 public class DashboardService {
 
   private static final Logger log = LoggerFactory.getLogger(NotificationServiceImpl.class);
