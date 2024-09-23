@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 //import org.springframework.data.jpa.repository.Modifying;
 //import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -21,8 +22,10 @@ public interface RequestRepository extends CrudRepository<Request, Long> {
   List<Request> findByStatus(RequestStatus status);
   List<Request> findByCitizenId(Long citizenId);
   
-  //cuando se elimina un user de msvc_users se desasigna ese user de la solicitud
-  // @Modifying
-  // @Query("delete from RequestUser ru where ru.userId=?1")
-  // void removeRequestUserById(Long id);
+ // método para contar solicitudes por estado
+  long countByStatus(RequestStatus status);
+
+  // método para contar todas las solicitudes agrupadas por estado
+  @Query("SELECT r.status, COUNT(r) FROM Request r GROUP BY r.status")
+  List<Object[]> countTotalRequestsByStatus();
 }
