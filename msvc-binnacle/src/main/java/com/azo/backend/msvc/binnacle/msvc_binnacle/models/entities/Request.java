@@ -19,6 +19,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 
 //paso 1: entidad Solicitudes
+//patrones
 
 @Entity
 @Table(name = "requests")
