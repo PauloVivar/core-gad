@@ -20,6 +20,8 @@ import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.mapper.DtoMapperDo
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.mapper.DtoMapperRequest;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.Document;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.Request;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.models.filter.RequestFilter;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.models.filter.RequestSpecification;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.repositories.RequestRepository;
 
 //paso 4.1.
@@ -48,8 +50,15 @@ public class RequestServiceImpl implements RequestService {
   @Override
   @Transactional(readOnly = true)
   public Page<RequestDto> findAll(Pageable pageable) {
-    Page<Request> requestsPage = repository.findAll(pageable);
-    return requestsPage.map(r -> DtoMapperRequest.builder().setRequest(r).build());
+    Page<Request> requests = repository.findAll(pageable);
+    return requests.map(r -> DtoMapperRequest.builder().setRequest(r).build());
+  }
+
+  public Page<RequestDto> findAllWithFilters(RequestFilter filter, Pageable pageable) {
+    // Usa la especificación con el filtro
+    Page<Request> requests = repository.findAll(RequestSpecification.withFilter(filter), pageable);
+    // Mapea las entidades Request a DTOs
+    return requests.map(r -> DtoMapperRequest.builder().setRequest(r).build());
   }
 
   @Override

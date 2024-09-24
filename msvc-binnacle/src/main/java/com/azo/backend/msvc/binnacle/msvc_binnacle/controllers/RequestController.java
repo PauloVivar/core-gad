@@ -20,11 +20,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.azo.backend.msvc.binnacle.msvc_binnacle.enums.RequestStatus;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.RequestDetailDto;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.RequestDto;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.models.filter.RequestFilter;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.services.RequestService;
 
 import feign.FeignException;
@@ -54,6 +56,16 @@ public class RequestController {
   public Page<RequestDto> list(@PathVariable Integer page){
     Pageable pageable = PageRequest.of(page, 5);
     return service.findAll(pageable);
+  }
+
+  @GetMapping("/page")
+  public ResponseEntity<Page<RequestDto>> listRequestsPaginated(
+          RequestFilter filter,
+          @RequestParam(defaultValue = "0") int page,
+          @RequestParam(defaultValue = "10") int size) {
+      Pageable pageable = PageRequest.of(page, size);
+      Page<RequestDto> requests = service.findAllWithFilters(filter, pageable);
+      return ResponseEntity.ok(requests);
   }
 
   @GetMapping("/{id}")

@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.NotificationDto;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.RequestDetailDto;
 
 public interface NotificationService {
 
@@ -18,5 +19,7 @@ public interface NotificationService {
   Optional<NotificationDto> update(NotificationDto notification, UUID id);
   void remove(UUID id);
   List<NotificationDto> findByRequestId(Long requestId);
+
+  void sendNotification(RequestDetailDto request, NotificationDto notification);
   
 }

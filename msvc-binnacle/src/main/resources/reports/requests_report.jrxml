@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="RequestsReport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+    <field name="id" class="java.lang.Long"/>
+    <field name="entryDate" class="java.time.LocalDateTime"/>
+    <field name="status" class="com.azo.backend.msvc.binnacle.msvc_binnacle.enums.RequestStatus"/>
+    <field name="citizenId" class="java.lang.Long"/>
+    <field name="cadastralCode" class="java.lang.String"/>
+    <title>
+        <band height="50">
+            <staticText>
+                <reportElement x="0" y="0" width="555" height="30"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="16" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Reporte de Solicitudes]]></text>
+            </staticText>
+        </band>
+    </title>
+    <columnHeader>
+        <band height="30">
+            <staticText>
+                <reportElement x="0" y="0" width="111" height="30"/>
+                <text><![CDATA[ID]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="111" y="0" width="111" height="30"/>
+                <text><![CDATA[Fecha de Entrada]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="222" y="0" width="111" height="30"/>
+                <text><![CDATA[Estado]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="333" y="0" width="111" height="30"/>
+                <text><![CDATA[ID Ciudadano]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="444" y="0" width="111" height="30"/>
+                <text><![CDATA[Código Catastral]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+    <detail>
+        <band height="30">
+            <textField>
+                <reportElement x="0" y="0" width="111" height="30"/>
+                <textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="111" y="0" width="111" height="30"/>
+                <textFieldExpression><![CDATA[$F{entryDate}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="222" y="0" width="111" height="30"/>
+                <textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="333" y="0" width="111" height="30"/>
+                <textFieldExpression><![CDATA[$F{citizenId}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="444" y="0" width="111" height="30"/>
+                <textFieldExpression><![CDATA[$F{cadastralCode}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+</jasperReport>

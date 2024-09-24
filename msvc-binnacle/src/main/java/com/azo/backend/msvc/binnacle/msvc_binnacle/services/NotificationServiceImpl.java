@@ -11,12 +11,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.azo.backend.msvc.binnacle.msvc_binnacle.clients.UserClientRest;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.User;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.NotificationDto;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.RequestDetailDto;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.mapper.DtoMapperNotification;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.Notification;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.repositories.NotificationRepository;
@@ -33,6 +36,9 @@ public class NotificationServiceImpl implements NotificationService {
 
   @Autowired
   private UserClientRest userClientRest;
+
+  @Autowired
+  private JavaMailSender mailSender;
 
   @Override
   @Transactional(readOnly = true)
@@ -99,6 +105,20 @@ public class NotificationServiceImpl implements NotificationService {
   }
 
   @Override
+  public void sendNotification(RequestDetailDto requestDto, NotificationDto notificationDto) {
+
+    SimpleMailMessage message = new SimpleMailMessage();
+    message.setTo(requestDto.getCitizenEmail());
+    message.setSubject("Actualización de su solicitud: " + requestDto.getId());
+    message.setText(notificationDto.getContent());
+    mailSender.send(message);
+
+    // Aquí se puede añadir lógica adicional para otros tipos de notificaciones
+    // como notificaciones push, SMS, etc.
+    
+  }
+
+  @Override
   @Transactional(readOnly = true)
   public List<NotificationDto> findByRequestId(Long requestId) {
     List<Notification> notifications = repository.findByRequestId(requestId);
@@ -125,5 +145,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
     return dto;
   }
+
+  
 
 }

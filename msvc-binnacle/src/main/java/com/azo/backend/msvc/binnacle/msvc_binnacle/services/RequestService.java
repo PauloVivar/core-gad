@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.enums.RequestStatus;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.RequestDetailDto;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.RequestDto;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.models.filter.RequestFilter;
 
 //3. Tercero Create RequestService -> Implementación del CRUD
 //Interacción con la tabla user(dto) y cliente
@@ -18,6 +19,7 @@ public interface RequestService {
 
   //listar todos las revisiones con paginación
   Page<RequestDto> findAll(Pageable pageable);
+  Page<RequestDto> findAllWithFilters(RequestFilter filter, Pageable pageable);
 
   //listar revisiones por id
   //RequestDto findById(Long id);
