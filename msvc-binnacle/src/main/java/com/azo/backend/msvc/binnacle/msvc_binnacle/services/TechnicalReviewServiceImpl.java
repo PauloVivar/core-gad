@@ -38,7 +38,10 @@ public class TechnicalReviewServiceImpl implements TechnicalReviewService {
     List<TechnicalReview> reviews = (List<TechnicalReview>) repository.findAll();
     return reviews.stream()
             .map(r -> enrichTechnicalReviewDto(
-              DtoMapperTechnicalReview.builder().setTechnicalReview(r).build()))
+                        DtoMapperTechnicalReview
+                          .builder()
+                          .setTechnicalReview(r)
+                          .build()))
             .collect(Collectors.toList());
     //return (List<TechnicalReviewDto>) repository.findAll();
   }
@@ -49,17 +52,21 @@ public class TechnicalReviewServiceImpl implements TechnicalReviewService {
 		Page<TechnicalReview> reviews = repository.findAllByRequestId(requestId, pageable);
     return reviews
             .map(r -> enrichTechnicalReviewDto(
-                        DtoMapperTechnicalReview.builder().setTechnicalReview(r).build()));
+                        DtoMapperTechnicalReview
+                          .builder()
+                          .setTechnicalReview(r)
+                          .build()));
 	}
 
   @Override
   @Transactional(readOnly = true)
   public Optional<TechnicalReviewDto> findById(Long id) {
     return repository.findById(id)
-            .map(r -> enrichTechnicalReviewDto(DtoMapperTechnicalReview
-            .builder()
-            .setTechnicalReview(r)
-            .build()));
+            .map(r -> enrichTechnicalReviewDto(
+                        DtoMapperTechnicalReview
+                          .builder()
+                          .setTechnicalReview(r)
+                          .build()));
     //return repository.findById(id);
   }
 

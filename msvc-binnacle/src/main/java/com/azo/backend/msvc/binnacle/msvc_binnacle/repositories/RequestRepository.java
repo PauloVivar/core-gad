@@ -38,15 +38,16 @@ public interface RequestRepository extends JpaRepository<Request, Long>, JpaSpec
   // métodos para Dashboard
   //Representa el conteo de solicitudes por cada estado, agrupa los resultados por el estado de la solicitud.
   @Query("SELECT new com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.dtos_dashboard.StatusCountDto(r.status, COUNT(r)) FROM Request r GROUP BY r.status")
+  //Map<RequestStatus, Long> countAllByStatus();
   Map<RequestStatus, Long> countByStatus();
 
   //Calcula el promedio de días entre la fecha de entrada y la fecha de finalización para las solicitudes aprobadas.
-  @Query("SELECT AVG(DATEDIFF(r.endDate, r.entryDate)) FROM Request r WHERE r.status = 'APROBADO'")
+  @Query("SELECT AVG(TIMESTAMPDIFF(DAY, r.entryDate, r.endDate)) FROM Request r WHERE r.status = 'APROBADO' AND r.endDate IS NOT NULL")
   Double calculateAverageResolutionTime();
 
   //Esta consulta agrupa las solicitudes por estado, año y mes de la fecha de entrada
-  @Query("SELECT new com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.dtos_dashboard.StatusOverTimeDto(r.status, FUNCTION('YEAR', r.entryDate), FUNCTION('MONTH', r.entryDate), COUNT(r)) " +
-          "FROM Request r GROUP BY r.status, FUNCTION('YEAR', r.entryDate), FUNCTION('MONTH', r.entryDate)")
+  //@Query("SELECT new com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.dtos_dashboard.StatusOverTimeDto(r.status, FUNCTION('YEAR', r.entryDate), FUNCTION('MONTH', r.entryDate), COUNT(r)) FROM Request r GROUP BY r.status, FUNCTION('YEAR', r.entryDate), FUNCTION('MONTH', r.entryDate)")
+  @Query("SELECT new com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.dtos_dashboard.StatusOverTimeDto(r.status, YEAR(r.entryDate), MONTH(r.entryDate), COUNT(r)) FROM Request r GROUP BY r.status, YEAR(r.entryDate), MONTH(r.entryDate)")
   List<StatusOverTimeDto> getRequestsByStatusOverTime();
 
   //Esta consulta cuenta las solicitudes agrupándolas por su tipo.

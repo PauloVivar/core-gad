@@ -61,6 +61,7 @@ public class DashboardController {
   }
 
   //new endpoints
+  //ojo arreglar
   @GetMapping("/summary")
   public ResponseEntity<DashboardSummaryDto> getSummary() {
       return ResponseEntity.ok(dashboardService.generateSummary());
@@ -71,19 +72,22 @@ public class DashboardController {
       return ResponseEntity.ok(dashboardService.generateStatistics());
   }
 
+  //ojo arreglar
   @PutMapping("/requests/{id}/assign")
   public ResponseEntity<RequestDetailDto> assignRequest(@PathVariable Long id, @RequestBody Long userId) {
       return ResponseEntity.ok(dashboardService.assignRequest(id, userId));
   }
 
+  //ojo arreglar
   @PutMapping("/requests/{id}/status")
   public ResponseEntity<RequestDetailDto> updateRequestStatus(@PathVariable Long id, @RequestBody RequestStatus status) {
       return ResponseEntity.ok(dashboardService.updateRequestStatus(id, status));
   }
 
+  //ojo arreglar
   @PostMapping("/requests/{id}/notifications")
-  public ResponseEntity<Void> sendNotification(@PathVariable Long id, @RequestBody NotificationDto notification) {
-      dashboardService.sendNotification(id, notification);
+  public ResponseEntity<Void> sendNotification(@PathVariable Long id, @RequestBody NotificationDto notificationDto) {
+      dashboardService.sendNotification(id, notificationDto);
       return ResponseEntity.ok().build();
   }
 
@@ -97,11 +101,13 @@ public class DashboardController {
       return ResponseEntity.ok(dashboardService.rejectRequest(id));
   }
 
+  //ojo arreglar
   @PutMapping("/requests/{id}/reassign")
   public ResponseEntity<RequestDetailDto> reassignRequest(@PathVariable Long id, @RequestBody Long newUserId) {
       return ResponseEntity.ok(dashboardService.reassignRequest(id, newUserId));
   }
 
+  //ojo arreglar
   @GetMapping("/requests/export")
   public ResponseEntity<Resource> exportRequests(@RequestParam(defaultValue = "excel") String format) {
       try {

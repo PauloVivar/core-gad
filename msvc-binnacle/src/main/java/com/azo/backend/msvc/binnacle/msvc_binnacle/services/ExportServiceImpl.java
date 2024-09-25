@@ -11,11 +11,13 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.Request;
 
 import net.sf.jasperreports.engine.JRException;
 
+@Service
 public class ExportServiceImpl implements ExportService {
 
   @Autowired

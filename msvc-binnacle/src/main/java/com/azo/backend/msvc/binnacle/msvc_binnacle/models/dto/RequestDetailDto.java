@@ -4,11 +4,13 @@ import java.util.List;
 import java.time.LocalDateTime;
 
 import com.azo.backend.msvc.binnacle.msvc_binnacle.enums.RequestStatus;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.enums.RequestType;
 
 public class RequestDetailDto {
   private Long id;
   private LocalDateTime entryDate;
   private RequestStatus status;
+  private RequestType type;
   private Long citizenId;
   private String citizenName;            // Obtenido del msvc-users
   private String citizenEmail;           // Obtenido del msvc-users
@@ -25,6 +27,7 @@ public class RequestDetailDto {
       Long id, 
       LocalDateTime entryDate,
       RequestStatus status,
+      RequestType type,
       Long citizenId,
       String cadastralCode, 
       Long assignedToUserId,
@@ -33,6 +36,7 @@ public class RequestDetailDto {
       this.id = id;
       this.entryDate = entryDate;
       this.status = status;
+      this.type = type;
       this.citizenId = citizenId;
       this.cadastralCode = cadastralCode;
       this.assignedToUserId = assignedToUserId;
@@ -127,6 +131,14 @@ public class RequestDetailDto {
 
   public void setDocuments(List<DocumentDto> documents) {
     this.documents = documents;
+  }
+
+  public RequestType getType() {
+    return type;
+  }
+
+  public void setType(RequestType type) {
+    this.type = type;
   }
   
 }

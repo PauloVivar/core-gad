@@ -82,6 +82,7 @@ public class RequestServiceImpl implements RequestService {
     Request request = new Request();
     request.setEntryDate(requestDto.getEntryDate());
     request.setStatus(requestDto.getStatus());
+    request.setType(requestDto.getType());
     request.setCitizenId(requestDto.getCitizenId());
     request.setCadastralCode(requestDto.getCadastralCode());
     request.setAssignedToUserId(requestDto.getAssignedToUserId());

@@ -8,6 +8,9 @@ public class StatusOverTimeDto {
   private int month;
   private Long count;
   
+  public StatusOverTimeDto() {
+  }
+
   public StatusOverTimeDto(RequestStatus status, int year, int month, Long count) {
     this.status = status;
     this.year = year;

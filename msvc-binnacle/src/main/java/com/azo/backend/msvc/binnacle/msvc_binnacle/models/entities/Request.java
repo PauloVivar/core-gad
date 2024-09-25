@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.azo.backend.msvc.binnacle.msvc_binnacle.enums.RequestStatus;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.enums.RequestType;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -30,14 +31,19 @@ public class Request {
   private Long id;
   
   @NotBlank(message = "El entryDate es requerido.")
-  @Column(name = "start_date", nullable = false)
+  @Column(name = "entry_date", nullable = false)
   private LocalDateTime entryDate;
   
   @Column(name = "end_date")
   private LocalDateTime endDate;
+
+  @Enumerated(EnumType.STRING)
+  @NotBlank(message = "El tipo trámite es requerido.")
+  @Column(nullable = false)
+  private RequestType type;
   
   @Enumerated(EnumType.STRING)
-  @NotBlank(message = "El status es requerido.")
+  @NotBlank(message = "El estado es requerido.")
   @Column(nullable = false)
   private RequestStatus status;
 
@@ -67,6 +73,14 @@ public class Request {
 
   public void setId(Long id) {
     this.id = id;
+  }
+
+  public RequestType getType() {
+    return type;
+  }
+
+  public void setType(RequestType type) {
+    this.type = type;
   }
 
   public LocalDateTime getEntryDate() {

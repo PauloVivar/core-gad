@@ -160,6 +160,7 @@ public class DashboardService {
     // Mapear propiedades de Request a RequestDto
     dto.setId(request.getId());
     dto.setStatus(request.getStatus());
+    dto.setType(request.getType());
     dto.setEntryDate(request.getEntryDate());
     dto.setCitizenId(request.getCitizenId());
     dto.setCadastralCode(request.getCadastralCode());
