@@ -11,7 +11,9 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "technical_reviews")
@@ -27,8 +29,14 @@ public class TechnicalReview {
   @Column(name = "reviewer_id", nullable = false)
   private Long reviewerId;
 
+  @NotEmpty
   @Column(nullable = false)
   private LocalDateTime date;
+
+  @PrePersist
+  protected void onCreate() {
+    date = LocalDateTime.now();
+  }
 
   @Column(length = 1000)
   private String comments;

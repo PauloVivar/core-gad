@@ -20,7 +20,8 @@ public class RequestDetailDto {
   private String assignedToUserEmail;    // Obtenido del msvc-users
   private List<DocumentDto> documents;
 
-  public RequestDetailDto() {
+  public RequestDetailDto(RequestStatus status) {
+    this.status = RequestStatus.INGRESADO;
   }
 
   public RequestDetailDto(
@@ -35,7 +36,7 @@ public class RequestDetailDto {
     ) {
       this.id = id;
       this.entryDate = entryDate;
-      this.status = status;
+      this.status = status != null ? status : RequestStatus.INGRESADO; // Asegura que haya un valor por defecto
       this.type = type;
       this.citizenId = citizenId;
       this.cadastralCode = cadastralCode;

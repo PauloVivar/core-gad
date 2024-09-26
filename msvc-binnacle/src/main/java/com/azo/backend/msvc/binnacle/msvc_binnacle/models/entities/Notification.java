@@ -11,7 +11,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
 
 //paso 1: entidad Notificaciones
 
@@ -23,8 +25,14 @@ public class Notification {
   @GeneratedUUID
   private UUID id;
 
+  @NotEmpty
   @Column(nullable = false)
   private LocalDateTime date;
+
+  @PrePersist
+  protected void onCreate() {
+    date = LocalDateTime.now();
+  }
 
   @Column(nullable = false)
   private String content;

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.azo.backend.msvc.binnacle.msvc_binnacle.enums.DocumentType;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -13,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -32,7 +34,13 @@ public class Document {
   private DocumentType type;
   
   @NotEmpty
+  @Column(name = "upload_date", nullable = false)
   private LocalDateTime uploadDate;
+
+  @PrePersist
+  protected void onCreate() {
+    uploadDate = LocalDateTime.now();
+  }
 
   @NotEmpty
   private String fileUrl;

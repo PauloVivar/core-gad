@@ -1,18 +1,18 @@
 services:
   # db***
   # test_home_users
-  postgres16:
-    container_name: postgres16
-    image: postgres:16-alpine
-    ports:
-      - "5434:5432"
-    environment:
-      - POSTGRES_USER=paulov
-      - POSTGRES_PASSWORD=paulovroot
-      - POSTGRES_DB=db_msvc_users_prod
-    volumes:
-      - data-postgres:/var/lib/postgresql/data
-    restart: always
+  # postgres16:
+  #   container_name: postgres16
+  #   image: postgres:16-alpine
+  #   ports:
+  #     - "5434:5432"
+  #   environment:
+  #     - POSTGRES_USER=paulov
+  #     - POSTGRES_PASSWORD=paulovroot
+  #     - POSTGRES_DB=db_msvc_users_prod
+  #   volumes:
+  #     - data-postgres:/var/lib/postgresql/data
+  #   restart: always
   # test_home_users
 
   postgres16ac:
@@ -66,8 +66,8 @@ services:
     env_file:
       - ./msvc-users-prod/.env
     # test_home_users
-    depends_on:
-      - postgres16
+    # depends_on:
+    #   - postgres16
     # test_home_users
     restart: always
 
@@ -129,8 +129,8 @@ services:
 
 volumes:
   # test_home_users
-  data-postgres:
-    name: data-postgres
+  # data-postgres:
+  #   name: data-postgres
   # test_home_users
   data-postgres-ac:
     name: data-postgres-ac

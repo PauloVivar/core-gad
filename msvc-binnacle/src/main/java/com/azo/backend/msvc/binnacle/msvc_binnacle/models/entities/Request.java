@@ -18,6 +18,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 
 //paso 1: entidad Solicitudes
 //patrones
@@ -30,9 +31,14 @@ public class Request {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   
-  @NotBlank(message = "El entryDate es requerido.")
+  @NotEmpty
   @Column(name = "entry_date", nullable = false)
   private LocalDateTime entryDate;
+
+  @PrePersist
+  protected void onCreate() {
+    entryDate = LocalDateTime.now();
+  }
   
   @Column(name = "end_date")
   private LocalDateTime endDate;
@@ -46,11 +52,6 @@ public class Request {
   @NotBlank(message = "El estado es requerido.")
   @Column(nullable = false)
   private RequestStatus status;
-
-  @PrePersist
-  protected void onCreate() {
-    entryDate = LocalDateTime.now();
-  }
 
   @NotBlank(message = "El ciudadano es requerido.")
   @Column(nullable = false)

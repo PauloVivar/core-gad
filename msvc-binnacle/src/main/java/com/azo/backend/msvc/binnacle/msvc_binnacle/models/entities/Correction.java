@@ -11,7 +11,9 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "corrections")
@@ -27,8 +29,14 @@ public class Correction {
   @Column(length = 1000, nullable = false)
   private String description;
 
+  @NotEmpty
   @Column(name = "date_notified", nullable = false)
   private LocalDateTime dateNotified;
+
+  @PreUpdate
+  protected void onUpdate() {
+      this.dateNotified = LocalDateTime.now();
+  }
 
   @Column(nullable = false)
   private LocalDateTime deadline;

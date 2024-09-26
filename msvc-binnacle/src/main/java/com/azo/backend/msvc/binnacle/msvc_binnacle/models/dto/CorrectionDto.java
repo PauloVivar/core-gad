@@ -3,6 +3,7 @@ package com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto;
 import java.time.LocalDateTime;
 
 import com.azo.backend.msvc.binnacle.msvc_binnacle.enums.CorrectionStatus;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.enums.RequestStatus;
 
 public class CorrectionDto {
   private Long id;
@@ -15,6 +16,10 @@ public class CorrectionDto {
   public CorrectionDto() {
   }
 
+  public CorrectionDto(CorrectionStatus status) {
+    this.status = CorrectionStatus.PENDIENTE;
+  }
+
   public CorrectionDto(Long id, Long requestId, String description, LocalDateTime dateNotified, LocalDateTime deadline, CorrectionStatus status) {
     this.id = id;
     this.requestId = requestId;
@@ -22,6 +27,7 @@ public class CorrectionDto {
     this.dateNotified = dateNotified;
     this.deadline = deadline;
     this.status = status;
+    this.status = status != null ? status : CorrectionStatus.PENDIENTE;
   }
 
   public Long getId() {

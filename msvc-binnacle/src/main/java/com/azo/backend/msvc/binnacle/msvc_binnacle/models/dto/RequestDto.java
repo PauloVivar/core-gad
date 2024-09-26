@@ -16,7 +16,8 @@ public class RequestDto {
   private Long assignedToUserId;
   private List<DocumentDto> documents;
 
-  public RequestDto() {
+  public RequestDto(RequestStatus status) {
+    this.status = RequestStatus.INGRESADO;
   }
 
   public RequestDto(
@@ -32,7 +33,7 @@ public class RequestDto {
 
       this.id = id;
       this.entryDate = entryDate;
-      this.status = status;
+      this.status = status != null ? status : RequestStatus.INGRESADO; // Asegura que haya un valor por defecto
       this.type = type;
       this.citizenId = citizenId;
       this.cadastralCode = cadastralCode;
