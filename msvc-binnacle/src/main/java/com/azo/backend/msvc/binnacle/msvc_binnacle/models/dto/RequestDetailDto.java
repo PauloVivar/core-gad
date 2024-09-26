@@ -20,6 +20,10 @@ public class RequestDetailDto {
   private String assignedToUserEmail;    // Obtenido del msvc-users
   private List<DocumentDto> documents;
 
+  
+  public RequestDetailDto() {
+  }
+
   public RequestDetailDto(RequestStatus status) {
     this.status = RequestStatus.INGRESADO;
   }
