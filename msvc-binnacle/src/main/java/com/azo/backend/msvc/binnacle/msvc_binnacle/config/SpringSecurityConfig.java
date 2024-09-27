@@ -14,36 +14,36 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 public class SpringSecurityConfig {
-   @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-        config.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return source;
-    }
+  @Bean
+  SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http
+      //.authorizeHttpRequests()
+      .authorizeHttpRequests(authRules -> authRules
+        .requestMatchers(HttpMethod.GET, "/api/v1/requests").permitAll()
+        //.requestMatchers(HttpMethod.GET, "/api/v1/requests/{requestId}/documents").permitAll()
+        .requestMatchers(HttpMethod.POST, "/api/v1/requests").permitAll()
+        //.requestMatchers(HttpMethod.POST, "/api/v1/requests/{requestId}/documents").permitAll()
+        //.requestMatchers("/api/v1/users/*").hasRole("ADMIN")
+        .requestMatchers("/api/v1/requests/**").permitAll()
+        .anyRequest().authenticated())
 
-    @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            //.authorizeHttpRequests()
-            .authorizeHttpRequests(authRules -> authRules
-              .requestMatchers(HttpMethod.GET, "/api/v1/requests").permitAll()
-              //.requestMatchers(HttpMethod.GET, "/api/v1/requests/{requestId}/documents").permitAll()
-              .requestMatchers(HttpMethod.POST, "/api/v1/requests").permitAll()
-              //.requestMatchers(HttpMethod.POST, "/api/v1/requests/{requestId}/documents").permitAll()
-              //.requestMatchers("/api/v1/users/*").hasRole("ADMIN")
-              .requestMatchers("/api/v1/requests/**").permitAll()
-              .anyRequest().authenticated())
+      .csrf(config -> config.disable())                                                                    //desabilitar cuanto es API-REST, Monolito viene por defecto
+      .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+      .cors(cors -> cors.configurationSource(corsConfigurationSource()));
+    return http.build();
+  }
 
-            .csrf(config -> config.disable())                                                                    //desabilitar cuanto es API-REST, Monolito viene por defecto
-            .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()));
-          return http.build();
-    }
-  
+  @Bean
+  CorsConfigurationSource corsConfigurationSource() {
+      CorsConfiguration config = new CorsConfiguration();
+      config.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+      config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+      config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+      config.setAllowCredentials(true);
+
+      UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+      source.registerCorsConfiguration("/**", config);
+      return source;
+  }
 }
