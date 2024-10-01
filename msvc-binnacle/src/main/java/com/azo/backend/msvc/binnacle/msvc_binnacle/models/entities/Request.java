@@ -8,12 +8,16 @@ import com.azo.backend.msvc.binnacle.msvc_binnacle.enums.RequestType;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
@@ -25,48 +29,54 @@ import jakarta.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "requests")
-public class Request {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "request_type", discriminatorType = DiscriminatorType.STRING)
+public abstract class Request {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  protected Long id;
   
   @NotEmpty
   @Column(name = "entry_date", nullable = false)
-  private LocalDateTime entryDate;
+  protected LocalDateTime entryDate;
+  
+  @Column(name = "end_date")
+  protected LocalDateTime endDate;
+
+  @Enumerated(EnumType.STRING)
+  @NotBlank(message = "El tipo trámite es requerido.")
+  @Column(nullable = false)
+  protected RequestType type;
+  
+  @Enumerated(EnumType.STRING)
+  @NotBlank(message = "El estado es requerido.")
+  @Column(nullable = false)
+  protected RequestStatus status;
+
+  @NotBlank(message = "El ciudadano es requerido.")
+  @Column(nullable = false)
+  protected Long citizenId;
+
+  @NotBlank(message = "La clave catastral es requerida.")
+  protected String cadastralCode;
+
+  @NotBlank(message = "El Técnico es requerido.")
+  @Column(nullable = false)
+  protected Long assignedToUserId;
+
+  @OneToMany(mappedBy = "request", cascade = CascadeType.ALL, orphanRemoval = true)
+  @NotBlank(message = "Los documentos son requeridos.")
+  protected List<Document> documents;
 
   @PrePersist
   protected void onCreate() {
     entryDate = LocalDateTime.now();
   }
   
-  @Column(name = "end_date")
-  private LocalDateTime endDate;
+  public abstract void process();
 
-  @Enumerated(EnumType.STRING)
-  @NotBlank(message = "El tipo trámite es requerido.")
-  @Column(nullable = false)
-  private RequestType type;
-  
-  @Enumerated(EnumType.STRING)
-  @NotBlank(message = "El estado es requerido.")
-  @Column(nullable = false)
-  private RequestStatus status;
-
-  @NotBlank(message = "El ciudadano es requerido.")
-  @Column(nullable = false)
-  private Long citizenId;
-
-  @NotBlank(message = "La clave catastral es requerida.")
-  private String cadastralCode;
-
-  @NotBlank(message = "El Técnico es requerido.")
-  @Column(nullable = false)
-  private Long assignedToUserId;
-
-  @OneToMany(mappedBy = "request", cascade = CascadeType.ALL, orphanRemoval = true)
-  @NotBlank(message = "Los documentos son requeridos.")
-  private List<Document> documents;
+  //Getters and Setters
 
   public Long getId() {
     return id;
@@ -74,14 +84,6 @@ public class Request {
 
   public void setId(Long id) {
     this.id = id;
-  }
-
-  public RequestType getType() {
-    return type;
-  }
-
-  public void setType(RequestType type) {
-    this.type = type;
   }
 
   public LocalDateTime getEntryDate() {
@@ -98,6 +100,14 @@ public class Request {
 
   public void setEndDate(LocalDateTime endDate) {
     this.endDate = endDate;
+  }
+
+  public RequestType getType() {
+    return type;
+  }
+
+  public void setType(RequestType type) {
+    this.type = type;
   }
 
   public RequestStatus getStatus() {
@@ -136,8 +146,8 @@ public class Request {
     return documents;
   }
 
-  public void setDocuments(List<Document> list) {
-    this.documents = list;
-  }
+  public void setDocuments(List<Document> documents) {
+    this.documents = documents;
+  } 
 
 }

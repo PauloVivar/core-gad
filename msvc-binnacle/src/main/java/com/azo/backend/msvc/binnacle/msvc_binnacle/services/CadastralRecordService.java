@@ -12,9 +12,7 @@ public interface CadastralRecordService {
   List<CadastralRecordDto> findAll();
   Page<CadastralRecordDto> findAll(Pageable pageable);
   Optional<CadastralRecordDto> findById(String code);
-  CadastralRecordDto save(CadastralRecordDto cadastralRecordDto);
-  Optional<CadastralRecordDto> update(CadastralRecordDto cadastralRecordDto, String code);
-  void delete(String code);
+  //CadastralRecordDto save(CadastralRecordDto cadastralRecordDto);
   Optional<CadastralRecordDto> findByCitizenId(Long citizenId);
   
 }

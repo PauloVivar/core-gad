@@ -21,8 +21,8 @@ public class SubdivisionCertificate {
   private String details;
 
   @OneToOne
-  @JoinColumn(name = "cadastral_record_id")
-  private CadastralRecord cadastralRecord;
+  @JoinColumn(name = "request_id")
+  private Request request;
 
   public Long getId() {
     return id;
@@ -40,12 +40,12 @@ public class SubdivisionCertificate {
     this.details = details;
   }
 
-  public CadastralRecord getCadastralRecord() {
-    return cadastralRecord;
+  public Request getRequest() {
+    return request;
   }
 
-  public void setCadastralRecord(CadastralRecord cadastralRecord) {
-    this.cadastralRecord = cadastralRecord;
+  public void setRequest(Request request) {
+    this.request = request;
   }
   
 }

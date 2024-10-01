@@ -6,6 +6,7 @@ import com.azo.backend.msvc.binnacle.msvc_binnacle.models.User;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.RequestDetailDto;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.RequestDto;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.Request;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.RequestCadastralRecord;
 
 public class DtoMapperRequest {
 
@@ -41,7 +42,7 @@ public class DtoMapperRequest {
     if(request == null) {
         throw new RuntimeException("Debe pasar el Entity Request!");
     }
-    return new RequestDto(
+    RequestDto dto = new RequestDto(
       request.getId(),
       request.getEntryDate(),
       request.getStatus(),
@@ -53,8 +54,21 @@ public class DtoMapperRequest {
             request.getDocuments().stream()
                 .map(doc -> DtoMapperDocument.builder().setDocument(doc).build())
                 .collect(Collectors.toList()) : 
-            null
+            null,
+      null,
+      null
     );
+    if (request instanceof RequestCadastralRecord) {
+        RequestCadastralRecord cadastralRecord = (RequestCadastralRecord) request;
+        dto.setTechnicalReviews(cadastralRecord.getTechnicalReviews().stream()
+            .map(review -> DtoMapperTechnicalReview.builder().setTechnicalReview(review).build())
+            .collect(Collectors.toList()));
+        dto.setCorrections(cadastralRecord.getCorrections().stream()
+            .map(correction -> DtoMapperCorrection.builder().setCorrection(correction).build())
+            .collect(Collectors.toList()));
+    }
+
+    return dto;
   }
 
   public RequestDetailDto buildDetailDto() {

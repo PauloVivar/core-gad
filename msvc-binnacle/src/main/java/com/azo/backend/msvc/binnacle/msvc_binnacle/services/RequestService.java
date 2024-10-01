@@ -19,7 +19,6 @@ public interface RequestService {
 
   //listar todos las revisiones con paginación
   Page<RequestDto> findAll(Pageable pageable);
-  Page<RequestDto> findAllWithFilters(RequestFilter filter, Pageable pageable);
 
   //listar revisiones por id
   //RequestDto findById(Long id);
@@ -36,5 +35,6 @@ public interface RequestService {
 
   List<RequestDto> getRequestsByStatus(RequestStatus status);
   List<RequestDto> getRequestsByUser(Long userId);
+  Page<RequestDto> findAllWithFilters(RequestFilter filter, Pageable pageable);
 
 }

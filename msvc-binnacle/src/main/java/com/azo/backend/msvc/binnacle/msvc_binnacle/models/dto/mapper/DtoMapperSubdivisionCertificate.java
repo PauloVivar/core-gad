@@ -1,7 +1,7 @@
 package com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.mapper;
 
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.SubdivisionCertificateDto;
-import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.CadastralRecord;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.Request;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.SubdivisionCertificate;
 
 public class DtoMapperSubdivisionCertificate {
@@ -27,15 +27,25 @@ public class DtoMapperSubdivisionCertificate {
       return new SubdivisionCertificateDto(
           subdivisionCertificate.getId(),
           subdivisionCertificate.getDetails(),
-          subdivisionCertificate.getCadastralRecord() != null ? subdivisionCertificate.getCadastralRecord().getCadastralCode() : null
+          subdivisionCertificate.getRequest() != null ? subdivisionCertificate.getRequest().getId() : null
       );
   }
 
-  public static SubdivisionCertificate toEntity(SubdivisionCertificateDto dto, CadastralRecord cadastralRecord) {
+  public static SubdivisionCertificateDto build(SubdivisionCertificate subdivisionCertificate) {
+    return builder().setSubdivisionCertificate(subdivisionCertificate).build();
+  }
+
+  public static SubdivisionCertificate toEntity(SubdivisionCertificateDto dto) {
       SubdivisionCertificate certificate = new SubdivisionCertificate();
       certificate.setId(dto.getId());
       certificate.setDetails(dto.getDetails());
-      certificate.setCadastralRecord(cadastralRecord);
+      // No establecemos la relación con Request aquí, eso se hará en el servicio
+      return certificate;
+  }
+
+  public static SubdivisionCertificate toEntity(SubdivisionCertificateDto dto, Request request) {
+      SubdivisionCertificate certificate = toEntity(dto);
+      certificate.setRequest(request);
       return certificate;
   }
   

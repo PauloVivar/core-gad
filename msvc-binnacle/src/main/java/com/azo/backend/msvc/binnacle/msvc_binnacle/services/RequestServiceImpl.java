@@ -12,14 +12,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.azo.backend.msvc.binnacle.msvc_binnacle.clients.UserClientRest;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.enums.RequestStatus;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.factories.RequestFactory;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.User;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.CorrectionDto;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.DocumentDto;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.RequestDetailDto;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.RequestDto;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.TechnicalReviewDto;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.mapper.DtoMapperDocument;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.mapper.DtoMapperRequest;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.Document;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.Request;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.RequestCadastralRecord;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.RequestSubdivisionCertificate;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.filter.RequestFilter;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.filter.RequestSpecification;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.repositories.RequestRepository;
@@ -32,10 +37,20 @@ public class RequestServiceImpl implements RequestService {
   private RequestRepository repository;
 
   @Autowired
+  private RequestFactory requestFactory;
+
+  @Autowired
   private DocumentService documentService;
 
   @Autowired
   private UserClientRest userClientRest;
+
+  @Autowired
+  private TechnicalReviewService technicalReviewService;
+
+  @Autowired
+  private CorrectionService correctionService;
+
 
   @Override
   @Transactional(readOnly = true)
@@ -79,13 +94,17 @@ public class RequestServiceImpl implements RequestService {
   @Override
   @Transactional
   public RequestDto save(RequestDto requestDto) {
-    Request request = new Request();
+    //Request request = new Request();
+    Request request = requestFactory.createRequest(requestDto.getType());
     request.setEntryDate(requestDto.getEntryDate());
     request.setStatus(requestDto.getStatus());
     request.setType(requestDto.getType());
     request.setCitizenId(requestDto.getCitizenId());
     request.setCadastralCode(requestDto.getCadastralCode());
     request.setAssignedToUserId(requestDto.getAssignedToUserId());
+
+    // Llamar al método process() específico del tipo de solicitud
+    request.process();
 
     request = repository.save(request);
 
@@ -123,6 +142,13 @@ public class RequestServiceImpl implements RequestService {
       existingRequest.setDocuments(documents);
     }
 
+    // Manejar actualizaciones específicas según el tipo de solicitud
+    if (existingRequest instanceof RequestCadastralRecord) {
+      updateTechnicalReviewsAndCorrections(requestDto, id);
+    } else if (existingRequest instanceof RequestSubdivisionCertificate) {
+        // Aquí puedes manejar actualizaciones específicas para RequestSubdivisionCertificate si es necesario
+    }
+
     existingRequest = repository.save(existingRequest);
     return DtoMapperRequest.builder().setRequest(existingRequest).build();
   }
@@ -156,4 +182,33 @@ public class RequestServiceImpl implements RequestService {
 
   //Métodos Aux
 
+  private void updateTechnicalReviewsAndCorrections(RequestDto requestDto, Long requestId) {
+    // Actualizar revisiones técnicas
+    if (requestDto.getTechnicalReviews() != null) {
+      for (TechnicalReviewDto reviewDto : requestDto.getTechnicalReviews()) {
+        if (reviewDto.getId() == null) {
+            // Nueva revisión técnica
+            reviewDto.setRequestId(requestId);
+            technicalReviewService.save(reviewDto);
+        } else {
+            // Actualizar revisión técnica existente
+            technicalReviewService.update(reviewDto, reviewDto.getId());
+        }
+      }
+    }
+
+    // Actualizar correcciones
+    if (requestDto.getCorrections() != null) {
+      for (CorrectionDto correctionDto : requestDto.getCorrections()) {
+        if (correctionDto.getId() == null) {
+            // Nueva corrección
+            correctionDto.setRequestId(requestId);
+            correctionService.save(correctionDto);
+        } else {
+            // Actualizar corrección existente
+            correctionService.update(correctionDto, correctionDto.getId());
+        }
+      }
+    }
+  }
 }

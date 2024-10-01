@@ -15,6 +15,21 @@ services:
   #   restart: always
   # test_home_users
 
+  # migrate db gad_mun---
+  # postgres16b:
+  #   container_name: postgres16b
+  #   image: postgres:16-alpine
+  #   ports:
+  #     - "5436:5432"
+  #   environment:
+  #     - POSTGRES_USER=paulov
+  #     - POSTGRES_PASSWORD=paulovroot
+  #     - POSTGRES_DB=db_msvc_binnacle
+  #   volumes:
+  #     - data-postgres-b:/var/lib/postgresql/data
+  #   restart: always
+  # migrate db gad_mun---
+
   postgres16ac:
     container_name: postgres16ac
     image: postgres:16-alpine
@@ -26,19 +41,6 @@ services:
       - POSTGRES_DB=db_msvc_avaluos_catastros
     volumes:
       - data-postgres-ac:/var/lib/postgresql/data
-    restart: always
-
-  postgres16b:
-    container_name: postgres16b
-    image: postgres:16-alpine
-    ports:
-      - "5436:5432"
-    environment:
-      - POSTGRES_USER=paulov
-      - POSTGRES_PASSWORD=paulovroot
-      - POSTGRES_DB=db_msvc_binnacle
-    volumes:
-      - data-postgres-b:/var/lib/postgresql/data
     restart: always
 
   # apps***
@@ -71,6 +73,33 @@ services:
     # test_home_users
     restart: always
 
+  msvc-binnacle:
+    container_name: msvc-binnacle
+    #prod----------------
+    #image: paulovivar/msvc-binnacle:latest
+    #dev-----------------
+    # image: binnacle:latest
+    build: 
+      context: ./
+      dockerfile: ./msvc-binnacle/Dockerfile
+    ports:
+      - 8003:8003
+    #prod----------------
+    # environment: 
+    #   - PORT=8003
+    #   - DB_HOST=postgres16b:5432
+    #   - DB_DATABASE=db_msvc_binnacle
+    #   - DB_USERNAME=paulov
+    #   - DB_PASSWORD=paulovroot
+    #   - USERS_URL=msvc-users-prod:8001/api/v1/users
+    #dev-----------------
+    env_file: 
+      - ./msvc-binnacle/.env
+    depends_on:
+      - msvc-users-prod
+      # - postgres16b
+    restart: always
+
   msvc-avaluos-catastros:
     container_name: msvc-avaluos-catastros
     #prod----------------
@@ -100,39 +129,14 @@ services:
       - msvc-users-prod
     restart: always
 
-  msvc-binnacle:
-    container_name: msvc-binnacle
-    #prod----------------
-    #image: paulovivar/msvc-binnacle:latest
-    #dev-----------------
-    # image: binnacle:latest
-    build: 
-      context: ./
-      dockerfile: ./msvc-binnacle/Dockerfile
-    ports:
-      - 8003:8003
-    #prod----------------
-    # environment: 
-    #   - PORT=8003
-    #   - DB_HOST=postgres16b:5432
-    #   - DB_DATABASE=db_msvc_binnacle
-    #   - DB_USERNAME=paulov
-    #   - DB_PASSWORD=paulovroot
-    #   - USERS_URL=msvc-users-prod:8001/api/v1/users
-    #dev-----------------
-    env_file: 
-      - ./msvc-binnacle/.env
-    depends_on:
-      - postgres16b
-      - msvc-users-prod
-    restart: always
-
 volumes:
   # test_home_users
   # data-postgres:
   #   name: data-postgres
   # test_home_users
+  # migrate db gad_mun---
+  # data-postgres-b:
+  #   name: data-postgres-b
+  # migrate db gad_mun---
   data-postgres-ac:
     name: data-postgres-ac
-  data-postgres-b:
-    name: data-postgres-b

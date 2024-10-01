@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "cadastral_records")
+@Table(name = "gcficha")
 public class CadastralRecord {
 
   @Id
@@ -46,6 +46,10 @@ public class CadastralRecord {
   
   @Column(name = "gcestado")
   private Integer status;
+
+  //cédula-ruc
+  @Column(name = "gccedruc")
+  private String documentId;
 
   public String getCadastralCode() {
     return cadastralCode;
@@ -125,6 +129,14 @@ public class CadastralRecord {
 
   public void setStatus(Integer status) {
     this.status = status;
+  }
+
+  public String getDocumentId() {
+    return documentId;
+  }
+
+  public void setDocumentId(String documentId) {
+    this.documentId = documentId;
   }
 
 }

@@ -4,15 +4,15 @@ public class SubdivisionCertificateDto {
 
   private Long id;
   private String details;
-  private String cadastralRecordCode;
+  private Long requestId;
   
   public SubdivisionCertificateDto() {
   }
 
-  public SubdivisionCertificateDto(Long id, String details, String cadastralRecordCode) {
+  public SubdivisionCertificateDto(Long id, String details, Long requestId) {
     this.id = id;
     this.details = details;
-    this.cadastralRecordCode = cadastralRecordCode;
+    this.requestId = requestId;
   }
 
   public Long getId() {
@@ -31,14 +31,12 @@ public class SubdivisionCertificateDto {
     this.details = details;
   }
 
-  public String getCadastralRecordCode() {
-    return cadastralRecordCode;
+  public Long getRequestId() {
+    return requestId;
   }
 
-  public void setCadastralRecordCode(String cadastralRecordCode) {
-    this.cadastralRecordCode = cadastralRecordCode;
+  public void setRequestId(Long requestId) {
+    this.requestId = requestId;
   }
 
-  
-  
 }
