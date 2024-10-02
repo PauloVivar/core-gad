@@ -37,7 +37,7 @@ public class RequestSubdivisionCertificate extends Request {
     }
     this.subdivisionCertificate.setDetails("Certificado de No Pertenencia generado");
     this.setStatus(RequestStatus.APROBADO);
-}
+  }
 
   //Getters and Setters
   public SubdivisionCertificate getSubdivisionCertificate() {

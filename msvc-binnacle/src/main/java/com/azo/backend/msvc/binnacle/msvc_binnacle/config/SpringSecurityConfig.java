@@ -21,11 +21,18 @@ public class SpringSecurityConfig {
       //.authorizeHttpRequests()
       .authorizeHttpRequests(authRules -> authRules
         .requestMatchers(HttpMethod.GET, "/api/v1/requests").permitAll()
-        //.requestMatchers(HttpMethod.GET, "/api/v1/requests/{requestId}/documents").permitAll()
+        .requestMatchers(HttpMethod.GET, "/api/v1/cadastral-records", "/api/v1/cadastral-records/{cadastralCode}", "/api/v1/cadastral-records/citizen/{citizenId}").permitAll()
+        .requestMatchers(HttpMethod.GET, "/api/v1/subdivision-certificates").permitAll()
+        .requestMatchers(HttpMethod.GET, "/api/v1/dashboard").permitAll()
+
         .requestMatchers(HttpMethod.POST, "/api/v1/requests").permitAll()
-        //.requestMatchers(HttpMethod.POST, "/api/v1/requests/{requestId}/documents").permitAll()
+        .requestMatchers(HttpMethod.POST, "/api/v1/subdivision-certificates").permitAll()
+        .requestMatchers(HttpMethod.POST, "/api/v1/dashboard").permitAll()
         //.requestMatchers("/api/v1/users/*").hasRole("ADMIN")
         .requestMatchers("/api/v1/requests/**").permitAll()
+        .requestMatchers("/api/v1/cadastral-records/**").permitAll()
+        .requestMatchers("/api/v1/subdivision-certificates/**").permitAll()
+        .requestMatchers("/api/v1/dashboard/**").permitAll()
         .anyRequest().authenticated())
 
       .csrf(config -> config.disable())                                                                    //desabilitar cuanto es API-REST, Monolito viene por defecto

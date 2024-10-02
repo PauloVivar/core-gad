@@ -31,6 +31,8 @@ public interface RequestRepository extends JpaRepository<Request, Long>, JpaSpec
   // método para contar solicitudes por estado
   long countByStatus(RequestStatus status);
 
+  boolean existsByCadastralRecord_CadastralCode(String cadastralCode);
+
   // método para contar todas las solicitudes agrupadas por estado
   @Query("SELECT r.status, COUNT(r) FROM Request r GROUP BY r.status")
   List<Object[]> countTotalRequestsByStatus();

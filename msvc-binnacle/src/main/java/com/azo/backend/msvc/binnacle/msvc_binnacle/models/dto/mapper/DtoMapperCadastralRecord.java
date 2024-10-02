@@ -32,7 +32,8 @@ public class DtoMapperCadastralRecord {
             cadastralRecord.getCompanyDate(),
             cadastralRecord.getUpdateDate(),
             cadastralRecord.getHeritageZone(),
-            cadastralRecord.getStatus()
+            cadastralRecord.getStatus(),
+            cadastralRecord.getDocumentId()
         );
     }
 
@@ -48,6 +49,7 @@ public class DtoMapperCadastralRecord {
         record.setUpdateDate(dto.getUpdateDate());
         record.setHeritageZone(dto.getHeritageZone());
         record.setStatus(dto.getStatus());
+        record.setDocumentId(dto.getDocumentId());
         return record;
     }
   

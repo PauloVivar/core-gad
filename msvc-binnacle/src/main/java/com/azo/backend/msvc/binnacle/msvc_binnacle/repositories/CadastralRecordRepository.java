@@ -1,6 +1,7 @@
 package com.azo.backend.msvc.binnacle.msvc_binnacle.repositories;
 
-import java.util.Optional;
+//import java.util.Optional;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,6 +17,6 @@ public interface CadastralRecordRepository extends JpaRepository<CadastralRecord
   // List<CadastralRecord> findByCity(String city);
   // List<CadastralRecord> findByStatusAndHeritageZone(Integer status, Integer heritageZone);
   @Query("SELECT cr FROM CadastralRecord cr WHERE cr.documentId = :documentId")
-  Optional<CadastralRecord> findByDocumentId(@Param("documentId") String documentId);
+  List<CadastralRecord> findAllByDocumentId(@Param("documentId") String documentId);
 
 }

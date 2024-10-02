@@ -13,11 +13,14 @@ import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
@@ -58,11 +61,11 @@ public abstract class Request {
   @Column(nullable = false)
   protected Long citizenId;
 
-  @NotBlank(message = "La clave catastral es requerida.")
-  protected String cadastralCode;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "cadastral_code", referencedColumnName = "gcclacat")
+  private CadastralRecord cadastralRecord;
 
-  @NotBlank(message = "El Técnico es requerido.")
-  @Column(nullable = false)
+  @Column(nullable = true)
   protected Long assignedToUserId;
 
   @OneToMany(mappedBy = "request", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -126,14 +129,6 @@ public abstract class Request {
     this.citizenId = citizenId;
   }
 
-  public String getCadastralCode() {
-    return cadastralCode;
-  }
-
-  public void setCadastralCode(String cadastralCode) {
-    this.cadastralCode = cadastralCode;
-  }
-
   public Long getAssignedToUserId() {
     return assignedToUserId;
   }
@@ -148,6 +143,14 @@ public abstract class Request {
 
   public void setDocuments(List<Document> documents) {
     this.documents = documents;
-  } 
+  }
+
+  public CadastralRecord getCadastralRecord() {
+    return cadastralRecord;
+  }
+
+  public void setCadastralRecord(CadastralRecord cadastralRecord) {
+    this.cadastralRecord = cadastralRecord;
+  }
 
 }

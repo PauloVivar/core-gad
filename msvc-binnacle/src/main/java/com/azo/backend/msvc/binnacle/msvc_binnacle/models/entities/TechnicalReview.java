@@ -26,7 +26,7 @@ public class TechnicalReview {
   @Column(name = "request_id", nullable = false)
   private Long requestId;
 
-  @Column(name = "reviewer_id", nullable = false)
+  @Column(name = "reviewer_id", nullable = true)
   private Long reviewerId;
 
   @NotEmpty

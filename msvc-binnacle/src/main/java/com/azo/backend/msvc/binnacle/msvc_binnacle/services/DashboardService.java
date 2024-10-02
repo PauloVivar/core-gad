@@ -163,7 +163,7 @@ public class DashboardService {
     dto.setType(request.getType());
     dto.setEntryDate(request.getEntryDate());
     dto.setCitizenId(request.getCitizenId());
-    dto.setCadastralCode(request.getCadastralCode());
+    dto.setCadastralCode(request.getCadastralRecord().getCadastralCode());
     dto.setAssignedToUserId(request.getAssignedToUserId());
     
     // Obtener información del usuario desde el microservicio users-prod para ciudadano

@@ -48,7 +48,7 @@ public class DtoMapperRequest {
       request.getStatus(),
       request.getType(),
       request.getCitizenId(),
-      request.getCadastralCode(),
+      request.getCadastralRecord().getCadastralCode(),
       request.getAssignedToUserId(),
       request.getDocuments() != null ? 
             request.getDocuments().stream()
@@ -81,7 +81,7 @@ public class DtoMapperRequest {
       request.getStatus(),
       request.getType(),
       request.getCitizenId(),
-      request.getCadastralCode(),
+      request.getCadastralRecord().getCadastralCode(),
       request.getAssignedToUserId(),
       request.getDocuments() != null ? 
             request.getDocuments().stream()

@@ -21,13 +21,17 @@ import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.RequestDto;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.TechnicalReviewDto;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.mapper.DtoMapperDocument;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.mapper.DtoMapperRequest;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.CadastralRecord;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.Document;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.Request;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.RequestCadastralRecord;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.RequestSubdivisionCertificate;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.filter.RequestFilter;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.filter.RequestSpecification;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.repositories.CadastralRecordRepository;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.repositories.RequestRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 
 //paso 4.1.
 @Service
@@ -37,13 +41,13 @@ public class RequestServiceImpl implements RequestService {
   private RequestRepository repository;
 
   @Autowired
+  private CadastralRecordRepository cadastralRecordRepository;
+
+  @Autowired
   private RequestFactory requestFactory;
 
   @Autowired
   private DocumentService documentService;
-
-  @Autowired
-  private UserClientRest userClientRest;
 
   @Autowired
   private TechnicalReviewService technicalReviewService;
@@ -51,6 +55,8 @@ public class RequestServiceImpl implements RequestService {
   @Autowired
   private CorrectionService correctionService;
 
+  @Autowired
+  private UserClientRest userClientRest;
 
   @Override
   @Transactional(readOnly = true)
@@ -94,18 +100,25 @@ public class RequestServiceImpl implements RequestService {
   @Override
   @Transactional
   public RequestDto save(RequestDto requestDto) {
+
+    // Verificar si el cadastralCode existe
+    CadastralRecord cadastralRecord = cadastralRecordRepository.findById(requestDto.getCadastralCode())
+        .orElseThrow(() -> new EntityNotFoundException("No se encontró registro catastral con código: " + requestDto.getCadastralCode()));
+
     //Request request = new Request();
     Request request = requestFactory.createRequest(requestDto.getType());
     request.setEntryDate(requestDto.getEntryDate());
     request.setStatus(requestDto.getStatus());
     request.setType(requestDto.getType());
     request.setCitizenId(requestDto.getCitizenId());
-    request.setCadastralCode(requestDto.getCadastralCode());
-    request.setAssignedToUserId(requestDto.getAssignedToUserId());
+    request.setCadastralRecord(cadastralRecord);
+    //request.setAssignedToUserId(requestDto.getAssignedToUserId());
 
+    // Guarda primero para obtener el ID
+    request = repository.save(request);
     // Llamar al método process() específico del tipo de solicitud
     request.process();
-
+    // Guarda nuevamente para persistir los cambios
     request = repository.save(request);
 
     // Manejar documentos
@@ -128,8 +141,18 @@ public class RequestServiceImpl implements RequestService {
             .orElseThrow(() -> new RuntimeException("Request not found"));
     
     existingRequest.setStatus(requestDto.getStatus());
-    existingRequest.setCadastralCode(requestDto.getCadastralCode());
-    existingRequest.setAssignedToUserId(requestDto.getAssignedToUserId());
+    
+    // Actualizar CadastralRecord si ha cambiado
+    if (!existingRequest.getCadastralRecord().getCadastralCode().equals(requestDto.getCadastralCode())) {
+      CadastralRecord newCadastralRecord = cadastralRecordRepository.findById(requestDto.getCadastralCode())
+          .orElseThrow(() -> new EntityNotFoundException("CadastralRecord not found with code: " + requestDto.getCadastralCode()));
+      existingRequest.setCadastralRecord(newCadastralRecord);
+    }
+
+    // Actualizar assignedToUserId si está presente en el DTO
+    if (requestDto.getAssignedToUserId() != null) {
+        existingRequest.setAssignedToUserId(requestDto.getAssignedToUserId());
+    }
     
     // Actualizar documentos
     if (requestDto.getDocuments() != null) {
@@ -146,7 +169,7 @@ public class RequestServiceImpl implements RequestService {
     if (existingRequest instanceof RequestCadastralRecord) {
       updateTechnicalReviewsAndCorrections(requestDto, id);
     } else if (existingRequest instanceof RequestSubdivisionCertificate) {
-        // Aquí puedes manejar actualizaciones específicas para RequestSubdivisionCertificate si es necesario
+        // Aquí para manejar actualizaciones específicas para RequestSubdivisionCertificate aun por implementar
     }
 
     existingRequest = repository.save(existingRequest);
@@ -211,4 +234,5 @@ public class RequestServiceImpl implements RequestService {
       }
     }
   }
+
 }

@@ -22,18 +22,13 @@ import com.azo.backend.msvc.binnacle.msvc_binnacle.services.CadastralRecordServi
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/cadastral-records")
+@RequestMapping("/api/v1/cadastral-records")
 @CrossOrigin(originPatterns = "*")
 @Tag(name = "CadastralRecordController", description = "Operaciones relacionadas con las fichas catastrales")
 public class CadastralRecordController {
 
   @Autowired
   private CadastralRecordService service;
-
-  @GetMapping
-  public ResponseEntity<List<CadastralRecordDto>> findAll() {
-      return ResponseEntity.ok(service.findAll());
-  }
 
   @GetMapping("/page/{page}")
   public ResponseEntity<Page<CadastralRecordDto>> findAll(
@@ -42,23 +37,24 @@ public class CadastralRecordController {
       return ResponseEntity.ok(service.findAll(PageRequest.of(page, size)));
   }
 
-  @GetMapping("/{id}")
-  public ResponseEntity<CadastralRecordDto> findById(@PathVariable String code) {
-      return service.findById(code)
-              .map(ResponseEntity::ok)
-              .orElse(ResponseEntity.notFound().build());
-  }
-
-  // @PostMapping
-  // public ResponseEntity<CadastralRecordDto> create(@RequestBody CadastralRecordDto cadastralRecordDto) {
-  //     return ResponseEntity.status(HttpStatus.CREATED).body(service.save(cadastralRecordDto));
-  // }
-
-  @GetMapping("/citizen/{citizenId}")
-  public ResponseEntity<CadastralRecordDto> findByCitizenId(@PathVariable Long citizenId) {
-      return service.findByCitizenId(citizenId)
+  @GetMapping("/{cadastralCode}")
+  public ResponseEntity<CadastralRecordDto> findById(@PathVariable String cadastralCode) {
+      return service.findById(cadastralCode)
               .map(ResponseEntity::ok)
               .orElse(ResponseEntity.notFound().build());
   }
   
+  @GetMapping("/citizen/{citizenId}")
+  public ResponseEntity<?> findByCitizenId(@PathVariable Long citizenId) {
+    List<CadastralRecordDto> records = service.findByCitizenId(citizenId);
+    if (records.isEmpty()) {
+        return ResponseEntity.notFound().build();
+    }
+    return ResponseEntity.ok(records);
+  }
+  
+  // @PostMapping
+  // public ResponseEntity<CadastralRecordDto> create(@RequestBody CadastralRecordDto cadastralRecordDto) {
+  //     return ResponseEntity.status(HttpStatus.CREATED).body(service.save(cadastralRecordDto));
+  // }
 }

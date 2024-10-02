@@ -3,6 +3,7 @@ package com.azo.backend.msvc.binnacle.msvc_binnacle.services;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,8 +18,6 @@ import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.mapper.DtoMapperCa
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.CadastralRecord;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.repositories.CadastralRecordRepository;
 
-import feign.FeignException;
-
 @Service
 public class CadastralRecordServiceImpl implements CadastralRecordService{
 
@@ -27,15 +26,6 @@ public class CadastralRecordServiceImpl implements CadastralRecordService{
 
   @Autowired
   private UserClientRest userClientRest;
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<CadastralRecordDto> findAll() {
-    List<CadastralRecord> cadastralRecords = (List<CadastralRecord>) repository.findAll();
-    return cadastralRecords.stream()
-            .map(c -> DtoMapperCadastralRecord.builder().setCadastralRecord(c).build())
-            .collect(Collectors.toList());
-  }
 
   @Override
   @Transactional(readOnly = true)
@@ -65,22 +55,24 @@ public class CadastralRecordServiceImpl implements CadastralRecordService{
 
   @Override
   @Transactional(readOnly = true)
-  public Optional<CadastralRecordDto> findByCitizenId(Long citizenId) {
+  public List<CadastralRecordDto> findByCitizenId(Long citizenId) {
     try {
       // Se obtiene el usuario del microservicio de usuarios
       User user = userClientRest.detail(citizenId);
       
       // Luego, se busca el CadastralRecord usando el documentId del usuario
-      return repository.findByDocumentId(user.getContribuyenteCi())
-              //.map(DtoMapperCadastralRecord::build);
-              .map(c -> DtoMapperCadastralRecord
-                          .builder()
-                          .setCadastralRecord(c)
-                          .build());
-    } catch (FeignException.NotFound e) {
-        // Si el usuario no se encuentra, retornamos un Optional vacío
-        return Optional.empty();
+      if (user != null && user.getContribuyenteCi() != null) {
+        // Usa el contribuyenteCi para buscar los registros catastrales
+        List<CadastralRecord> records = repository.findAllByDocumentId(user.getContribuyenteCi());
+        return records.stream()
+            .map(record -> DtoMapperCadastralRecord.builder().setCadastralRecord(record).build())
+            .collect(Collectors.toList());
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
     }
+    // Si el usuario no se encuentra, retornamos un Optional vacío
+    return Collections.emptyList();
   }
   
 }

@@ -34,6 +34,7 @@ import feign.FeignException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
 //5. Se crea el ProcedureController
@@ -94,10 +95,12 @@ public class RequestController {
     try {
       RequestDto createdRequest = service.save(requestDto);
       return ResponseEntity.status(HttpStatus.CREATED).body(createdRequest);
+    } catch (EntityNotFoundException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
     } catch (Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
               .body("Error al crear la solicitud: " + e.getMessage());
-    }
+  }
     //return ResponseEntity.status(HttpStatus.CREATED).body(service.save(request));
   }
 

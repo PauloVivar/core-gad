@@ -30,7 +30,6 @@ public class RequestCadastralRecord extends Request {
   public void process() {
     // Implementación específica para procesar una solicitud de ficha catastral
     this.setStatus(RequestStatus.EN_REVISION);
-    
     // Crear una revisión técnica inicial
     initializeInitialReview();
   }
@@ -38,17 +37,16 @@ public class RequestCadastralRecord extends Request {
   private void initializeInitialReview() {
     TechnicalReview initialReview = new TechnicalReview();
     initialReview.setRequestId(this.getId());
-    initialReview.setReviewerId(this.getAssignedToUserId());
     initialReview.setDate(LocalDateTime.now());
     initialReview.setComments("Revisión inicial");
-    initialReview.setResult(ReviewResult.NECESITA_CORRECCION);
+    initialReview.setResult(ReviewResult.EN_PROCESO);
     this.addTechnicalReview(initialReview);
   }
 
   // Métodos específicos para manejar revisiones técnicas
   public void addTechnicalReview(TechnicalReview review) {
-  technicalReviews.add(review);
-  review.setRequestId(this.getId());
+      technicalReviews.add(review);
+      review.setRequestId(this.getId());
   }
 
   public void removeTechnicalReview(TechnicalReview review) {

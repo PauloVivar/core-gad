@@ -75,7 +75,9 @@ public class TechnicalReviewServiceImpl implements TechnicalReviewService {
   public TechnicalReviewDto save(TechnicalReviewDto reviewDto) {
     TechnicalReview review = new TechnicalReview();
     review.setRequestId(reviewDto.getRequestId());
-    review.setReviewerId(reviewDto.getReviewerId());
+    if (reviewDto.getReviewerId() != null) {
+      review.setReviewerId(reviewDto.getReviewerId());
+    }
     review.setDate(reviewDto.getDate());
     review.setComments(reviewDto.getComments());
     review.setResult(reviewDto.getResult());

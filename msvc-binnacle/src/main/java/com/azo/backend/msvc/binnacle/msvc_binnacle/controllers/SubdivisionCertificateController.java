@@ -24,7 +24,7 @@ import com.azo.backend.msvc.binnacle.msvc_binnacle.services.SubdivisionCertifica
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/subdivision-certificates")
+@RequestMapping("/api/v1/subdivision-certificates")
 @CrossOrigin(originPatterns = "*")
 @Tag(name = "CadastralRecordController", description = "Operaciones relacionadas con los certificadfos de pertenercer o no a fraccionamiento")
 public class SubdivisionCertificateController {
