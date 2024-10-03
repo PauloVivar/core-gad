@@ -90,7 +90,6 @@ public class DocumentServiceImpl implements DocumentService {
             .map(existingDocument -> {
                 // Actualizar los campos del documento existente
                 existingDocument.setType(documentDto.getType());
-                existingDocument.setUploadDate(documentDto.getUploadDate());
                 existingDocument.setFileUrl(documentDto.getFileUrl());
 
                 // Actualizar la relación con Request si es necesario

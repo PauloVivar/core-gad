@@ -13,7 +13,7 @@ public class CadastralRecordDto {
   private LocalDate companyDate;
   private LocalDate updateDate;
   private Integer heritageZone;
-  private Integer status;
+  private String status;
   private String documentId;
 
   public CadastralRecordDto() {
@@ -29,7 +29,7 @@ public class CadastralRecordDto {
     LocalDate companyDate, 
     LocalDate updateDate, 
     Integer heritageZone, 
-    Integer status,
+    String status,
     String documentId
     ) {
     this.cadastralCode = cadastralCode;
@@ -117,14 +117,6 @@ public class CadastralRecordDto {
     this.heritageZone = heritageZone;
   }
 
-  public Integer getStatus() {
-    return status;
-  }
-
-  public void setStatus(Integer status) {
-    this.status = status;
-  }
-
   public String getDocumentId() {
     return documentId;
   }
@@ -133,6 +125,12 @@ public class CadastralRecordDto {
     this.documentId = documentId;
   }
 
-  
+  public String getStatus() {
+    return status;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
+  }
   
 }

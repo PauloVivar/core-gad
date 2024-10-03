@@ -19,6 +19,8 @@ public class RequestDetailDto {
   private String assignedToUserName;     // Obtenido del msvc-users
   private String assignedToUserEmail;    // Obtenido del msvc-users
   private List<DocumentDto> documents;
+  private List<TechnicalReviewDto> technicalReviews;
+  private List<CorrectionDto> corrections;
 
   
   public RequestDetailDto() {
@@ -36,7 +38,9 @@ public class RequestDetailDto {
       Long citizenId,
       String cadastralCode, 
       Long assignedToUserId,
-      List<DocumentDto> documents
+      List<DocumentDto> documents,
+      List<TechnicalReviewDto> technicalReviews,
+      List<CorrectionDto> corrections
     ) {
       this.id = id;
       this.entryDate = entryDate;
@@ -46,6 +50,8 @@ public class RequestDetailDto {
       this.cadastralCode = cadastralCode;
       this.assignedToUserId = assignedToUserId;
       this.documents = documents;
+      this.technicalReviews = technicalReviews;
+      this.corrections = corrections;
   }
 
   //Getters and Setters
@@ -145,5 +151,23 @@ public class RequestDetailDto {
   public void setType(RequestType type) {
     this.type = type;
   }
+
+  public List<TechnicalReviewDto> getTechnicalReviews() {
+    return technicalReviews;
+  }
+
+  public void setTechnicalReviews(List<TechnicalReviewDto> technicalReviews) {
+    this.technicalReviews = technicalReviews;
+  }
+
+  public List<CorrectionDto> getCorrections() {
+    return corrections;
+  }
+
+  public void setCorrections(List<CorrectionDto> corrections) {
+    this.corrections = corrections;
+  }
+
+  
   
 }

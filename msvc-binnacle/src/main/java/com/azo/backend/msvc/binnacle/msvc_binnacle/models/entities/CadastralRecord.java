@@ -45,7 +45,7 @@ public class CadastralRecord {
   private Integer heritageZone;
   
   @Column(name = "gcestado")
-  private Integer status;
+  private String status;
 
   //cédula-ruc
   @Column(name = "gccedruc")
@@ -123,20 +123,20 @@ public class CadastralRecord {
     this.heritageZone = heritageZone;
   }
 
-  public Integer getStatus() {
-    return status;
-  }
-
-  public void setStatus(Integer status) {
-    this.status = status;
-  }
-
   public String getDocumentId() {
     return documentId;
   }
 
   public void setDocumentId(String documentId) {
     this.documentId = documentId;
+  }
+
+  public String getStatus() {
+    return status;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
   }
 
 }

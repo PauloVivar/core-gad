@@ -74,8 +74,8 @@ public class RequestController {
   @GetMapping("/{id}")
   @Operation(summary = "Obtener detalle solicitud", description = "Devuelve los detalles de una solicitud por su ID")
   public ResponseEntity<?> detail(
-    @Parameter(description = "ID de la solicitud", required = true) 
-    @PathVariable Long id) {
+          @Parameter(description = "ID de la solicitud", required = true) 
+          @PathVariable Long id) {
       Optional<RequestDetailDto> o = service.findById(id);
       if(o.isPresent()) {
         return ResponseEntity.ok(o.orElseThrow());

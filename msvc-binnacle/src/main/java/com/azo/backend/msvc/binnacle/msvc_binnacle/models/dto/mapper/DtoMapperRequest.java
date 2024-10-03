@@ -87,7 +87,9 @@ public class DtoMapperRequest {
             request.getDocuments().stream()
                 .map(doc -> DtoMapperDocument.builder().setDocument(doc).build())
                 .collect(Collectors.toList()) : 
-            null
+            null,
+      null,
+      null
     );
 
     if (citizen != null) {
@@ -103,6 +105,17 @@ public class DtoMapperRequest {
     if (request.getDocuments() != null) {
       dto.setDocuments(request.getDocuments().stream()
           .map(doc -> DtoMapperDocument.builder().setDocument(doc).build())
+          .collect(Collectors.toList()));
+    }
+
+    //test
+    if (request instanceof RequestCadastralRecord) {
+      RequestCadastralRecord cadastralRecord = (RequestCadastralRecord) request;
+      dto.setTechnicalReviews(cadastralRecord.getTechnicalReviews().stream()
+          .map(review -> DtoMapperTechnicalReview.builder().setTechnicalReview(review).build())
+          .collect(Collectors.toList()));
+      dto.setCorrections(cadastralRecord.getCorrections().stream()
+          .map(correction -> DtoMapperCorrection.builder().setCorrection(correction).build())
           .collect(Collectors.toList()));
     }
 
