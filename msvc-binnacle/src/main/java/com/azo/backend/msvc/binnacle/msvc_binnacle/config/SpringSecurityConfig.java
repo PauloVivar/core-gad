@@ -18,7 +18,6 @@ public class SpringSecurityConfig {
   @Bean
   SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http
-      //.authorizeHttpRequests()
       .authorizeHttpRequests(authRules -> authRules
         .requestMatchers(HttpMethod.GET, "/api/v1/requests", "/api/v1/requests/{id}", "/api/v1/requests/status/{status}", "/api/v1/requests/user/{userId}").permitAll()
         .requestMatchers(HttpMethod.GET, "/api/v1/cadastral-records", "/api/v1/cadastral-records/{cadastralCode}", "/api/v1/cadastral-records/citizen/{citizenId}").permitAll()
