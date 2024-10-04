@@ -28,6 +28,7 @@ public class SpringSecurityConfig {
         .requestMatchers(HttpMethod.POST, "/api/v1/requests").permitAll()
         .requestMatchers(HttpMethod.POST, "/api/v1/subdivision-certificates").permitAll()
         .requestMatchers(HttpMethod.POST, "/api/v1/dashboard").permitAll()
+        .requestMatchers(HttpMethod.DELETE, "/api/v1/requests/**").permitAll()
         //.requestMatchers("/api/v1/users/*").hasRole("ADMIN")
         .requestMatchers("/api/v1/requests/**").permitAll()
         .requestMatchers("/api/v1/cadastral-records/**").permitAll()
