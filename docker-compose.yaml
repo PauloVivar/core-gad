@@ -33,16 +33,18 @@ services:
   # apps***
   msvc-users-prod:
     container_name: msvc-users-prod
-    #prod----------------
-    # image: paulovivar/msvc-users-prod:latest
-    #dev-----------------
+    # prod----------------
+    # image: paulovivar/users:latest
+    # dev-----------------
     # image: users:latest
+    # comentar en server--------
     build: 
       context: ./
       dockerfile: ./msvc-users-prod/Dockerfile
+    # comentar en server--------
     ports:
       - 8001:8001
-    #prod----------------
+    # prod----------------
     # environment: 
     #   - PORT=8001
     #   - DB_HOST=172.26.11.35:5432
@@ -50,10 +52,12 @@ services:
     #   - DB_USERNAME=postgres
     #   - DB_PASSWORD=
     #   - SPRING_MAIL_PASSWORD=eqwyqgalkzsykgvi
-    #   - PROCEDURES_URL=msvc-avaluos-catastros:8002/api/v1/procedures
-    #dev-----------------
+    #   - BINNACLE_URL=msvc-binnacle:8003/api/v1/requests
+    # dev-----------------
+    # comentar en server--------
     env_file:
       - ./msvc-users-prod/.env
+    # comentar en server--------
     # test_home_users
     # depends_on:
     #   - postgres16
@@ -62,16 +66,16 @@ services:
 
   msvc-binnacle:
     container_name: msvc-binnacle
-    #prod----------------
-    #image: paulovivar/msvc-binnacle:latest
-    #dev-----------------
+    # prod----------------
+    # image: paulovivar/binnacle:latest
+    # dev-----------------
     # image: binnacle:latest
     build: 
       context: ./
       dockerfile: ./msvc-binnacle/Dockerfile
     ports:
       - 8003:8003
-    #prod----------------
+    # prod----------------
     # environment: 
     #   - PORT=8003
     #   - DB_HOST=host.docker.internal:5433
@@ -79,15 +83,15 @@ services:
     #   - DB_USERNAME=paulov
     #   - DB_PASSWORD=paulovroot
     #   - USERS_URL=msvc-users-prod:8001/api/v1/users
-    #dev-----------------
+    # dev-----------------
     env_file: 
       - ./msvc-binnacle/.env
     depends_on:
       - msvc-users-prod
       # - postgres16b
     restart: always
-
-volumes:
+# usar cuando se dockeriza la db
+# volumes:
   # test_home_users
   # data-postgres:
   #   name: data-postgres

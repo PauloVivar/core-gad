@@ -20,6 +20,7 @@
     <module>msvc-avaluos-catastros</module>
     <module>msvc-binnacle</module>
     <module>msvc-dashboard</module>
+    <module>msvc-auth</module>
   </modules>
 
 	<name>core-gad</name>
