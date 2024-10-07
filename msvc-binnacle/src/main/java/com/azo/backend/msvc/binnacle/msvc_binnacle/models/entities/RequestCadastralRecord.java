@@ -29,7 +29,7 @@ public class RequestCadastralRecord extends Request {
   @Override
   public void process() {
     // Implementación específica para procesar una solicitud de ficha catastral
-    this.setStatus(RequestStatus.EN_REVISION);
+    this.setStatus(RequestStatus.INGRESADO);
     // Crear una revisión técnica inicial
     initializeInitialReview();
   }
