@@ -66,22 +66,6 @@ public class ProcedureServiceImpl implements ProcedureService {
     return repository.save(procedure);
   }
 
-  // @Override
-  // @Transactional
-  // public Optional<Procedure> update(Procedure procedure, Long id) {
-  //   Optional<Procedure> o = repository.findById(id);
-  //   Procedure procedureOptional = null;
-  //   if(o.isPresent()){
-  //     Procedure procedureDb = o.orElseThrow();
-  //     procedureDb.setStatus(procedure.getStatus());
-  //     procedureDb.setTypeProcedure(procedure.getTypeProcedure());
-  //     procedureDb.setStartDate(procedure.getStartDate());
-  //     procedureDb.setEndDate(procedure.getEndDate());
-  //     procedureOptional = repository.save(procedureDb);
-  //   }
-  //   return Optional.ofNullable(procedureOptional);
-  // }
-
   @Override
   @Transactional
   public void remove(Long id) {

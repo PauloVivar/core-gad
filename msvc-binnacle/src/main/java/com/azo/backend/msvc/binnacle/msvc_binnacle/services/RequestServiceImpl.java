@@ -179,7 +179,6 @@ public class RequestServiceImpl implements RequestService {
   @Override
   @Transactional
   public void remove(Long id) {
-    //repository.deleteById(id);
     Optional<Request> o = repository.findById(id);
     if (o.isPresent()) {
       Request request = o.orElseThrow();

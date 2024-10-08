@@ -80,16 +80,16 @@ public class SecurityConfig {
 		return http.build();
 	}
 
-	@Bean
-	public UserDetailsService userDetailsService() {
-		UserDetails userDetails = User.withDefaultPasswordEncoder()
-				.username("user")
-				.password("password")
-				.roles("USER")
-				.build();
+	// @Bean
+	// public UserDetailsService userDetailsService() {
+	// 	UserDetails userDetails = User.withDefaultPasswordEncoder()
+	// 			.username("user")
+	// 			.password("password")
+	// 			.roles("USER")
+	// 			.build();
 
-		return new InMemoryUserDetailsManager(userDetails);
-	}
+	// 	return new InMemoryUserDetailsManager(userDetails);
+	// }
 
 	@Bean
 	public RegisteredClientRepository registeredClientRepository() {
@@ -124,7 +124,7 @@ public class SecurityConfig {
 		return new ImmutableJWKSet<>(jwkSet);
 	}
 
-	private static KeyPair generateRsaKey() { (6)
+	private static KeyPair generateRsaKey() {
 		KeyPair keyPair;
 		try {
 			KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
