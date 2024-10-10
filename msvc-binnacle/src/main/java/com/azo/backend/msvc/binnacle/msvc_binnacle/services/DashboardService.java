@@ -77,7 +77,7 @@ public class DashboardService {
               ));
 
       long totalRequests = requestCountByStatus.values().stream().mapToLong(Long::longValue).sum();
-      long pendingRequests = requestCountByStatus.getOrDefault(RequestStatus.PENDIENTE_SUBSANACION, 0L)
+      long pendingRequests = requestCountByStatus.getOrDefault(RequestStatus.PENDIENTE, 0L)
                             + requestCountByStatus.getOrDefault(RequestStatus.EN_REVISION, 0L);
 
       return new DashboardDto(requestCountByStatus, totalRequests, pendingRequests);
@@ -89,7 +89,7 @@ public class DashboardService {
     summary.setTotalRequests(requestRepository.count());
     summary.setRequestCountByStatus(requestRepository.countByStatus());
     summary.setAverageResolutionTime(requestRepository.calculateAverageResolutionTime());
-    summary.setPendingRequests(requestRepository.countByStatus().get(RequestStatus.PENDIENTE_SUBSANACION));
+    summary.setPendingRequests(requestRepository.countByStatus().get(RequestStatus.PENDIENTE));
     return summary;
   }
 
