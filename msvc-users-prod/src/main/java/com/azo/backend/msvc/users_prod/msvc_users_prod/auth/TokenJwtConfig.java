@@ -1,8 +1,8 @@
 package com.azo.backend.msvc.users_prod.msvc_users_prod.auth;
 
 import javax.crypto.SecretKey;
-import io.jsonwebtoken.Jwts;
 
+import io.jsonwebtoken.Jwts;
 
 public class TokenJwtConfig {
   //public final static String SECRET_KEY = "algun_texto_secreto_random";

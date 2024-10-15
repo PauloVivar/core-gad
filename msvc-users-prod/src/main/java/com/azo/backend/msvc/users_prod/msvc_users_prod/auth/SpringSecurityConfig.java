@@ -55,8 +55,11 @@ public class SpringSecurityConfig {
         //.requestMatchers(HttpMethod.GET, "/api/v1/users/{id}").hasAnyRole("ADMIN", "USER")
         .requestMatchers(HttpMethod.GET, "/api/v1/terms/status/{id}").hasAnyRole("ADMIN", "USER")
         .requestMatchers(HttpMethod.GET, "/api/v1/terms/latest").permitAll()
-        .requestMatchers(HttpMethod.GET, "/api/v1/users", "/api/v1/users/page/{page}", "/api/v1/users/{id}").permitAll()
+        .requestMatchers(HttpMethod.GET, "/api/v1/users", "/api/v1/users/page/{page}").permitAll()
+        .requestMatchers(HttpMethod.GET, "/api/v1/users/{id}").permitAll()
         .requestMatchers(HttpMethod.GET, "/api/v1/taxpayers", "/api/v1/taxpayers/page/{page}", "/api/v1/taxpayers/{ci}", "/api/v1/taxpayers/check/{ci}").permitAll()
+
+        .requestMatchers(HttpMethod.GET, "/api/v1/requests", "/api/v1/requests/{id}", "/api/v1/requests/status/{status}", "/api/v1/requests/user/{userId}").permitAll()
 
         .requestMatchers(HttpMethod.POST, "/api/v1/terms").hasRole("ADMIN")
         .requestMatchers(HttpMethod.POST, "/api/v1/terms/record").permitAll()
@@ -65,13 +68,14 @@ public class SpringSecurityConfig {
         .requestMatchers(HttpMethod.POST, "/api/v1/password/reset-request").permitAll()
         .requestMatchers(HttpMethod.POST, "/api/v1/password/reset").permitAll()
 
+        .requestMatchers(HttpMethod.PUT, "/api/v1/users/*").hasAnyRole("ADMIN", "SERVICE")
+        .requestMatchers(HttpMethod.DELETE, "/api/v1/users/*").hasRole("ADMIN")
+
         .requestMatchers("/api/v1/terms/*").hasRole("ADMIN")
-        .requestMatchers("/api/v1/users/*").hasRole("ADMIN")
+        //.requestMatchers("/api/v1/users/*").hasRole("ADMIN")
         .requestMatchers("/api/v1/taxpayers/*").hasRole("ADMIN")
         .requestMatchers("/api/v1/procedures/*").permitAll()
-        
-        //.requestMatchers(HttpMethod.DELETE, "/api/v1/users/{id}").hasRole("ADMIN")
-        //.requestMatchers(HttpMethod.PUT, "/api/v1/users/{id}").hasRole("ADMIN")
+
         .anyRequest().authenticated())
         //.and()
       .addFilter(new JwtAuthenticationFilter(authenticationConfiguration.getAuthenticationManager(), userRepository))      //para 
