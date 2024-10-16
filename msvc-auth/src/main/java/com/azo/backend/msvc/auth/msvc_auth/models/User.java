@@ -7,7 +7,7 @@ public class User {
   private String username;
   private String password;
   private String email;
-  private List<String> roles;
+  private List<Role> roles;
 
   public Long getId() {
     return id;
@@ -33,10 +33,10 @@ public class User {
   public void setEmail(String email) {
     this.email = email;
   }
-  public List<String> getRoles() {
+  public List<Role> getRoles() {
     return roles;
   }
-  public void setRoles(List<String> roles) {
+  public void setRoles(List<Role> roles) {
     this.roles = roles;
   }
 
