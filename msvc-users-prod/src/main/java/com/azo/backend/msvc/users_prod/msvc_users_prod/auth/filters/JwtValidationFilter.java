@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -30,11 +29,6 @@ import static com.azo.backend.msvc.users_prod.msvc_users_prod.auth.TokenJwtConfi
 //4. Jwt Validation,  comparar tokens
 public class JwtValidationFilter extends BasicAuthenticationFilter {
 
-
-  //test
-  @Value("${inter-service.secret}")
-  private String interServiceSecret;
-
   public JwtValidationFilter(AuthenticationManager authenticationManager) {
     super(authenticationManager);
   }
@@ -54,22 +48,8 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
 
     String token = header.replace(PREFIX_TOKEN, "");
 
-    try {
+    try {    
 
-      // Verificar si es un token de servicio
-      //test
-      if (token.equals(interServiceSecret)) {
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-          "service", null, Arrays.asList(new SimpleGrantedAuthority("ROLE_SERVICE"))
-        );
-        SecurityContextHolder.getContext().setAuthentication(auth);
-        chain.doFilter(request, response);
-        return;
-      }
-      //test
-      
-
-      // Si no es un token de servicio, proceder con la lógica existente
       Claims claims = Jwts.parser()
       .verifyWith(SECRET_KEY)
       .build()

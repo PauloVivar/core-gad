@@ -23,7 +23,6 @@ public class SpringSecurityConfig {
         .requestMatchers(HttpMethod.GET, "/api/v1/cadastral-records", "/api/v1/cadastral-records/{cadastralCode}", "/api/v1/cadastral-records/citizen/{citizenId}").permitAll()
         .requestMatchers(HttpMethod.GET, "/api/v1/subdivision-certificates").permitAll()
         .requestMatchers(HttpMethod.GET, "/api/v1/dashboard").permitAll()
-        .requestMatchers(HttpMethod.GET, "/api/v1/users", "/api/v1/users/page/{page}", "/api/v1/users/{id}").permitAll()
 
         .requestMatchers(HttpMethod.POST, "/api/v1/requests").permitAll()
         .requestMatchers(HttpMethod.POST, "/api/v1/subdivision-certificates").permitAll()

@@ -128,7 +128,5 @@ public class RequestDto {
   public void setCorrections(List<CorrectionDto> corrections) {
     this.corrections = corrections;
   }
-
-  
   
 }

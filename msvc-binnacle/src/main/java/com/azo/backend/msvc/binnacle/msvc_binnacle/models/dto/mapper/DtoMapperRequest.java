@@ -87,9 +87,9 @@ public class DtoMapperRequest {
             request.getDocuments().stream()
                 .map(doc -> DtoMapperDocument.builder().setDocument(doc).build())
                 .collect(Collectors.toList()) : 
-            null
-      // null,
-      // null
+            null,
+      null,
+      null
     );
 
     if (citizen != null) {

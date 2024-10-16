@@ -13,7 +13,6 @@ import com.azo.backend.msvc.binnacle.msvc_binnacle.models.User;
 //@FeignClient(name = "msvc-users-prod", url = "host.docker.internal:8001/api/v1/users")
 //@FeignClient(name = "msvc-users-prod", url = "msvc-users-prod:8001/api/v1/users")
 @FeignClient(name = "msvc-users-prod", url = "${msvc.users.url}", configuration = FeignClientConfig.class)
-//@FeignClient(name = "msvc-users-prod", url = "${msvc.users.url}")
 public interface UserClientRest {
   
   @GetMapping("/{id}")
