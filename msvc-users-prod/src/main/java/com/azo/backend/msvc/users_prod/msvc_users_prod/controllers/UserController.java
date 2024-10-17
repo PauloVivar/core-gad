@@ -34,8 +34,6 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
-
 //5. Quinto Create Controller -> Mapeo de endpoints, finalización del CRUD
 
 @RestController
@@ -194,7 +192,6 @@ public class UserController {
   public ResponseEntity<?> getUsersByProcedure(@RequestParam List<Long> ids) {
       return ResponseEntity.ok(service.listByIds(ids));
   }
-  
   
   //METODOS AUXILIARES
   //metodo utils para validar entrada de data
