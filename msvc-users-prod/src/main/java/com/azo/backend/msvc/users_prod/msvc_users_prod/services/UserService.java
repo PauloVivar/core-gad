@@ -26,6 +26,8 @@ public interface UserService {
   //buscar users por id
   Optional<UserDetailDto> findById(Long id);
 
+  Optional<UserDto> findByUsername(String username);
+
   //guardar user
   UserDto save(User user);
 

@@ -59,8 +59,9 @@ services:
       - ./msvc-users-prod/.env
     # comentar en server--------
     # test_home_users
-    # depends_on:
-    #   - postgres16
+    depends_on:
+      - msvc-auth
+    # - postgres16
     # test_home_users
     restart: always
 
@@ -87,9 +88,22 @@ services:
     env_file: 
       - ./msvc-binnacle/.env
     depends_on:
+      - msvc-auth
       - msvc-users-prod
       # - postgres16b
     restart: always
+
+  msvc-auth:
+    container_name: msvc-auth
+    build:
+      context: ./
+      dockerfile: ./msvc-auth/Dockerfile
+    ports:
+      - 9000:9000
+    env_file:
+      - ./msvc-auth/.env
+    restart: always
+
 # usar cuando se dockeriza la db
 # volumes:
   # test_home_users

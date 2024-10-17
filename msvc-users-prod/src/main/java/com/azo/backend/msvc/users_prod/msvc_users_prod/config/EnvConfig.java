@@ -4,8 +4,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 
-@Configuration
 // @PropertySource("classpath:.env")
+@Configuration
 @PropertySources({
   @PropertySource(value = "classpath:.env", ignoreResourceNotFound = true),
   @PropertySource(value = "file:.env", ignoreResourceNotFound = true),

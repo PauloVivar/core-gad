@@ -8,13 +8,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.azo.backend.msvc.auth.msvc_auth.models.User;
 
 @FeignClient(name = "msvc-users-prod", url = "${msvc.users.url}")
-public class UserClientRest {
+public interface UserClientRest {
 
   @GetMapping("/{id}")
   User detail(@PathVariable Long id);
 
   @GetMapping("/api/v1/users/search")
-  public
   User findByUsername(@RequestParam String username);
 
 }

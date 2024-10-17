@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.azo.backend.msvc.users_prod.msvc_users_prod.models.dto.UserDetailDto;
@@ -83,6 +82,13 @@ public class UserController {
     }
     return ResponseEntity.notFound().build();
   }
+
+  @GetMapping("/search")
+    public ResponseEntity<?> findByUsername(@RequestParam String username) {
+        return service.findByUsername(username)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 
   //***Forma alternativa para el post
   // @PostMapping
@@ -188,6 +194,7 @@ public class UserController {
   public ResponseEntity<?> getUsersByProcedure(@RequestParam List<Long> ids) {
       return ResponseEntity.ok(service.listByIds(ids));
   }
+  
   
   //METODOS AUXILIARES
   //metodo utils para validar entrada de data

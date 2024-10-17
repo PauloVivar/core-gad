@@ -1,10 +1,17 @@
 package com.azo.backend.msvc.users_prod.msvc_users_prod.controllers;
 
+import java.time.Instant;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,8 +33,14 @@ public class PasswordResetController {
   @Autowired
   private UserService userService;
 
+  @Autowired
+  private JwtDecoder jwtDecoder;
+
   @PostMapping("/reset-request")
-  public ResponseEntity<?> resetPasswordRequest(@Valid @RequestBody PasswordResetRequestDto requestDto) {
+  public ResponseEntity<?> resetPasswordRequest(
+      @Valid 
+      @RequestBody 
+      PasswordResetRequestDto requestDto) {
     return userService.findByEmail(requestDto.getEmail())
         .map(user -> {
             @SuppressWarnings("unused")
@@ -39,17 +52,44 @@ public class PasswordResetController {
   }
 
   @PostMapping("/reset")
-  public ResponseEntity<?> resetPassword(@Valid @RequestBody PasswordResetDto resetDto) {
+  public ResponseEntity<?> resetPassword(
+      @Valid 
+      @RequestBody 
+      PasswordResetDto resetDto,
+      @RequestHeader("Authorization") String authHeader) {
+
+    String token = authHeader.replace("Bearer ", "");
+    if (!validateToken(token)) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token inválido o expirado");
+    }
+
+    String email = getEmailFromToken(token);
+    User user = userService.findByEmail(email).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
     String result = userService.validatePasswordResetCode(resetDto.getCode());
-    if(result != null) {
+    if (result != null) {
         return ResponseEntity.badRequest().body("Código inválido o expirado");
     }
-    User user = userService.getUserByPasswordResetCode(resetDto.getCode());
-    if(user != null) {
-        userService.changeUserPassword(user, resetDto.getNewPassword());
-        return ResponseEntity.ok("Contraseña cambiada exitosamente");
-    } else {
-        return ResponseEntity.badRequest().body("Error al cambiar la contraseña");
+
+    userService.changeUserPassword(user, resetDto.getNewPassword());
+    return ResponseEntity.ok("Contraseña cambiada exitosamente");
+  }
+
+  private boolean validateToken(String token) {
+    try {
+      Jwt jwt = jwtDecoder.decode(token);
+      Instant now = Instant.now();
+      Instant expiresAt = jwt.getExpiresAt();
+      return expiresAt != null && !expiresAt.isBefore(now) && 
+             "password_reset".equals(jwt.getClaim("purpose"));
+    } catch (JwtException e) {
+        return false;
     }
   }
+
+  private String getEmailFromToken(String token) {
+    Jwt jwt = jwtDecoder.decode(token);
+    return jwt.getSubject();
+  }
+
 }

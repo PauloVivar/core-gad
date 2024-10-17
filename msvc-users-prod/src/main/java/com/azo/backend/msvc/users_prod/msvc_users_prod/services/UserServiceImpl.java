@@ -1,8 +1,8 @@
 package com.azo.backend.msvc.users_prod.msvc_users_prod.services;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -12,10 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.azo.backend.msvc.users_prod.msvc_users_prod.auth.TokenJwtConfig;
+// import com.azo.backend.msvc.users_prod.msvc_users_prod.auth.TokenJwtConfig;
 import com.azo.backend.msvc.users_prod.msvc_users_prod.clients.ProcedureClientRest;
 import com.azo.backend.msvc.users_prod.msvc_users_prod.models.IUser;
 import com.azo.backend.msvc.users_prod.msvc_users_prod.models.dto.UserDetailDto;
@@ -32,8 +35,6 @@ import com.azo.backend.msvc.users_prod.msvc_users_prod.repositories.PasswordRese
 import com.azo.backend.msvc.users_prod.msvc_users_prod.repositories.RoleRepository;
 import com.azo.backend.msvc.users_prod.msvc_users_prod.repositories.TermsAcceptanceRepository;
 import com.azo.backend.msvc.users_prod.msvc_users_prod.repositories.UserRepository;
-
-import io.jsonwebtoken.Jwts;
 
 //4. Cuarto Implementación de UserService -> volver realidad el CRUD
 
@@ -53,20 +54,22 @@ public class UserServiceImpl implements UserService {
   private TermsAcceptanceRepository termsAcceptanceRepository;
 
   @Autowired
-  private PasswordEncoder passwordEncoder;
+  private PasswordResetCodeRepository passwordResetCodeRepository;
 
   @Autowired
   private TermsService termsService;
-
-  //test
-  @Autowired
-    private PasswordResetCodeRepository passwordResetCodeRepository;
-
+  
   @Autowired
   private EmailService emailService;
 
   @Autowired
+  private PasswordEncoder passwordEncoder;
+
+  @Autowired
   private ProcedureClientRest client;
+
+  @Autowired
+  private JwtEncoder jwtEncoder;
   
   //listar todos los users
   @Override
@@ -97,6 +100,13 @@ public class UserServiceImpl implements UserService {
       .setUser(u)
       .buildDetail());
     //return repository.findById(id);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public Optional<UserDto> findByUsername(String username) {
+    return repository.findByUsername(username)
+                .map(user -> DtoMapperUser.builder().setUser(user).build());
   }
 
   //guardar user
@@ -248,17 +258,16 @@ public class UserServiceImpl implements UserService {
   }
 
   private String generateJwtToken(User user) {
-    long expirationTime = 3600000; // 1 hora en milisegundos
-    Date expirationDate = new Date(System.currentTimeMillis() + expirationTime);
-
-    return Jwts.builder()
-            .subject(user.getUsername())
-            .claim("userId", user.getId())
-            .claim("purpose", "password_reset")
-            .issuedAt(new Date())
-            .expiration(expirationDate)
-            .signWith(TokenJwtConfig.SECRET_KEY)
-            .compact();
+    Instant now = Instant.now();
+    JwtClaimsSet claims = JwtClaimsSet.builder()
+        .issuer("self")
+        .issuedAt(now)
+        .expiresAt(now.plusSeconds(3600))
+        .subject(user.getUsername())
+        .claim("userId", user.getId())
+        .claim("purpose", "password_reset")
+        .build();
+    return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
   }
 
   // Método para cambiar la contraseña
