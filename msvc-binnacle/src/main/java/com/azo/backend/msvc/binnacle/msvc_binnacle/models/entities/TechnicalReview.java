@@ -8,9 +8,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
@@ -44,6 +47,10 @@ public class TechnicalReview {
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private ReviewResult result;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "request_id", nullable = false)
+  private Request request;
 
   // Getters and setters
   public Long getId() {
@@ -92,6 +99,14 @@ public class TechnicalReview {
 
   public void setResult(ReviewResult result) {
     this.result = result;
-  } 
+  }
+
+  public Request getRequest() {
+    return request;
+  }
+
+  public void setRequest(Request request) {
+    this.request = request;
+  }
 
 }

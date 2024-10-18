@@ -129,12 +129,23 @@ public class RequestController {
   public ResponseEntity<?> remove ( 
           @Parameter(description = "ID de la solicitud", required = true)
           @PathVariable Long id){
-    Optional<RequestDetailDto> o = service.findById(id);
-    if(o.isPresent()){
+    
+    //Optional<RequestDetailDto> o = service.findById(id);
+    // if(o.isPresent()){
+    //   service.remove(id);
+    //   return ResponseEntity.noContent().build();
+    // }
+    // return ResponseEntity.notFound().build();
+
+    try {
       service.remove(id);
       return ResponseEntity.noContent().build();
+    } catch (EntityNotFoundException e) {
+        return ResponseEntity.notFound().build();
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error al eliminar la solicitud: " + e.getMessage());
     }
-    return ResponseEntity.notFound().build();
   }
 
   @GetMapping("/status/{status}")

@@ -77,6 +77,13 @@ public abstract class Request {
     entryDate = LocalDateTime.now();
   }
   
+  // Método abstracto para obtener revisiones técnicas
+  public abstract List<TechnicalReview> getTechnicalReviews();
+
+  // Método abstracto para obtener correcciones
+  public abstract List<Correction> getCorrections();
+
+  // Método abstracto para procesar la solicitud
   public abstract void process();
 
   //Getters and Setters

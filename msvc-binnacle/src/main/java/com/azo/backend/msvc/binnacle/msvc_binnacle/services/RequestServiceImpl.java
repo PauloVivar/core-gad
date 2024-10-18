@@ -195,10 +195,26 @@ public class RequestServiceImpl implements RequestService {
   @Override
   @Transactional
   public void remove(Long id) {
-    Optional<Request> o = repository.findById(id);
-    if (o.isPresent()) {
-      Request request = o.orElseThrow();
-      repository.delete(request);
+    try {
+      Optional<Request> o = repository.findById(id);
+      if (o.isPresent()) {
+          Request request = o.orElseThrow();
+          // La eliminación en cascada se encargará de los documentos
+          // Fuerza la carga de todas las relaciones
+          request.getDocuments().size();
+          request.getTechnicalReviews().size();
+          request.getCorrections().size();
+          if (request instanceof RequestSubdivisionCertificate) {
+              ((RequestSubdivisionCertificate) request).getSubdivisionCertificate();
+          }
+          repository.delete(request);
+      } else {
+          throw new EntityNotFoundException("Solicitud no encontrada con ID: " + id);
+      }
+    } catch (Exception e) {
+        // Log the exception
+        logger.error("Error al eliminar la solicitud con ID: " + id, e);
+        throw new RuntimeException("No se pudo eliminar la solicitud", e);
     }
   }
 

@@ -64,16 +64,18 @@ public class RequestCadastralRecord extends Request {
 
   // Getters y setters
 
+  @Override
   public List<TechnicalReview> getTechnicalReviews() {
       return technicalReviews;
   }
 
-  public void setTechnicalReviews(List<TechnicalReview> technicalReviews) {
-      this.technicalReviews = technicalReviews;
-  }
-
+  @Override
   public List<Correction> getCorrections() {
       return corrections;
+  }
+
+  public void setTechnicalReviews(List<TechnicalReview> technicalReviews) {
+      this.technicalReviews = technicalReviews;
   }
 
   public void setCorrections(List<Correction> corrections) {

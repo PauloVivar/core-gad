@@ -12,6 +12,9 @@ import jakarta.persistence.JoinColumn;
 
 import jakarta.persistence.OneToOne;
 
+import java.util.List;
+import java.util.ArrayList;
+
 @Entity
 @DiscriminatorValue("CERTIFICADO_NO_PERTENENCIA")
 public class RequestSubdivisionCertificate extends Request {
@@ -40,6 +43,7 @@ public class RequestSubdivisionCertificate extends Request {
   }
 
   //Getters and Setters
+  
   public SubdivisionCertificate getSubdivisionCertificate() {
     return subdivisionCertificate;
   }
@@ -50,5 +54,15 @@ public class RequestSubdivisionCertificate extends Request {
         subdivisionCertificate.setRequest(this);
     }
   }
-  
+
+  @Override
+  public List<TechnicalReview> getTechnicalReviews() {
+      return new ArrayList<>(); // O null si no aplica
+  }
+
+  @Override
+  public List<Correction> getCorrections() {
+      return new ArrayList<>(); // O null si no aplica
+  }
+
 }
