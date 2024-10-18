@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,11 +33,14 @@ import com.azo.backend.msvc.binnacle.msvc_binnacle.models.filter.RequestSpecific
 import com.azo.backend.msvc.binnacle.msvc_binnacle.repositories.CadastralRecordRepository;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.repositories.RequestRepository;
 
+import feign.FeignException;
 import jakarta.persistence.EntityNotFoundException;
 
 //paso 4.1.
 @Service
 public class RequestServiceImpl implements RequestService {
+
+  private static final Logger logger = LoggerFactory.getLogger(RequestServiceImpl.class);
 
   @Autowired
   private RequestRepository repository;
@@ -86,13 +91,24 @@ public class RequestServiceImpl implements RequestService {
   @Transactional(readOnly = true)
   public Optional<RequestDetailDto> findById(Long id) {
     return repository.findById(id).map(r -> {
-      User citizen = userClientRest.detail(r.getCitizenId());
-      User assignedUser = userClientRest.detail(r.getAssignedToUserId());
-      return DtoMapperRequest.builder()
-              .setRequest(r)
-              .setCitizen(citizen)
-              .setAssignedUser(assignedUser)
-              .buildDetailDto();
+      try {
+        User citizen = userClientRest.detail(r.getCitizenId());
+        // User assignedUser = userClientRest.detail(r.getAssignedToUserId());
+        User assignedUser = null;
+        if (r.getAssignedToUserId() != null) {
+          assignedUser = userClientRest.detail(r.getAssignedToUserId());
+        }
+        return DtoMapperRequest.builder()
+                .setRequest(r)
+                .setCitizen(citizen)
+                .setAssignedUser(assignedUser)
+                .buildDetailDto();
+      } catch(FeignException e){
+        logger.error("Error calling user service: {}", e.getMessage());
+        logger.error("Status: {}, Content: {}", e.status(), e.contentUTF8());
+        // return un DTO parcial o lanzar una excepción personalizada
+        throw new RuntimeException("Error retrieving user details", e);
+      }
     });
     //return repository.findById(id);
   }

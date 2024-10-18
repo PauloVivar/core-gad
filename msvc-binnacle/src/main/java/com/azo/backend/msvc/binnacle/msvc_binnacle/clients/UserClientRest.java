@@ -3,6 +3,7 @@ package com.azo.backend.msvc.binnacle.msvc_binnacle.clients;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+// import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.azo.backend.msvc.binnacle.msvc_binnacle.config.FeignClientConfig;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.User;
@@ -17,5 +18,6 @@ public interface UserClientRest {
   
   @GetMapping("/{id}")
   User detail (@PathVariable Long id);
+  // User detail (@PathVariable Long id, @RequestHeader(value = "Authorization", required = true) String token);
 
 }
