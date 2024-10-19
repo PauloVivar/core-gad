@@ -13,13 +13,20 @@ import org.springframework.transaction.annotation.Transactional;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.CorrectionDto;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.mapper.DtoMapperCorrection;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.Correction;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.Request;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.repositories.CorrectionRepository;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.repositories.RequestRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class CorrectionServiceImpl implements CorrectionService {
 
   @Autowired
   private CorrectionRepository repository;
+
+  @Autowired
+  private RequestRepository requestRepository;
 
   @Override
   @Transactional(readOnly = true)
@@ -50,7 +57,10 @@ public class CorrectionServiceImpl implements CorrectionService {
   @Transactional
   public CorrectionDto save(CorrectionDto correctionDto) {
     Correction correction = new Correction();
-    correction.setRequestId(correctionDto.getRequestId());
+    Request request = requestRepository.findById(correctionDto.getRequestId())
+            .orElseThrow(() -> new EntityNotFoundException("Request not found"));
+    correction.setRequest(request);
+    //correction.setRequestId(correctionDto.getRequestId());
     correction.setDescription(correctionDto.getDescription());
     correction.setDateNotified(correctionDto.getDateNotified());
     correction.setDeadline(correctionDto.getDeadline());
@@ -67,7 +77,10 @@ public class CorrectionServiceImpl implements CorrectionService {
     Optional<Correction> o = repository.findById(id);
     if (o.isPresent()) {
         Correction correctionDb = o.get();
-        correctionDb.setRequestId(correctionDto.getRequestId());
+        Request request = requestRepository.findById(correctionDto.getRequestId())
+                    .orElseThrow(() -> new EntityNotFoundException("Request not found"));
+        correctionDb.setRequest(request);
+        //correctionDb.setRequestId(correctionDto.getRequestId());
         correctionDb.setDescription(correctionDto.getDescription());
         correctionDb.setDateNotified(correctionDto.getDateNotified());
         correctionDb.setDeadline(correctionDto.getDeadline());

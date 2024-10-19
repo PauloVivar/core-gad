@@ -24,7 +24,8 @@ public class DtoMapperCorrection {
     }
     return new CorrectionDto(
         correction.getId(),
-        correction.getRequestId(),
+        //correction.getRequestId(),
+        correction.getRequest() != null ? correction.getRequest().getId() : null,
         correction.getDescription(),
         correction.getDateNotified(),
         correction.getDeadline(),

@@ -26,8 +26,12 @@ public class Correction {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "request_id", nullable = false)
-  private Long requestId;
+  // @Column(name = "request_id", nullable = false)
+  // private Long requestId;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "request_id", nullable = false)
+  private Request request;
 
   @Column(length = 1000, nullable = false)
   private String description;
@@ -48,10 +52,6 @@ public class Correction {
   @Column(nullable = false)
   private CorrectionStatus status;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "request_id", nullable = false)
-  private Request request;
-
   // Getters and setters
   public Long getId() {
     return id;
@@ -61,12 +61,20 @@ public class Correction {
     this.id = id;
   }
 
-  public Long getRequestId() {
-    return requestId;
+  // public Long getRequestId() {
+  //   return requestId;
+  // }
+
+  // public void setRequestId(Long requestId) {
+  //   this.requestId = requestId;
+  // }
+
+  public Request getRequest() {
+    return request;
   }
 
-  public void setRequestId(Long requestId) {
-    this.requestId = requestId;
+  public void setRequest(Request request) {
+    this.request = request;
   }
 
   public String getDescription() {
@@ -99,14 +107,6 @@ public class Correction {
 
   public void setStatus(CorrectionStatus status) {
     this.status = status;
-  }
-
-  public Request getRequest() {
-    return request;
-  }
-
-  public void setRequest(Request request) {
-    this.request = request;
   }
 
 }

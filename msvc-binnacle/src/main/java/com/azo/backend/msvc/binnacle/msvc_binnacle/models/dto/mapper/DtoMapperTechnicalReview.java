@@ -25,7 +25,8 @@ public class DtoMapperTechnicalReview {
     }
     return new TechnicalReviewDto(
         technicalReview.getId(),
-        technicalReview.getRequestId(),
+        //technicalReview.getRequestId(),
+        technicalReview.getRequest() != null ? technicalReview.getRequest().getId() : null,
         technicalReview.getReviewerId(),
         technicalReview.getDate(),
         technicalReview.getComments(),

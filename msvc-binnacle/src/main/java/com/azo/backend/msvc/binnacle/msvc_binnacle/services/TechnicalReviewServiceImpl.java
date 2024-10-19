@@ -14,10 +14,14 @@ import com.azo.backend.msvc.binnacle.msvc_binnacle.clients.UserClientRest;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.User;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.TechnicalReviewDto;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.dto.mapper.DtoMapperTechnicalReview;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.Request;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.models.entities.TechnicalReview;
+import com.azo.backend.msvc.binnacle.msvc_binnacle.repositories.RequestRepository;
 import com.azo.backend.msvc.binnacle.msvc_binnacle.repositories.TechnicalReviewRepository;
 
 import feign.FeignException;
+import jakarta.persistence.EntityNotFoundException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +32,9 @@ public class TechnicalReviewServiceImpl implements TechnicalReviewService {
 
   @Autowired
   private TechnicalReviewRepository repository;
+
+  @Autowired
+  private RequestRepository requestRepository;
 
   @Autowired
   private UserClientRest userClientRest;
@@ -74,7 +81,10 @@ public class TechnicalReviewServiceImpl implements TechnicalReviewService {
   @Transactional
   public TechnicalReviewDto save(TechnicalReviewDto reviewDto) {
     TechnicalReview review = new TechnicalReview();
-    review.setRequestId(reviewDto.getRequestId());
+    Request request = requestRepository.findById(reviewDto.getRequestId())
+            .orElseThrow(() -> new EntityNotFoundException("Request not found"));
+    review.setRequest(request);
+    //review.setRequestId(reviewDto.getRequestId());
     if (reviewDto.getReviewerId() != null) {
       review.setReviewerId(reviewDto.getReviewerId());
     }
@@ -93,7 +103,10 @@ public class TechnicalReviewServiceImpl implements TechnicalReviewService {
     Optional<TechnicalReview> o = repository.findById(id);
     if (o.isPresent()) {
       TechnicalReview reviewDb = o.get();
-      reviewDb.setRequestId(reviewDto.getRequestId());
+      Request request = requestRepository.findById(reviewDto.getRequestId())
+                    .orElseThrow(() -> new EntityNotFoundException("Request not found"));
+      reviewDb.setRequest(request);
+      //reviewDb.setRequestId(reviewDto.getRequestId());
       reviewDb.setReviewerId(reviewDto.getReviewerId());
       reviewDb.setDate(reviewDto.getDate());
       reviewDb.setComments(reviewDto.getComments());

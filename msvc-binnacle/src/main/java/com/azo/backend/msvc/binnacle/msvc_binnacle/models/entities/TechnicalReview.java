@@ -15,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreRemove;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 
@@ -26,8 +27,12 @@ public class TechnicalReview {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "request_id", nullable = false)
-  private Long requestId;
+  // @Column(name = "request_id", nullable = false)
+  // private Long requestId;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "request_id", nullable = false)
+  private Request request;
 
   @Column(name = "reviewer_id", nullable = true)
   private Long reviewerId;
@@ -48,9 +53,10 @@ public class TechnicalReview {
   @Column(nullable = false)
   private ReviewResult result;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "request_id", nullable = false)
-  private Request request;
+  @PreRemove
+  private void preRemove() {
+      this.request = null;
+  }
 
   // Getters and setters
   public Long getId() {
@@ -61,12 +67,20 @@ public class TechnicalReview {
     this.id = id;
   }
 
-  public Long getRequestId() {
-    return requestId;
+  // public Long getRequestId() {
+  //   return requestId;
+  // }
+
+  // public void setRequestId(Long requestId) {
+  //   this.requestId = requestId;
+  // }
+
+  public Request getRequest() {
+    return request;
   }
 
-  public void setRequestId(Long requestId) {
-    this.requestId = requestId;
+  public void setRequest(Request request) {
+    this.request = request;
   }
 
   public Long getReviewerId() {
@@ -99,14 +113,6 @@ public class TechnicalReview {
 
   public void setResult(ReviewResult result) {
     this.result = result;
-  }
-
-  public Request getRequest() {
-    return request;
-  }
-
-  public void setRequest(Request request) {
-    this.request = request;
   }
 
 }

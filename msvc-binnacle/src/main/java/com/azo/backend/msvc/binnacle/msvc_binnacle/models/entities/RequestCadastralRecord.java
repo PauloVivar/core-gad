@@ -36,7 +36,8 @@ public class RequestCadastralRecord extends Request {
 
   private void initializeInitialReview() {
     TechnicalReview initialReview = new TechnicalReview();
-    initialReview.setRequestId(this.getId());
+    initialReview.setRequest(this);
+    //initialReview.setRequestId(this.getId());
     initialReview.setDate(LocalDateTime.now());
     initialReview.setComments("Revisión inicial");
     initialReview.setResult(ReviewResult.EN_PROCESO);
@@ -46,7 +47,8 @@ public class RequestCadastralRecord extends Request {
   // Métodos específicos para manejar revisiones técnicas
   public void addTechnicalReview(TechnicalReview review) {
       technicalReviews.add(review);
-      review.setRequestId(this.getId());
+      review.setRequest(this);
+      //review.setRequestId(this.getId());
   }
 
   public void removeTechnicalReview(TechnicalReview review) {
@@ -55,7 +57,8 @@ public class RequestCadastralRecord extends Request {
 
   public void addCorrection(Correction correction) {
       corrections.add(correction);
-      correction.setRequestId(this.getId());
+      //corrections.setRequest(this);
+      //correction.setRequestId(this.getId());
   }
 
   public void removeCorrection(Correction correction) {
