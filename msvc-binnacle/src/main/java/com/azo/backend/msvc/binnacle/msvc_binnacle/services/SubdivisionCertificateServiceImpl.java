@@ -186,7 +186,7 @@ public class SubdivisionCertificateServiceImpl implements SubdivisionCertificate
       parameters.put("requestId", requestId);
       parameters.put("citizenName", requestDetail.getCitizenName());
       parameters.put("cadastralCode", requestDetail.getCadastralCode());
-      parameters.put("propertyBelongingType", certificate.getSubdivisionType().getDescription());
+      parameters.put("subdivisionType", certificate.getSubdivisionType().getDescription());
       parameters.put("issueDate", certificate.getIssueDate().format(DateTimeFormatter.ofPattern("dd 'de' MMMM 'del' yyyy")));
 
       // Añade más parámetros según sea necesario
