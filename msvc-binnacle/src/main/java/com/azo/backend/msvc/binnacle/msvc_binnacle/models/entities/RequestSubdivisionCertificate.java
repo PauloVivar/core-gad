@@ -25,11 +25,11 @@ public class RequestSubdivisionCertificate extends Request {
 
   @Override
   public void process() {
-    this.setStatus(RequestStatus.EN_REVISION);
+    this.setStatus(RequestStatus.INGRESADO);
     // Generar el certificado de subdivisión
     SubdivisionCertificate certificate = new SubdivisionCertificate();
     certificate.setRequest(this);
-    certificate.setDetails("Certificado de No Pertenencia en proceso");
+    certificate.setDetails("Generación de certificado en proceso");
     this.setSubdivisionCertificate(certificate);
   }
 
@@ -38,7 +38,7 @@ public class RequestSubdivisionCertificate extends Request {
         this.subdivisionCertificate = new SubdivisionCertificate();
         this.subdivisionCertificate.setRequest(this);
     }
-    this.subdivisionCertificate.setDetails("Certificado de No Pertenencia generado");
+    this.subdivisionCertificate.setDetails("Certificado generado");
     this.setStatus(RequestStatus.APROBADO);
   }
 

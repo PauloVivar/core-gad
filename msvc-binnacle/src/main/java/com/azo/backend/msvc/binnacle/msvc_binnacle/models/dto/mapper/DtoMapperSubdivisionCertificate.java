@@ -27,7 +27,10 @@ public class DtoMapperSubdivisionCertificate {
       return new SubdivisionCertificateDto(
           subdivisionCertificate.getId(),
           subdivisionCertificate.getDetails(),
-          subdivisionCertificate.getRequest() != null ? subdivisionCertificate.getRequest().getId() : null
+          subdivisionCertificate.getRequest() != null ? subdivisionCertificate.getRequest().getId() : null,
+          subdivisionCertificate.getSubdivisionType(),
+          subdivisionCertificate.getIssueDate(),
+          subdivisionCertificate.getFileUrl()
       );
   }
 
@@ -39,6 +42,9 @@ public class DtoMapperSubdivisionCertificate {
       SubdivisionCertificate certificate = new SubdivisionCertificate();
       certificate.setId(dto.getId());
       certificate.setDetails(dto.getDetails());
+      certificate.setSubdivisionType(dto.getSubdivisionType());
+      certificate.setIssueDate(dto.getIssueDate());
+      certificate.setFileUrl(dto.getFileUrl());
       // No establecemos la relación con Request aquí, eso se hará en el servicio
       return certificate;
   }

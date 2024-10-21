@@ -25,7 +25,7 @@ public class SpringSecurityConfig {
         .requestMatchers(HttpMethod.GET, "/api/v1/dashboard").permitAll()
 
         .requestMatchers(HttpMethod.POST, "/api/v1/requests").permitAll()
-        .requestMatchers(HttpMethod.POST, "/api/v1/subdivision-certificates").permitAll()
+        .requestMatchers(HttpMethod.POST, "/api/v1/subdivision-certificates", "/api/v1/subdivision-certificates/**").permitAll()
         .requestMatchers(HttpMethod.POST, "/api/v1/dashboard").permitAll()
         .requestMatchers(HttpMethod.DELETE, "/api/v1/requests/**").permitAll()
         .requestMatchers("/api/v1/requests/**").permitAll()
